@@ -31,7 +31,10 @@ package org.firstinspires.ftc.teamcode.Team2844.Drivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
 
 /**
  * This is NOT an opmode.
@@ -53,26 +56,29 @@ public class RobotHardware
 {
     LinearOpMode OpMode_;
 
-    DcMotor  leftDrive;
-    DcMotor  rightDrive;
+    public DcMotor  leftDrive;
+    public DcMotor  rightDrive;
 
+    public BNO055IMU imu;
 
-    //private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    //private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
-    //private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    final double             COUNTS_PER_INCH         = 1.0;  //TODO determine in class
+    private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    private final double     DRIVE_GEAR_REDUCTION    = 40.0;   // This is < 1.0 if geared UP
+    private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    private final double     WHEEL_CIRCUMFERENCE     = 4 * (3.14159265);
+    final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / WHEEL_CIRCUMFERENCE;  //TODO determine in class
 
     /* Constructor */
-    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode) {
+    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode)
+    {
         /* Public OpMode members. */
         OpMode_ = opMode;
 
         // Define and Initialize Motors
-        leftDrive = ahwMap.get(DcMotor.class, "lmotor");
-        rightDrive = ahwMap.get(DcMotor.class, "rmotor");
+        leftDrive = ahwMap.get(DcMotor.class, "lmotor"); // motor 0
+        rightDrive = ahwMap.get(DcMotor.class, "rmotor"); // motor 1
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // TODO determine which motor should be reversed
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// TODO determine which motor should be reversed
+        leftDrive.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
 
         // Set all motors to zero power
         leftDrive.setPower(0);
@@ -81,6 +87,9 @@ public class RobotHardware
         // Set all motors to run without encoders by default
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        imu = ahwMap.get(BNO055IMU.class, "imu");
     }
- }
+
+}
 
