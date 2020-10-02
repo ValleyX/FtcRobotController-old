@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Team12841.Drivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -50,14 +51,15 @@ public class RobotHardware
 {
     LinearOpMode OpMode_;
 
-    DcMotor  leftDrive;
-    DcMotor  rightDrive;
+    public DcMotor  leftDrive;
+    public DcMotor  rightDrive;
 
 
-    //private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    //private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
-    //private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    final double             COUNTS_PER_INCH         = 1.0;  //TODO determine in class
+    private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
+    private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    private final double     Circumference           = 3.14 * 4; //4 inches of wheel
+    final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Circumference; //TODO determine in class
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode) {
@@ -68,8 +70,8 @@ public class RobotHardware
         leftDrive = ahwMap.get(DcMotor.class, "lmotor");
         rightDrive = ahwMap.get(DcMotor.class, "rmotor");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // TODO determine which motor should be reversed
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// TODO determine which motor should be reversed
+        leftDrive.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
 
         // Set all motors to zero power
         leftDrive.setPower(0);
@@ -80,4 +82,5 @@ public class RobotHardware
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
  }
+
 
