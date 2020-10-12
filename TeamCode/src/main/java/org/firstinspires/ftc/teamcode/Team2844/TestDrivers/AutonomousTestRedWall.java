@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDriveHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
+import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.EasyOpenCVExample;
 
 @Autonomous (name="RedWall")
 
@@ -20,6 +21,24 @@ public class AutonomousTestRedWall extends LinearOpMode
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
         RotateToHeading rotateToHeading = new RotateToHeading(robot, rotatePrecise);
+        EasyOpenCVExample RingDetection = new EasyOpenCVExample();
+
+        RingDetection.pipeline.getAnalysis();
+
+        int position = RingDetection.pipeline.getAnalysis();
+
+        if (position >= RingDetection.pipeline.FOUR_RING_THRESHOLD)
+        {
+            int x = 0; // 4 rings
+        }
+        if (RingDetection.pipeline.ONE_RING_THRESHOLD >= position && position > RingDetection.pipeline.FOUR_RING_THRESHOLD)
+        {
+            int x = 0; // 1 ring
+        }
+        if (position < RingDetection.pipeline.ONE_RING_THRESHOLD)
+        {
+            int x = 0; // no rings
+        }
 
         waitForStart();
 
