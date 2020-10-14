@@ -7,55 +7,62 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDriveHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
-import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.EasyOpenCVExample;
 
 @Autonomous (name="RedWall")
-
+// hello
 public class AutonomousTestRedWall extends LinearOpMode
 {
-    @Override
+    //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(hardwareMap, this);
+        RobotHardware robot = new RobotHardware(this);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
         RotateToHeading rotateToHeading = new RotateToHeading(robot, rotatePrecise);
-        EasyOpenCVExample RingDetection = new EasyOpenCVExample();
+       // EasyOpenCVExample RingDetection = new EasyOpenCVExample();
 
-        RingDetection.pipeline.getAnalysis();
+        //robot.pipeline.getAnalysis();
 
-        int position = RingDetection.pipeline.getAnalysis();
 
-        if (position >= RingDetection.pipeline.FOUR_RING_THRESHOLD)
+        //int location = robot.pipeline.getAnalysis();
+        int path = 0;
+
+        while (!opModeIsActive())
         {
-            int x = 0; // 4 rings
-        }
-        if (RingDetection.pipeline.ONE_RING_THRESHOLD >= position && position > RingDetection.pipeline.FOUR_RING_THRESHOLD)
-        {
-            int x = 0; // 1 ring
-        }
-        if (position < RingDetection.pipeline.ONE_RING_THRESHOLD)
-        {
-            int x = 0; // no rings
+            if (robot.pipeline.position == robot.pipeline.position.FOUR)
+            {
+                path = 2; // 4 rings
+            }
+            if (robot.pipeline.position == robot.pipeline.position.ONE)
+            {
+                path = 1; // 1 ring
+            }
+            if (robot.pipeline.position == robot.pipeline.position.NONE)
+            {
+                path = 0; // no rings
+            }
+            telemetry.addData("path value = ", path);
+            telemetry.update();
         }
 
         waitForStart();
 
-        int x = 1;
+        //telemetry.addData("path value = ", path);
+        System.out.println("path value = " + path);
 
         final double WHITELINE_DISTANCE = 72;
         final double BOXLENGTH = 22.75;
         final double DISTANCETO_BOXB = 9;
 
-        if (x==0) // Square A
+        if (path==0) // Square A, 0 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE, 0, 10, true); //drives to middle of square A
             sleep(2000); // drop wobble goal
             //should already be on line
         }
 
-        if (x==1) // Square B
+        if (path==1) // Square B, 1 ring
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true); //drives next to middle of square B
             // use box length to get to middle of next box from middle of first box
@@ -69,7 +76,7 @@ public class AutonomousTestRedWall extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH, 0, 10, true); // drive to line
         }
 
-        if (x==2) // Square C
+        if (path==2) // Square C, 4 rings
         {
             encoderDriveHeading.StartAction(0.6, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true); // drive to middle of square C
             // use box length to get to middle of next box from middle of first box

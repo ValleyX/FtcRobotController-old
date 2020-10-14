@@ -53,7 +53,7 @@ public class TestEncoderDrive extends LinearOpMode {
     {
         ElapsedTime runtime = new ElapsedTime();
 
-        RobotHardware robot = new RobotHardware(hardwareMap, this);
+        RobotHardware robot = new RobotHardware(this);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
 
         System.out.println("ValleyX: Waiting for Start");
