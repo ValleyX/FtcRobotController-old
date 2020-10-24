@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Team2844.Drivers;
 
+import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.SwitchableWebcamExample;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -8,8 +9,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-
-
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -51,6 +50,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.EasyOpenCVExample;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +63,6 @@ import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.ElementType.PARAMETER;
-
 
 /**
  * This is NOT an opmode.
@@ -81,6 +80,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
+
 public class RobotHardware
 {
     LinearOpMode OpMode_;
@@ -88,7 +88,9 @@ public class RobotHardware
     public DcMotor  leftDrive;
     public DcMotor  rightDrive;
     public SkystoneDeterminationPipeline pipeline;
-    public OpenCvCamera webcam;
+    public WebcamName webcamFront;
+    public WebcamName webcamBack;
+    OpenCvSwitchableWebcam switchableWebcam;
 
     public BNO055IMU imu;
 
@@ -100,48 +102,45 @@ public class RobotHardware
 
 
     /* Constructor */
-    public RobotHardware(LinearOpMode opMode)
+    public RobotHardware(LinearOpMode opMode, int x, int y)
     {
-        /* Public OpMode members. */
+        /* Public OpMode members */
         OpMode_ = opMode;
 
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
-        webcam.setPipeline(pipeline);
+        webcamFront = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Front");
+        webcamBack = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Back");
+        pipeline = new SkystoneDeterminationPipeline(x, y);
+        //webcam.setPipeline(pipeline);
+
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamFront, webcamBack);
+        switchableWebcam.openCameraDevice();
+        switchableWebcam.setPipeline(pipeline);
+
+        OpMode_.sleep(100);
+
+        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+        switchableWebcam.setActiveCamera(webcamBack);
 
 
+        /*
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                /*
-                 * Tell the webcam to start streaming images to us! Note that you must make sure
-                 * the resolution you specify is supported by the camera. If it is not, an exception
-                 * will be thrown.
-                 *
-                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
-                 * supports streaming from the webcam in the uncompressed YUV image format. This means
-                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
-                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
-                 *
-                 * Also, we specify the rotation that the webcam is used in. This is so that the image
-                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
-                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
-                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
-                 * away from the user.
-                 */
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
         });
+        */
 
         // Define and Initialize Motors
         leftDrive = OpMode_.hardwareMap.get(DcMotor.class, "lmotor"); // motor 0
         rightDrive = OpMode_.hardwareMap.get(DcMotor.class, "rmotor"); // motor 1
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         leftDrive.setPower(0);
@@ -152,16 +151,11 @@ public class RobotHardware
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
-
-
-
     }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
-        /*
-         * An enum to define the skystone position
-         */
+        //An enum to define the skystone position
         public enum RingPosition
         {
             FOUR,
@@ -169,36 +163,26 @@ public class RobotHardware
             NONE
         }
 
-        /*
-         * Some color constants
-         */
+        //Some color constants
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-
-        // box location and dimensions
-        // TODO determine box location, box dimensions, and threshold values
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(200,165); // 181,98 //y:120
+        //The core values which define the location and size of the sample regions
+        //box location and dimensions
+        //static final
+        //Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(x,y); // 200, 165
+        Point REGION1_TOPLEFT_ANCHOR_POINT;
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 45;
 
-        public final int         FOUR_RING_THRESHOLD = 150;
-        public final int         ONE_RING_THRESHOLD = 135;
+        public final int  FOUR_RING_THRESHOLD = 150;
+        public final int  ONE_RING_THRESHOLD = 135;
 
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        Point region1_pointA;
+        Point region1_pointB;
 
-        /*
-         * Working variables
-         */
+        //Working variables
         Mat region1_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
@@ -207,10 +191,14 @@ public class RobotHardware
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
 
-        /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Cb channel to the 'Cb' variable
-         */
+        public SkystoneDeterminationPipeline(int x, int y)
+        {
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(x,y); // 200, 165
+            region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
+            region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        }
+
+        //This function takes the RGB frame, converts to YCrCb, and extracts the Cb channel to the 'Cb' variable
         void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
@@ -268,7 +256,4 @@ public class RobotHardware
             return avg1;
         }
     }
-    }
-
-
-
+}

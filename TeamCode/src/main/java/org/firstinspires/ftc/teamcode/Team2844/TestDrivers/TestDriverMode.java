@@ -12,7 +12,7 @@ public class TestDriverMode extends LinearOpMode
     @Override
     public void runOpMode ()
     {
-         RobotHardware robot = new RobotHardware(this);
+         RobotHardware robot = new RobotHardware(this, 0, 0);
          System.out.println("ValleyX: In Innit");
          waitForStart();
 
