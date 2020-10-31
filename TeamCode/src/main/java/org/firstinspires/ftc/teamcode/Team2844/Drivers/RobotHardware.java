@@ -115,25 +115,29 @@ public class RobotHardware
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamFront, webcamBack);
         switchableWebcam.openCameraDevice();
+
+
+
+        //OpMode_.sleep(1000);
+
         switchableWebcam.setPipeline(pipeline);
 
-        OpMode_.sleep(100);
+        //switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        //switchableWebcam.setActiveCamera(webcamFront);
+        //final boolean usefront = true;
 
-        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
-        switchableWebcam.setActiveCamera(webcamBack);
-
-
-        /*
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                //pick desired camera here
+
+                switchableWebcam.setActiveCamera(webcamFront);
             }
         });
-        */
+
 
         // Define and Initialize Motors
         leftDrive = OpMode_.hardwareMap.get(DcMotor.class, "lmotor"); // motor 0

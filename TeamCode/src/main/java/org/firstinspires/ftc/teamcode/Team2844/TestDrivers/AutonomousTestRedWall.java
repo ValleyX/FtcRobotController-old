@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDriveHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 
-@Autonomous (name="BlueWall")
+@Autonomous (name="RedWall")
 // hello
-public class AutonomousTestBlueWall extends LinearOpMode
+public class AutonomousTestRedWall extends LinearOpMode
 {
     //@Override
     public void runOpMode() throws InterruptedException
@@ -26,7 +27,7 @@ public class AutonomousTestBlueWall extends LinearOpMode
 
 
         //int location = robot.pipeline.getAnalysis();
-        int path = 1;
+        int path = 2;
 /*
         while (!opModeIsActive())
         {
@@ -65,7 +66,7 @@ public class AutonomousTestBlueWall extends LinearOpMode
             //should already be on line
              */
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-7.5, 0, 10, true);
-            rotateToHeading.DoIt(-35);
+            rotateToHeading.DoIt(35);
             // drops wobble goal, already on line
         }
 
@@ -83,10 +84,10 @@ public class AutonomousTestBlueWall extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH, 0, 10, true); // drive to line
              */
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true);
-            rotateToHeading.DoIt(90);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, 90, 10, true);
+            rotateToHeading.DoIt(-90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, -90, 10, true);
             sleep(2000);
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXB, 90, 10, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXB, -90, 10, true);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+2, 0, 5, true);
         }
@@ -98,8 +99,8 @@ public class AutonomousTestBlueWall extends LinearOpMode
             sleep(2000); // drop wobble goal
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH-EXTRALENGTH, 0, 10, true); //drive backwards to line
              */
-            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH, 0, 10, true);
-            rotateToHeading.DoIt(-30);
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH+4, 0, 10, true);
+            rotateToHeading.DoIt(30);
             sleep(2000);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH-EXTRALENGTH, 0, 10, true);

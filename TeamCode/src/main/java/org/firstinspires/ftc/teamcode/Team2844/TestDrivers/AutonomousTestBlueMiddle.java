@@ -1,0 +1,103 @@
+package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
+import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDriveHeading;
+import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
+import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
+import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
+
+@Autonomous (name="BlueMiddle")
+// hello
+public class AutonomousTestBlueMiddle extends LinearOpMode
+{
+    //@Override
+    public void runOpMode() throws InterruptedException
+    {
+        RobotHardware robot = new RobotHardware(this, 200, 165);
+        EncoderDrive encoderDrive = new EncoderDrive(robot);
+        EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
+        RotatePrecise rotatePrecise =  new RotatePrecise(robot);
+        RotateToHeading rotateToHeading = new RotateToHeading(robot, rotatePrecise);
+        // EasyOpenCVExample RingDetection = new EasyOpenCVExample();
+
+        //robot.pipeline.getAnalysis();
+
+
+        //int location = robot.pipeline.getAnalysis();
+        int path = 2;
+/*
+        while (!opModeIsActive())
+        {
+            if (robot.pipeline.position == robot.pipeline.position.FOUR)
+            {
+                path = 2; // 4 rings
+            }
+            if (robot.pipeline.position == robot.pipeline.position.ONE)
+            {
+                path = 1; // 1 ring
+            }
+            if (robot.pipeline.position == robot.pipeline.position.NONE)
+            {
+                path = 0; // no rings
+            }
+            telemetry.addData("path value = ", path);
+            telemetry.update();
+        }
+*/
+
+
+        waitForStart();
+
+        //telemetry.addData("path value = ", path);
+        System.out.println("path value = " + path);
+
+        final double WHITELINE_DISTANCE = 68; //72
+        final double BOXLENGTH = 27; //22.75
+        final double DISTANCETO_BOXB = 11; //9
+        final double EXTRALENGTH = 9;
+        final double DISTANCETO_BOXAC = 15;
+
+        if (path==0) // Square A, 0 rings
+        {
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
+            rotateToHeading.DoIt(-90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, -90, 5, true);
+            sleep(2000);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, -90, 5, true);
+            rotateToHeading.DoIt(0);
+        }
+
+        if (path==1) // Square B, 1 ring
+        {
+            /*encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
+            rotateToHeading.DoIt(-30);
+            sleep(2000);
+            encoderDriveHeading.StartAction(0.8, -BOXLENGTH-EXTRALENGTH, -30, 10, true);
+            rotateToHeading.DoIt(0);
+             */
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE, 0, 10, true);
+            rotateToHeading.DoIt(30);
+            encoderDriveHeading.StartAction(0.8, BOXLENGTH+8, 30, 10, true);
+            rotateToHeading.DoIt(-90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, -90, 5, true);
+            sleep(2000);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXB, -90, 5, true);
+            rotateToHeading.DoIt(0);
+            encoderDriveHeading.StartAction(0.8, -BOXLENGTH+5, 0, 10, true);
+        }
+
+        if (path==2) // Square C, 4 rings
+        {
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH+14, 0, 10, true);
+            rotateToHeading.DoIt(-90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, -90, 5, true);
+            sleep(2000);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, -90, 5, true);
+            rotateToHeading.DoIt(0);
+            encoderDriveHeading.StartAction(0.8, -BOXLENGTH-14, 0, 10, true);
+        }
+    }
+}
