@@ -16,7 +16,7 @@ public class AutonomousTestRedMiddle extends LinearOpMode
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(this, 200, 165);
+        RobotHardware robot = new RobotHardware(this, 200, 165, RobotHardware.cameraSelection.LEFT);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);

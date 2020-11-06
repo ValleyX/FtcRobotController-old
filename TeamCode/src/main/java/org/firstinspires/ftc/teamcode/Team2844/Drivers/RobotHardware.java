@@ -88,8 +88,8 @@ public class RobotHardware
     public DcMotor  leftDrive;
     public DcMotor  rightDrive;
     public SkystoneDeterminationPipeline pipeline;
-    public WebcamName webcamFront;
-    public WebcamName webcamBack;
+    public WebcamName webcamLeft; // USB 3.0
+    public WebcamName webcamRight; // USB 2.0
     OpenCvSwitchableWebcam switchableWebcam;
 
     public BNO055IMU imu;
@@ -100,22 +100,26 @@ public class RobotHardware
     private final double     WHEEL_CIRCUMFERENCE     = 4 * (3.14159265);
     public final double      COUNTS_PER_INCH         = ONE_MOTOR_COUNT / WHEEL_CIRCUMFERENCE;  //TODO determine in class
 
+    public enum cameraSelection
+    {
+        LEFT,
+        RIGHT
+    }
 
     /* Constructor */
-    public RobotHardware(LinearOpMode opMode, int x, int y)
+    public RobotHardware(LinearOpMode opMode, int x, int y, final cameraSelection camera)
     {
         /* Public OpMode members */
         OpMode_ = opMode;
 
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
-        webcamFront = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Front");
-        webcamBack = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Back");
+        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
+        webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new SkystoneDeterminationPipeline(x, y);
         //webcam.setPipeline(pipeline);
 
-        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamFront, webcamBack);
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam.openCameraDevice();
-
 
 
         //OpMode_.sleep(1000);
@@ -131,10 +135,18 @@ public class RobotHardware
             @Override
             public void onOpened()
             {
-                switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                 //pick desired camera here
 
-                switchableWebcam.setActiveCamera(webcamFront);
+                if (camera == cameraSelection.LEFT)
+                {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    switchableWebcam.setActiveCamera(webcamLeft);
+                }
+                else
+                {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.setActiveCamera(webcamRight);
+                }
             }
         });
 
@@ -197,7 +209,7 @@ public class RobotHardware
 
         public SkystoneDeterminationPipeline(int x, int y)
         {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(x,y); // 200, 165
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(x, y); // 200, 165
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
         }
@@ -231,7 +243,7 @@ public class RobotHardware
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD)
             {
                 position = SkystoneDeterminationPipeline.RingPosition.FOUR;
