@@ -15,7 +15,7 @@ public class AutonomousTestBlueWall extends LinearOpMode
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(this, 200, 165, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(this, 100, 140, RobotHardware.cameraSelection.LEFT);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
@@ -27,6 +27,8 @@ public class AutonomousTestBlueWall extends LinearOpMode
         {
             path = robot.pipeline.position;
         }
+
+        // placement: right wheels on line
 
         waitForStart();
 

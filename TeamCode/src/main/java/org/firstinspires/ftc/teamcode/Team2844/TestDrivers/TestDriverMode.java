@@ -19,16 +19,30 @@ public class TestDriverMode extends LinearOpMode
          while (opModeIsActive()) {
              double left;
              double right;
+             double rtrigger;
+             double ltrigger;
 
+             // Gamepad 1
              left = -gamepad1.left_stick_y;
              right = -gamepad1.right_stick_y;
 
              robot.leftDrive.setPower(left);
              robot.rightDrive.setPower(right);
 
+             rtrigger = gamepad1.right_trigger;
+             ltrigger = gamepad1.left_trigger;
+
+             // set intake motors to l and r triggers
+
              telemetry.addData("LeftStickY = ",left);
              telemetry.addData("RightStickY = ", right);
              telemetry.update();
+
+             // Gamepad 2
+
+
+             // lights
+
          }
 
 

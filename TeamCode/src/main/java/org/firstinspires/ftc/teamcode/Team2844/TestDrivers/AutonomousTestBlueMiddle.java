@@ -16,7 +16,7 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(this, 200, 165, RobotHardware.cameraSelection.RIGHT);
+        RobotHardware robot = new RobotHardware(this, 250, 140, RobotHardware.cameraSelection.RIGHT);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
@@ -27,27 +27,14 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
 
 
         //int location = robot.pipeline.getAnalysis();
-        int path = 1;
-/*
+
+        RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+
         while (!opModeIsActive())
         {
-            if (robot.pipeline.position == robot.pipeline.position.FOUR)
-            {
-                path = 2; // 4 rings
-            }
-            if (robot.pipeline.position == robot.pipeline.position.ONE)
-            {
-                path = 1; // 1 ring
-            }
-            if (robot.pipeline.position == robot.pipeline.position.NONE)
-            {
-                path = 0; // no rings
-            }
-            telemetry.addData("path value = ", path);
-            telemetry.update();
+            path = robot.pipeline.position;
         }
-*/
-
+        // placement: blue lines
 
         waitForStart();
 
@@ -60,7 +47,7 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
         final double EXTRALENGTH = 9;
         final double DISTANCETO_BOXAC = 15;
 
-        if (path==0) // Square A, 0 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
             rotateToHeading.DoIt(-90);
@@ -70,7 +57,7 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
             rotateToHeading.DoIt(0);
         }
 
-        if (path==1) // Square B, 1 ring
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
         {
             /*encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
             rotateToHeading.DoIt(-30);
@@ -89,7 +76,7 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+5, 0, 10, true);
         }
 
-        if (path==2) // Square C, 4 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.FOUR) // Square C, 4 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH+14, 0, 10, true);
             rotateToHeading.DoIt(-90);

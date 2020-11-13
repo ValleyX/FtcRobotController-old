@@ -16,7 +16,7 @@ public class AutonomousTestRedWall extends LinearOpMode
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(this, 200, 165, RobotHardware.cameraSelection.RIGHT);
+        RobotHardware robot = new RobotHardware(this, 165, 125, RobotHardware.cameraSelection.RIGHT);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
@@ -27,27 +27,12 @@ public class AutonomousTestRedWall extends LinearOpMode
 
 
         //int location = robot.pipeline.getAnalysis();
-        int path = 2;
-/*
+        RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+
         while (!opModeIsActive())
         {
-            if (robot.pipeline.position == robot.pipeline.position.FOUR)
-            {
-                path = 2; // 4 rings
-            }
-            if (robot.pipeline.position == robot.pipeline.position.ONE)
-            {
-                path = 1; // 1 ring
-            }
-            if (robot.pipeline.position == robot.pipeline.position.NONE)
-            {
-                path = 0; // no rings
-            }
-            telemetry.addData("path value = ", path);
-            telemetry.update();
+            path = robot.pipeline.position;
         }
-*/
-
 
         waitForStart();
 
@@ -59,30 +44,15 @@ public class AutonomousTestRedWall extends LinearOpMode
         final double DISTANCETO_BOXB = 7; //9
         final double EXTRALENGTH = 9;
 
-        if (path==0) // Square A, 0 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
-            /*encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE, 0, 10, true); //drives to middle of square A
-            sleep(2000); // drop wobble goal
-            //should already be on line
-             */
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-7.5, 0, 10, true);
             rotateToHeading.DoIt(35);
             // drops wobble goal, already on line
         }
 
-        if (path==1) // Square B, 1 ring
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
         {
-            /*encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true); //drives next to middle of square B
-            // use box length to get to middle of next box from middle of first box
-            rotateToHeading.DoIt(90);
-            //rotatePrecise.RotatePrecise(-90, 2, 0.6, 0.3, 2); //turn to face square B
-            encoderDriveHeading.StartAction(0.6, DISTANCETO_BOXB, -90, 10, true); // driving closer to the square, may not be needed
-            sleep(2000); // drop wobble goal
-            encoderDriveHeading.StartAction(-0.6, -DISTANCETO_BOXB, -90, 10, true); //back up to original position
-            rotateToHeading.DoIt(0);
-            //rotatePrecise.RotatePrecise(0, 2, 0.6, 0.3, 2); //turn back to original orientation
-            encoderDriveHeading.StartAction(0.8, -BOXLENGTH, 0, 10, true); // drive to line
-             */
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true);
             rotateToHeading.DoIt(-90);
             encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, -90, 10, true);
@@ -92,13 +62,8 @@ public class AutonomousTestRedWall extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+2, 0, 5, true);
         }
 
-        if (path==2) // Square C, 4 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.FOUR) // Square C, 4 rings
         {
-            /*encoderDriveHeading.StartAction(0.6, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH, 0, 10, true); // drive to middle of square C
-            // use box length to get to middle of next box from middle of first box
-            sleep(2000); // drop wobble goal
-            encoderDriveHeading.StartAction(0.8, -BOXLENGTH-EXTRALENGTH, 0, 10, true); //drive backwards to line
-             */
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH+4, 0, 10, true);
             rotateToHeading.DoIt(30);
             sleep(2000);
