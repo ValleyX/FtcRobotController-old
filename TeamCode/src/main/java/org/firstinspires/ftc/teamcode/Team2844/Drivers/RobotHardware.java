@@ -90,7 +90,7 @@ public class RobotHardware
     public SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; // USB 3.0
     public WebcamName webcamRight; // USB 2.0
-    OpenCvSwitchableWebcam switchableWebcam;
+    public OpenCvSwitchableWebcam switchableWebcam;
 
     public BNO055IMU imu;
 

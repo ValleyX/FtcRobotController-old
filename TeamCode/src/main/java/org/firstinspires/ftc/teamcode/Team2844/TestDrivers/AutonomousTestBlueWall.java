@@ -23,11 +23,13 @@ public class AutonomousTestBlueWall extends LinearOpMode
 
         RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
 
-        while (!opModeIsActive())
+        while (!isStarted())
         {
             path = robot.pipeline.position;
+            telemetry.addData("Number of Rings", robot.pipeline.position);
+            telemetry.update();
         }
-
+        robot.switchableWebcam.stopStreaming();
         // placement: right wheels on line
 
         waitForStart();
@@ -38,6 +40,7 @@ public class AutonomousTestBlueWall extends LinearOpMode
         final double BOXLENGTH = 27; //22.75
         final double DISTANCETO_BOXB = 7; //9
         final double EXTRALENGTH = 9;
+
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {

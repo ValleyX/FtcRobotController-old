@@ -29,11 +29,14 @@ public class AutonomousTestRedWall extends LinearOpMode
         //int location = robot.pipeline.getAnalysis();
         RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
 
-        while (!opModeIsActive())
+        while (!isStarted())
         {
             path = robot.pipeline.position;
+            telemetry.addData("Number of Rings", robot.pipeline.position);
+            telemetry.update();
         }
 
+        robot.switchableWebcam.stopStreaming();
         waitForStart();
 
         //telemetry.addData("path value = ", path);
