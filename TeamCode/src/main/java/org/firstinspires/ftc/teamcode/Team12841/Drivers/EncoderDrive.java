@@ -81,7 +81,7 @@ public class EncoderDrive
                 //then spin here making sure opmode is active, there is available time, action is still running
                 while (robot_.OpMode_.opModeIsActive() &&
                       (runtime_.seconds() < timeoutS) &&
-                      IsActionDone())
+                      !IsActionDone())
                 {
                     // Display it for the driver.
                     robot_.OpMode_.telemetry.addData("Path1", "Running to %7d :%7d",
