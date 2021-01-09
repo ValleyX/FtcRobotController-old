@@ -21,6 +21,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -51,14 +52,18 @@ import java.util.Locale;
 //package org.firstinspires.ftc.teamcode.vision;
 //import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Test: autonomous for ultimate goal blue4", group="Test")
-public class autonomousforultimategoalBlue4 extends LinearOpMode {
+@Autonomous(name="Test: autonomous for ultimate goal blue4 right", group="Test")
+public class autonomousforultimategoalBlue4Right extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
-    // WebcamName webcam2;
+    WebcamName webcam2;
     OpenCvSwitchableWebcam switchableWebcam;
 
-
+    public enum cameraSelection
+    {
+        LEFTCAM,
+        RIGHTCAM
+    }
 
 
 /*
@@ -193,23 +198,53 @@ class SamplePipeline extends OpenCvPipeline
 
         //    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
         {
-
+            final cameraSelection camera = cameraSelection.RIGHTCAM;
+            //change to right cam to switch cams
             //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
             webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-            // webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+            webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
 
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            //   switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
-            switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
+            switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
+            //switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
 
             switchableWebcam.openCameraDevice();
             pipeline = new SkystoneDeterminationPipeline();
             switchableWebcam.setPipeline(pipeline);
-            switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
 
-            waitForStart();
+            switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+            {
+                @Override
+                public void onOpened()
+                {
+                    //pick desired webcam here
+
+                    if (camera == cameraSelection.LEFTCAM)
+                    {
+                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                        switchableWebcam.setActiveCamera(webcam1);
+                    }
+                    else
+                    {
+                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                        switchableWebcam.setActiveCamera(webcam2);
+                    }
+                }
+
+            });
+
+
+            SkystoneDeterminationPipeline.RingPosition path = pipeline.position;
+
+            while (!isStarted())
+            {
+                path = pipeline.position;
+                telemetry.addData("Number of Rings", path);
+                telemetry.update();
+            }
+            //switchableWebcam.stopStreaming();
 /*
             while (opModeIsActive()) {
                 telemetry.addLine("PRESS A/B TO SWITCH CAMERA\n");

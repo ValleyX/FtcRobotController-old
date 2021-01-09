@@ -51,6 +51,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal;
@@ -85,6 +86,9 @@ public class RobotHardware4motors {
     public DcMotor rightDrivefront;
     public DcMotor leftDriveback;
     public DcMotor rightDriveback;
+    //public DcMotor shooterfront;
+    //public DcMotor shooterback;
+   // public Servo Servothing;
 
     private final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
     private final double DRIVE_GEAR_REDUCTION = 40.0;     // This is < 1.0 if geared UP
@@ -102,16 +106,27 @@ public class RobotHardware4motors {
         rightDrivefront = ahwMap.get(DcMotor.class, "rmotorfront");
         leftDriveback = ahwMap.get(DcMotor.class, "lmotorback");
         rightDriveback = ahwMap.get(DcMotor.class, "rmotorback");
+        //shooterfront = ahwMap.get(DcMotor.class, "shooterfront");
+        //shooterback = ahwMap.get(DcMotor.class, "shooterback");
 
-        leftDrivefront.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
-        rightDrivefront.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
-        leftDriveback.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
-        rightDriveback.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
+        //Servothing = ahwMap.get(Servo.class, "arm test");
+
+        leftDrivefront.setDirection(DcMotor.Direction.FORWARD);
+        rightDrivefront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveback.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveback.setDirection(DcMotor.Direction.REVERSE);
+
+        //shooterfront.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
+        //shooterback.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
+
 
         leftDrivefront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightDrivefront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftDriveback.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightDriveback.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        //shooterfront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        //shooterback.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Set all motors to zero power
         leftDrivefront.setPower(0);
@@ -119,11 +134,16 @@ public class RobotHardware4motors {
         leftDriveback.setPower(0);
         rightDriveback.setPower(0);
 
+        //shooterfront.setPower(0);
+        //shooterback.setPower(0);
+
         // Set all motors to run without encoders by default
         leftDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //shooterfront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //shooterback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

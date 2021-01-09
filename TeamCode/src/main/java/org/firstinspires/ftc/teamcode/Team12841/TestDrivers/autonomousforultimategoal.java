@@ -401,6 +401,10 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
 
     robot.leftDrive.setPower(0.15);
     robot.rightDrive.setPower(-0.15);
+        //      robot.leftDrivefront.setPower(0.15);
+        //      robot.rightDrivefront.setPower(-0.15);
+        //      robot.leftDriveback.setPower(0.15);
+        //       robot.rightDriveback.setPower(-0.15);
     System.out.println("ValleyX after power:");
     //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     //heading = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -417,6 +421,10 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     }
     robot.leftDrive.setPower(0);
     robot.rightDrive.setPower(0);
+        //      robot.leftDrivefront.setPower(0);
+        //      robot.rightDrivefront.setPower(0);
+        //      robot.leftDriveback.setPower(0);
+        //       robot.rightDriveback.setPower(0);
     encoder.StartAction(0.5,-54,-54,30,true);
 
 /*
@@ -424,6 +432,11 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     encoder.StartAction(0.5,99,99,30,true);
     robot.leftDrive.setPower(0.15);
     robot.rightDrive.setPower(-0.15);
+
+      //      robot.leftDrivefront.setPower(0.15);
+        //      robot.rightDrivefront.setPower(-0.15);
+        //      robot.leftDriveback.setPower(0.15);
+        //       robot.rightDriveback.setPower(-0.15);
 
     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -436,10 +449,20 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     robot.leftDrive.setPower(0);
     robot.rightDrive.setPower(0);
 
+      //      robot.leftDrivefront.setPower(0);
+        //      robot.rightDrivefront.setPower(0);
+        //      robot.leftDriveback.setPower(0);
+        //       robot.rightDriveback.setPower(0);
+
 //kinda blue box b (left start)
     encoder.StartAction(1,99,99,30,true);
     robot.leftDrive.setPower(0.2);
     robot.rightDrive.setPower(-0.2);
+
+      //      robot.leftDrivefront.setPower(0.2);
+        //      robot.rightDrivefront.setPower(-0.2);
+        //      robot.leftDriveback.setPower(0.2);
+        //       robot.rightDriveback.setPower(-0.2);
 
     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -451,9 +474,17 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     }
     robot.leftDrive.setPower(0);
     robot.rightDrive.setPower(0);
+      //      robot.leftDrivefront.setPower(0);
+        //      robot.rightDrivefront.setPower(0);
+        //      robot.leftDriveback.setPower(0);
+        //       robot.rightDriveback.setPower(0);
 
     robot.leftDrive.setPower(-0.2);
     robot.rightDrive.setPower(0.2);
+  //      robot.leftDrivefront.setPower(-0.2);
+        //      robot.rightDrivefront.setPower(0.2);
+        //      robot.leftDriveback.setPower(-0.2);
+        //       robot.rightDriveback.setPower(0.2);
 
     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -465,6 +496,10 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     }
     robot.leftDrive.setPower(0);
     robot.rightDrive.setPower(0);
+      //      robot.leftDrivefront.setPower(0);
+        //      robot.rightDrivefront.setPower(0);
+        //      robot.leftDriveback.setPower(0);
+        //       robot.rightDriveback.setPower(0);
 
 
 
@@ -479,15 +514,15 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
 */
     }
 
-    double formatAngle(AngleUnit angleUnit, double angle) {
-        double degrees = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
-        double normalDegrees = AngleUnit.DEGREES.normalize(degrees);
+         double formatAngle(AngleUnit angleUnit, double angle) {
+         double degrees = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+         double normalDegrees = AngleUnit.DEGREES.normalize(degrees);
 
-        return normalDegrees;
-        //double heading =  formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
+         return normalDegrees;
+         //double heading =  formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+         }
 
-    String formatDegrees(double degrees) {
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-}
+         String formatDegrees(double degrees) {
+         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+         }
+         }

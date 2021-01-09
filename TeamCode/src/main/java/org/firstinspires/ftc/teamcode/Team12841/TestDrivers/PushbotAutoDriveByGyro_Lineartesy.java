@@ -109,6 +109,12 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
         robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //         leftDrivefront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //         rightDrivefront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //         leftDriveback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //         rightDriveback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
@@ -126,6 +132,12 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
 
         robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //         leftDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //         rightDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //         leftDriveback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //         rightDriveback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
@@ -190,13 +202,27 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
             robot.leftDrive.setTargetPosition(newLeftTarget);
             robot.rightDrive.setTargetPosition(newRightTarget);
 
+            //         leftDrivefront.setTargetPosition(newLeftTarget);
+            //         rightDrivefront.setTargetPosition(newRightTarget);
+            //         leftDriveback.setTargetPosition(newLeftTarget);
+            //         rightDriveback.setTargetPosition(newRightTarget);
+
             robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            //      robot.leftDrivefront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //      robot.rightDrivefront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //      robot.leftDriveback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //       robot.rightDriveback.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
             robot.leftDrive.setPower(speed);
             robot.rightDrive.setPower(speed);
+            //      robot.leftDrivefront.setPower(speed);
+            //      robot.rightDrivefront.setPower(speed;
+            //      robot.leftDriveback.setPower(speed);
+            //       robot.rightDriveback.setPower(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
@@ -237,9 +263,19 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
             robot.leftDrive.setPower(0);
             robot.rightDrive.setPower(0);
 
+            //         leftDrivefront.setPower(0);
+            //         rightDrivefront.setPower(0);
+            //         leftDriveback.setPower(0);
+            //         rightDriveback.setPower(0);
+
             // Turn off RUN_TO_POSITION
             robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //         leftDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //         rightDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //         leftDriveback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //         rightDriveback.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -288,6 +324,11 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
         // Stop all motion;
         robot.leftDrive.setPower(0);
         robot.rightDrive.setPower(0);
+
+        //         leftDrivefront.setPower(0);
+        //         rightDrivefront.setPower(0);
+        //         leftDriveback.setPower(0);
+        //         rightDriveback.setPower(0);
     }
 
     /**
@@ -325,6 +366,11 @@ public class PushbotAutoDriveByGyro_Lineartesy extends LinearOpMode {
         // Send desired speeds to motors.
         robot.leftDrive.setPower(leftSpeed);
         robot.rightDrive.setPower(rightSpeed);
+
+        //         leftDrivefront.setPower(leftSpeed);
+        //         rightDrivefront.setPower(rightSpeed);
+        //         leftDriveback.setPower(leftSpeed);
+        //         rightDriveback.setPower(rightSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);

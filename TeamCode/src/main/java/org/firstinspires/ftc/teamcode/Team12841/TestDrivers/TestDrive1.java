@@ -17,6 +17,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class TestDrive1 extends LinearOpMode
 
 {
+  final double TopGoalBack = 0.9;
+
     public void runOpMode ()
     {
         RobotHardware4motors robot = new RobotHardware4motors(hardwareMap, this);
@@ -41,9 +43,18 @@ public class TestDrive1 extends LinearOpMode
 
             robot.leftDrivefront.setPower(left);
             robot.rightDrivefront.setPower(right);
-            //robot.leftDriveback.setPower(left);
-            //robot.rightDriveback.setPower(right);
+            robot.leftDriveback.setPower(left);
+            robot.rightDriveback.setPower(right);
 
+            if (gamepad2.right_bumper) {
+               // robot.shooterfront.setPower(TopGoalBack);
+               // robot.shooterback.setPower(TopGoalBack);
+            }
+
+            if (gamepad2.left_bumper) {
+               // robot.shooterfront.setPower(0);
+               // robot.shooterback.setPower(0);
+            }
             telemetry.addData("LeftStick = ", left);
             telemetry.addData("RightStick = ", right);
             telemetry.update();

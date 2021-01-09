@@ -58,6 +58,11 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
                 robot.rightDrive.setPower(0.15);
                 robot.leftDrive.setPower(0.15);
 
+                //      robot.leftDrivefront.setPower(-0.15);
+                //      robot.rightDrivefront.setPower(0.15);
+                //      robot.leftDriveback.setPower(-0.15);
+                //       robot.rightDriveback.setPower(0.15);
+
                 while (opModeIsActive()) {
                     Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
                             (int) (sensorColor.green() * SCALE_FACTOR),
@@ -74,6 +79,11 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
                     if (!((hsvValues[0] >=100) && (hsvValues[0] <= 120))) {
                         robot.leftDrive.setPower(0);
                         robot.rightDrive.setPower(0);
+
+                        //      robot.leftDrivefront.setPower(0);
+                        //      robot.rightDrivefront.setPower(0);
+                        //      robot.leftDriveback.setPower(0);
+                        //       robot.rightDriveback.setPower(0);
 
 
                     }
