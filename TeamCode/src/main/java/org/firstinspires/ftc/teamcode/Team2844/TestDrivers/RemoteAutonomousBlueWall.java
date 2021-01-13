@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDriveHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 
-@Autonomous (name="BlueWall")
+@Autonomous (name="RemoteBlueWall")
 // hello
-public class AutonomousTestBlueWall extends LinearOpMode
+public class RemoteAutonomousBlueWall extends LinearOpMode
 {
     //@Override
     public void runOpMode() throws InterruptedException
@@ -44,9 +45,17 @@ public class AutonomousTestBlueWall extends LinearOpMode
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
-            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-7.5, 0, 10, true);
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-4, 0, 10, true); //-7.5
             rotateToHeading.DoIt(-35);
-            // drops wobble goal, already on line
+            // drops wobble goal
+            encoderDriveHeading.StartAction(0.8, -11.5, -35, 5, true);
+            rotateToHeading.DoIt(165);
+            encoderDriveHeading.StartAction(0.8, 30, 165, 10, true);
+            sleep(2000); // pick up wobble goal
+            encoderDriveHeading.StartAction(0.8, -30, 165, 10, true);
+            rotateToHeading.DoIt(-15);
+            encoderDriveHeading.StartAction(0.8, 8, -15, 5, true);
+
         }
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring

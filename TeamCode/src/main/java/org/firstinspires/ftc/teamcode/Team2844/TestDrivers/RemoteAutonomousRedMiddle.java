@@ -9,14 +9,14 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotatePrecise;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 
-@Autonomous (name="BlueMiddle")
+@Autonomous (name="RemoteRedMiddle")
 // hello
-public class AutonomousTestBlueMiddle extends LinearOpMode
+public class RemoteAutonomousRedMiddle extends LinearOpMode
 {
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        RobotHardware robot = new RobotHardware(this, 250, 140, RobotHardware.cameraSelection.RIGHT);
+        RobotHardware robot = new RobotHardware(this, 5, 135, RobotHardware.cameraSelection.LEFT);
         EncoderDrive encoderDrive = new EncoderDrive(robot);
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
@@ -27,8 +27,8 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
 
 
         //int location = robot.pipeline.getAnalysis();
-
         RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+
 
         while (!isStarted())
         {
@@ -36,6 +36,7 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
             telemetry.addData("Number of Rings", robot.pipeline.position);
             telemetry.update();
         }
+
         robot.switchableWebcam.stopStreaming();
         // placement: black lines
 
@@ -52,14 +53,13 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
         final double DISTANCETO_RINGS = 17;
         final double INITIAL_DISTANCE = 15;
 
-
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
-            rotateToHeading.DoIt(-90);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, -90, 5, true);
+            rotateToHeading.DoIt(90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, 90, 5, true);
             sleep(2000);
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, -90, 5, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, 90, 5, true);
             rotateToHeading.DoIt(0);
         }
 
@@ -67,22 +67,22 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
         {
             // getting rings
             encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
-            rotateToHeading.DoIt(-30);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, -30, 10, true);
+            rotateToHeading.DoIt(30);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, 30, 10, true);
             // intake ring
             sleep(2000);
             // shoot ring
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, -30, 10, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, 30, 10, true);
             rotateToHeading.DoIt(0);
 
             //delivering wobble goal
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-INITIAL_DISTANCE, 0, 10, true);
-            rotateToHeading.DoIt(30);
-            encoderDriveHeading.StartAction(0.8, BOXLENGTH+8, 30, 10, true);
-            rotateToHeading.DoIt(-90);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, -90, 5, true);
+            rotateToHeading.DoIt(-30);
+            encoderDriveHeading.StartAction(0.8, BOXLENGTH+8, -30, 10, true);
+            rotateToHeading.DoIt(90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXB, 90, 5, true);
             sleep(2000);
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXB, -90, 5, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXB, 90, 5, true);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+4, 0, 10, true);
         }
@@ -91,20 +91,20 @@ public class AutonomousTestBlueMiddle extends LinearOpMode
         {
             // getting rings
             encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
-            rotateToHeading.DoIt(-30);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, -30, 10, true);
+            rotateToHeading.DoIt(30);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, 30, 10, true);
             // intake ring
             sleep(2000);
             // shoot ring
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, -30, 10, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, 30, 10, true);
             rotateToHeading.DoIt(0);
 
             //delivering wobble goal
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH-1, 0, 10, true);
-            rotateToHeading.DoIt(-90);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, -90, 5, true);
+            rotateToHeading.DoIt(90);
+            encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, 90, 5, true);
             sleep(2000);
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, -90, 5, true);
+            encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, 90, 5, true);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH-15, 0, 10, true);
         }

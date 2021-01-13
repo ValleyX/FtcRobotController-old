@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
+package org.firstinspires.ftc.teamcode.Team2844;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
@@ -11,7 +12,8 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 
 @Autonomous (name="RedMiddle")
 // hello
-public class AutonomousTestRedMiddle extends LinearOpMode
+@Disabled
+public class AutonomousRedMiddle extends LinearOpMode
 {
     //@Override
     public void runOpMode() throws InterruptedException
