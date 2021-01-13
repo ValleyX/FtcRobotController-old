@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.MandoRobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 
-@TeleOp (name="DriverTest")
+@TeleOp (name="TestDriverMode")
 
 public class TestDriverMode extends LinearOpMode
 {
