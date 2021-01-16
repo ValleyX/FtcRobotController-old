@@ -5,6 +5,7 @@ import android.graphics.Region;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -104,6 +105,17 @@ public class MandoRobotHardware
     private final double     WHEEL_CIRCUMFERENCE     = 4 * (3.14159265);
     public final double      COUNTS_PER_INCH         = ONE_MOTOR_COUNT / WHEEL_CIRCUMFERENCE;  //TODO determine in class
 
+    public final double wobbleUp = 0.0;
+    public final double wobbleDown = 1.0;
+    public final double wobbleMid = 0.5;
+    public final double clasperOpen = 0.5;
+    public final double clasperClosed = 0.0;
+
+    public final double nucketyUp = 0.05;
+    public final double nucketyDown = 0.5;
+    public final double sweepyOut = 0.75;
+    public final double sweepyPush = 0.5;
+
     public enum cameraSelection
     {
         LEFT,
@@ -143,12 +155,12 @@ public class MandoRobotHardware
 
                 if (camera == cameraSelection.LEFT)
                 {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
                     switchableWebcam.setActiveCamera(webcamLeft);
                 }
                 else
                 {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     switchableWebcam.setActiveCamera(webcamRight);
                 }
             }
@@ -161,8 +173,8 @@ public class MandoRobotHardware
         rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 0
         rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 1
 
-        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 3
-        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 2
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 2
+        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 3
         nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // ch servo 1
         sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 0
 
@@ -171,10 +183,13 @@ public class MandoRobotHardware
 
         intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 2
 
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        frontshot.setDirection(DcMotor.Direction.REVERSE);
+        backshot.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         leftFrontDrive.setPower(0);

@@ -1,38 +1,29 @@
 package org.firstinspires.ftc.teamcode.Team2844.Drivers;
 
 
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 
+public class RotateToHeadingFourWheelDrive {
 
-
-public class RotateToHeading {
-
-    private RobotHardware robot_;
+    private MandoRobotHardware robot_;
 
     private ElapsedTime runtime_;
 
     private boolean waiting_;
 
-    private RotatePrecise rotatePrecise_;
+    private RotatePreciseFourWheelDrive rotatePrecise_;
 
 
 
     /* Constructor setup all class variables here */
 
-    public RotateToHeading(RobotHardware robot, RotatePrecise rotatePrecise) {
+    public RotateToHeadingFourWheelDrive(MandoRobotHardware robot, RotatePreciseFourWheelDrive rotatePrecise) {
 
         robot_ = robot;
 
@@ -136,7 +127,7 @@ public class RotateToHeading {
 
     public void DoIt(double heading) {
 
-        DoItSpecify(heading, 2, 0.6, 0.1, 5);
+        DoItSpecify(heading, 2, 0.2, 0.3, 5);
 
     }
 

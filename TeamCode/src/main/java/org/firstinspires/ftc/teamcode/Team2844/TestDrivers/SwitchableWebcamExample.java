@@ -22,6 +22,7 @@
 //package org.openftc.easyopencv.examples;
 package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,6 +39,7 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import org.openftc.easyopencv.OpenCvCamera;
 
 @TeleOp
+@Disabled
 public class SwitchableWebcamExample extends LinearOpMode
 {
     WebcamName webcam1;
@@ -45,6 +47,7 @@ public class SwitchableWebcamExample extends LinearOpMode
     OpenCvSwitchableWebcam switchableWebcam;
 
     @Override
+
     public void runOpMode() throws InterruptedException
     {
         /**

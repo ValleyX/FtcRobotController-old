@@ -17,14 +17,17 @@ public class TestDriverMode extends LinearOpMode
          System.out.println("ValleyX: In Innit");
          waitForStart();
 
-         while (opModeIsActive())
+         boolean bDpadup = false;
+         boolean bDpaddown = false;
+         double currentSpeed = 0.5;
+
+
+        while (opModeIsActive())
          {
              double left;
              double right;
              double rtrigger;
              double ltrigger;
-
-             double currentSpeed = robot.backshot.getPower();
 
              // Gamepad 1
              // driving
@@ -44,15 +47,15 @@ public class TestDriverMode extends LinearOpMode
              // wobble goal arm
              if (gamepad1.x)
              {
-                 robot.wobbleServo.setPosition(0.1);
+                 robot.wobbleServo.setPosition(1.0); //down
              }
              if (gamepad1.y)
              {
-                 robot.wobbleServo.setPosition(0.0);
+                 robot.wobbleServo.setPosition(0.0); //up
              }
              if (gamepad1.a)
              {
-                 robot.clasper.setPosition(0.1);
+                 robot.clasper.setPosition(0.5);
              }
              if (gamepad1.b)
              {
@@ -60,19 +63,35 @@ public class TestDriverMode extends LinearOpMode
              }
              telemetry.addData("LeftStickY = ",left);
              telemetry.addData("RightStickY = ", right);
-             telemetry.update();
 
              // Gamepad 2
              // shooter (motors)
              if (gamepad2.dpad_up)
              {
-                 robot.backshot.setPower(currentSpeed+0.1);
-                 robot.frontshot.setPower(currentSpeed+0.1);
+                 if (!bDpadup) {
+                     bDpadup = true;
+                     currentSpeed = currentSpeed - 0.05;
+                 }
+                 robot.backshot.setPower(currentSpeed);
+                 robot.frontshot.setPower(currentSpeed);
+             }
+             else
+             {
+                 bDpadup = false;
              }
              if (gamepad2.dpad_down)
              {
-                 robot.backshot.setPower(currentSpeed-0.1);
-                 robot.frontshot.setPower(currentSpeed-0.1);
+                 if (!bDpaddown)
+                 {
+                     bDpaddown = true;
+                     currentSpeed = currentSpeed + 0.05;
+                 }
+                 robot.backshot.setPower(currentSpeed);
+                 robot.frontshot.setPower(currentSpeed);
+             }
+             else
+             {
+                 bDpaddown = false;
              }
              telemetry.addData("current speed: ", currentSpeed);
              telemetry.update();
@@ -80,20 +99,20 @@ public class TestDriverMode extends LinearOpMode
              // box (servo), presets for intake and loading
              if (gamepad2.a)
              {
-                 robot.nucketyServo.setPosition(0.1);
+                 robot.nucketyServo.setPosition(0.5); // down
              }
              if (gamepad2.b)
              {
-                 robot.nucketyServo.setPosition(0.0);
+                 robot.nucketyServo.setPosition(0.05); //up
              }
              // box ring pushing servo (incorporate into box preset buttons??)
              if (gamepad2.x)
              {
-                 robot.sweepyServo.setPosition(0.1);
+                 robot.sweepyServo.setPosition(0.75); //out
              }
              if (gamepad2.y)
              {
-                 robot.sweepyServo.setPosition(0.0);
+                 robot.sweepyServo.setPosition(0.5); //push
              }
 
              // lights
