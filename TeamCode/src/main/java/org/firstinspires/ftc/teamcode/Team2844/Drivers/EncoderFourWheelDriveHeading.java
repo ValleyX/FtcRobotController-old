@@ -15,7 +15,7 @@ public class EncoderFourWheelDriveHeading
     //static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
     //static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
-    static final double P_DRIVE_COEFF = 0.095;     // Larger is more responsive, but also less stable
+    static final double P_DRIVE_COEFF = 0.075;     // Larger is more responsive, but also less stable 0.095
 
     private MandoRobotHardware robot_;
     private ElapsedTime runtime_;

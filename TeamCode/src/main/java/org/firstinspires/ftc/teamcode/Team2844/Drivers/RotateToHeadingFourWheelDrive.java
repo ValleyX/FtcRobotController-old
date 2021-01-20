@@ -127,7 +127,7 @@ public class RotateToHeadingFourWheelDrive {
 
     public void DoIt(double heading) {
 
-        DoItSpecify(heading, 2, 0.2, 0.3, 5);
+        DoItSpecify(heading, 2, 0.4, 0.3, 5);
 
     }
 

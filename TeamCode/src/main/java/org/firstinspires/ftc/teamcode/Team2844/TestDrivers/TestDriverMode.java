@@ -96,6 +96,7 @@ public class TestDriverMode extends LinearOpMode
              telemetry.addData("current speed: ", currentSpeed);
              telemetry.update();
 
+             /*
              // box (servo), presets for intake and loading
              if (gamepad2.a)
              {
@@ -113,6 +114,30 @@ public class TestDriverMode extends LinearOpMode
              if (gamepad2.y)
              {
                  robot.sweepyServo.setPosition(0.5); //push
+             }
+              */
+
+             if (gamepad2.x) // shoot three rings
+             {
+                 robot.backshot.setPower(0.7);
+                 robot.frontshot.setPower(0.7);
+                 robot.nucketyServo.setPosition(robot.nucketyUp);
+                 sleep(2000);
+                 robot.sweepyServo.setPosition(robot.sweepyPush);
+                 sleep(1000);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+                 sleep(2000);
+                 robot.sweepyServo.setPosition(robot.sweepyPush);
+                 sleep(1000);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+                 sleep(2000);
+                 robot.sweepyServo.setPosition(robot.sweepyPush);
+                 sleep(1000);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+                 sleep(1000);
+                 robot.nucketyServo.setPosition(robot.nucketyDown);
+                 robot.backshot.setPower(0.0);
+                 robot.frontshot.setPower(0.0);
              }
 
              // lights
