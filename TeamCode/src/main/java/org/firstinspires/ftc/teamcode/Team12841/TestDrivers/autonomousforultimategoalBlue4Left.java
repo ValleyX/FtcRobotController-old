@@ -19,6 +19,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -53,10 +54,14 @@ import java.util.Locale;
 public class autonomousforultimategoalBlue4Left extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
-    // WebcamName webcam2;
+    WebcamName webcam2;
     OpenCvSwitchableWebcam switchableWebcam;
 
-
+    public enum cameraSelection
+    {
+        LEFTCAM,
+        RIGHTCAM
+    }
 
 
 
@@ -169,21 +174,50 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
     public void runOpMode() throws InterruptedException
     {
         {
+            final autonomousforultimategoalBlue4Left.cameraSelection camera = cameraSelection.LEFTCAM;
 
             //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
             webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-            // webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+            webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
 
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            //   switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
-            switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
+            switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
+            //switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
 
             switchableWebcam.openCameraDevice();
             pipeline = new SkystoneDeterminationPipeline();
             switchableWebcam.setPipeline(pipeline);
-            switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+            switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+            {
+                @Override
+                public void onOpened()
+                {
+                    //pick desired webcam here
+
+                    if (camera == cameraSelection.RIGHTCAM)
+                    {
+                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                        switchableWebcam.setActiveCamera(webcam1);
+                    }
+                    else
+                    {
+                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                        switchableWebcam.setActiveCamera(webcam2);
+                    }
+                }
+
+            });
+
+            autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition path = pipeline.position;
+
+            while (!isStarted())
+            {
+                path = pipeline.position;
+                telemetry.addData("Number of Rings", path);
+                telemetry.update();
+            }
 
             waitForStart();
 /*
@@ -241,7 +275,14 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
 
 //Kinda blue box a (left start)
         if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(0.5, 99, 99, 30, true);
+            encoder.StartAction(0.5, 75, 75, 30, true);
+
+            robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+            robot.Servohand.setPosition(robot.HANDOPEN_POS);
+            robot.Servoarm.setPosition(robot.ARMUP_POS);
+
+
+
             robot.leftDrivefront.setPower(0.15);
             robot.leftDriveback.setPower(0.15);
             robot.rightDrivefront.setPower(-0.15);
@@ -263,6 +304,7 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
 //kinda blue box b (left start)
             if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.ONE) {
                 encoder.StartAction(1, 99, 99, 30, true);
+
                 robot.leftDrivefront.setPower(0.2);
                 robot.leftDriveback.setPower(0.2);
                 robot.rightDrivefront.setPower(-0.2);
@@ -280,6 +322,10 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
                 robot.leftDriveback.setPower(0);
                 robot.rightDrivefront.setPower(0);
                 robot.rightDriveback.setPower(0);
+
+                robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+                robot.Servohand.setPosition(robot.HANDOPEN_POS);
+                robot.Servoarm.setPosition(robot.ARMUP_POS);
 
                 robot.leftDrivefront.setPower(-0.2);
                 robot.leftDriveback.setPower(-0.2);
@@ -301,10 +347,16 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
                 robot.rightDriveback.setPower(0);
 
                 encoder.StartAction(1, -30, -30, 10, true);
+
             }
 //kinda blue box c (left start)
             if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR) {
                 encoder.StartAction(1, 102, 102, 30, true);
+
+                robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+                robot.Servohand.setPosition(robot.HANDOPEN_POS);
+                robot.Servoarm.setPosition(robot.ARMUP_POS);
+
                 encoder.StartAction(1, -30, -30, 20, true);
 
             }

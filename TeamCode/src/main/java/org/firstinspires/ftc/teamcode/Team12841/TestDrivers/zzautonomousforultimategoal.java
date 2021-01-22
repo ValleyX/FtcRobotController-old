@@ -59,7 +59,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @Autonomous(name="Test: autonomous for ultimate goal blue", group="Test")
-public class autonomousforultimategoal extends LinearOpMode {
+public class zzautonomousforultimategoal extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
     // WebcamName webcam2;

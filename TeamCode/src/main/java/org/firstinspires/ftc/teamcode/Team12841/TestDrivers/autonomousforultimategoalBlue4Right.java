@@ -106,10 +106,10 @@ class SamplePipeline extends OpenCvPipeline
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(125, 135);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 125);
 
-        static final int REGION_WIDTH = 40;
-        static final int REGION_HEIGHT = 30;
+        static final int REGION_WIDTH = 50;
+        static final int REGION_HEIGHT = 40;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;
@@ -221,7 +221,7 @@ class SamplePipeline extends OpenCvPipeline
                 {
                     //pick desired webcam here
 
-                    if (camera == cameraSelection.LEFTCAM)
+                    if (camera == cameraSelection.RIGHTCAM)
                     {
                         switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
                         switchableWebcam.setActiveCamera(webcam1);
@@ -296,10 +296,25 @@ class SamplePipeline extends OpenCvPipeline
         final double fullturn = 3.14 * 18; //18 inches
         final double halfturn = 3.14 * 9; // 9 inches
         final double quarterturn = 3.14 * 4.5; //4.5 inches
+        final double TopGoalBack = 0.65;
 
+        encoder.StartAction(0.5,5,5,5,true);
+
+        robot.shooterfront.setPower(TopGoalBack);
+        robot.shooterback.setPower(TopGoalBack);
+
+
+        for (int i = 0; i<3; i++) {
+            robot.ringpusher.setPosition(robot.backringpusher_POS);
+            sleep(1000);
+            robot.ringpusher.setPosition(robot.frontringpusher_POS);
+            sleep(1000);
+        }
 
         //kinda blue box A (right start)
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+
+
             encoder.StartAction(1, 75, 75, 30, true);
 
             //turn left 90 degress
@@ -328,14 +343,31 @@ class SamplePipeline extends OpenCvPipeline
             robot.rightDrivefront.setPower(0);
             robot.rightDriveback.setPower(0);
 
-            encoder.StartAction(1, 22, 22, 30, true);
-            encoder.StartAction(1, -22, -22, 30, true);
+            encoder.StartAction(1, 5, 5, 30, true);
+
+            robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+            sleep (500);
+            robot.Servohand.setPosition(robot.HANDOPEN_POS);
+            sleep(500);
+            robot.Servoarm.setPosition(robot.ARMUP_POS);
+            sleep(500);
+
+            encoder.StartAction(1, -5, -5, 30, true);
         }
 
     //kinda blue box B (right start)
     if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-        encoder.StartAction(1, 97, 97, 30, true);
+        encoder.StartAction(1, 77, 77, 10, true);
 
+        sleep(1000);
+        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+        sleep (1000);
+        robot.Servohand.setPosition(robot.HANDOPEN_POS);
+        sleep(1000);
+        robot.Servoarm.setPosition(robot.ARMUP_POS);
+        sleep(1000);
+
+/*
         //robot.leftDrive.setPower(-0.80);
         //robot.rightDrive.setPower(0.80);
         robot.leftDrivefront.setPower(-0.80);
@@ -360,7 +392,9 @@ class SamplePipeline extends OpenCvPipeline
         robot.rightDrivefront.setPower(0);
         robot.rightDriveback.setPower(0);
 
-        sleep(5000);
+        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+        robot.Servohand.setPosition(robot.HANDOPEN_POS);
+        robot.Servoarm.setPosition(robot.ARMUP_POS);
 
         //robot.leftDrive.setPower(0.80);
         //robot.rightDrive.setPower(-0.80);
@@ -385,7 +419,10 @@ class SamplePipeline extends OpenCvPipeline
         robot.leftDriveback.setPower(0);
         robot.rightDrivefront.setPower(0);
         robot.rightDriveback.setPower(0);
+
         encoder.StartAction(1, -25, -25, 10, true);
+
+ */
     }
     /*
     //kinda blue box C (right start)
@@ -416,16 +453,23 @@ class SamplePipeline extends OpenCvPipeline
         robot.rightDrivefront.setPower(0);
         robot.rightDriveback.setPower(0);
 
-        encoder.StartAction(0.5, 25, 25, 30, true);
+        //encoder.StartAction(0.5, 25, 25, 30, true);
 
-        encoder.StartAction(0.5, -25, -25, 30, true);
+        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+        sleep (500);
+        robot.Servohand.setPosition(robot.HANDOPEN_POS);
+        sleep(500);
+        robot.Servoarm.setPosition(robot.ARMUP_POS);
+        sleep(500);
+
+        //encoder.StartAction(0.5, -25, -25, 30, true);
 
         // robot.leftDrivefront.setPower(0);
         //robot.rightDrive.setPower(0);
 
-        System.out.println("ValleyX : before sleep");
-        sleep(3000);
-        System.out.println("ValleyX : After sleep");
+        //System.out.println("ValleyX : before sleep");
+        //sleep(3000);
+        //System.out.println("ValleyX : After sleep");
 
         robot.leftDrivefront.setPower(0.15);
         robot.leftDriveback.setPower(0.15);
@@ -453,88 +497,7 @@ class SamplePipeline extends OpenCvPipeline
         //robot.rightDrive.setPower(0);
         encoder.StartAction(0.5, -54, -54, 30, true);
     }
-    /*
-//Kinda blue box a (left start)
-    encoder.StartAction(0.5,99,99,30,true);
-    robot.leftDrive.setPower(0.15);
-    robot.rightDrive.setPower(-0.15);
-        robot.leftDrivefront.setPower(0.15);
-        robot.leftDriveback.setPower(0.15);
-        robot.rightDrivefront.setPower(-0.15);
-        robot.rightDriveback.setPower(-0.15);
 
-    heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-    System.out.println("ValleyX left: " + heading);
-    while (heading >= -178){
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        System.out.println("ValleyX left: " + heading);
-    }
-    robot.leftDrive.setPower(0);
-    robot.rightDrive.setPower(0);
-     robot.leftDrivefront.setPower(0);
-     robot.leftDriveback.setPower(0);
-     robot.rightDriveback.setPower(0);
-     robot.rightDriveback.setPower(0);
-
-//kinda blue box b (left start)
-    encoder.StartAction(1,99,99,30,true);
-    robot.leftDrive.setPower(0.2);
-    robot.rightDrive.setPower(-0.2);
-        robot.leftDrivefront.setPower(0.2);
-        robot.leftDriveback.setPower(0.2);
-        robot.rightDrivefront.setPower(-0.2);
-        robot.rightDriveback.setPower(-0.2);
-
-    heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-    System.out.println("ValleyX left: " + heading);
-    while (heading > -90){
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        System.out.println("ValleyX left: " + heading);
-    }
-    robot.leftDrive.setPower(0);
-    robot.rightDrive.setPower(0);
-     robot.leftDrivefront.setPower(0);
-     robot.leftDriveback.setPower(0);
-     robot.rightDrivefront.setPower(0);
-     robot.rightDriveback.setPower(0);
-
-    robot.leftDrive.setPower(-0.2);
-    robot.rightDrive.setPower(0.2);
-        robot.leftDrivefront.setPower(-0.2);
-        robot.leftDriveback.setPower(-0.2);
-        robot.rightDrivefront.setPower(0.2);
-        robot.rightDriveback.setPower(0.2);
-
-    heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-    System.out.println("ValleyX left: " + heading);
-    while (heading < 0){
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        System.out.println("ValleyX left: " + heading);
-    }
-    robot.leftDrive.setPower(0);
-    robot.rightDrive.setPower(0);
-    robot.leftDrivefront.setPower(0);
-     robot.leftDriveback.setPower(0);
-     robot.rightDrivefront.setPower(0);
-     robot.rightDriveback.setPower(0);
-
-
-
-
-
-    encoder.StartAction(1,-30,-30,10,true);
-
-//kinda blue box c (left start)
-    encoder.StartAction(1,102,102,30,true);
-    encoder.StartAction(1,-30,-30,20,true);
-
-*/
     }
 
     double formatAngle(AngleUnit angleUnit, double angle) {

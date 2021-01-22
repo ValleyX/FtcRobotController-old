@@ -1,23 +1,7 @@
 package org.firstinspires.ftc.teamcode.Team12841.Drivers;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.EncoderDrive;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.EncoderDrive4motors;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware4motors;
-
-import java.util.Locale;
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -47,24 +31,8 @@ import java.util.Locale;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
 /**
  * This is NOT an opmode.
@@ -86,17 +54,24 @@ public class RobotHardware4motors {
     public DcMotor rightDrivefront;
     public DcMotor leftDriveback;
     public DcMotor rightDriveback;
-    //public DcMotor shooterfront;
-    //public DcMotor shooterback;
-   // public Servo Servothing;
+    public DcMotor shooterfront;
+    public DcMotor shooterback;
+    public Servo ringpusher;
+    public Servo Servoarm;
+    public Servo Servohand;
+
 
     private final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
     private final double DRIVE_GEAR_REDUCTION = 40.0;     // This is < 1.0 if geared UP
     private final double ONE_MOTOR_COUNT = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
     private final double Circumference = 3.14 * 4; //4 inches of wheel
     final double COUNTS_PER_INCH = ONE_MOTOR_COUNT / Circumference; //TODO determine in class
-
-    /* Constructor */
+    public final double ARMUP_POS     =  1;     // Maximum rotational position
+    public final double ARMDOWN_POS     =  0;     // Minimum rotational position
+    public final double HANDOPEN_POS     =  0.8;     // Maximum rotational position
+    public final double HANDCLOSE_POS     =  0.2;     // Minimum rotational position
+    public final double backringpusher_POS    =  0.9;     // Back all the way
+    public final double frontringpusher_POS    =  0.45;     // Forward all the wa/* Constructor */
     public RobotHardware4motors(HardwareMap ahwMap, LinearOpMode opMode) {
         /* Public OpMode members. */
         OpMode_ = opMode;
@@ -106,10 +81,12 @@ public class RobotHardware4motors {
         rightDrivefront = ahwMap.get(DcMotor.class, "rmotorfront");
         leftDriveback = ahwMap.get(DcMotor.class, "lmotorback");
         rightDriveback = ahwMap.get(DcMotor.class, "rmotorback");
-        //shooterfront = ahwMap.get(DcMotor.class, "shooterfront");
-        //shooterback = ahwMap.get(DcMotor.class, "shooterback");
+        shooterfront = ahwMap.get(DcMotor.class, "shooterfront");
+        shooterback = ahwMap.get(DcMotor.class, "shooterback");
+        ringpusher = ahwMap.get(Servo.class, "ringpusher");
 
-        //Servothing = ahwMap.get(Servo.class, "arm test");
+        Servoarm = ahwMap.get(Servo.class, "ARM");
+        Servohand = ahwMap.get(Servo.class, "HAND");
 
         leftDrivefront.setDirection(DcMotor.Direction.FORWARD);
         rightDrivefront.setDirection(DcMotor.Direction.REVERSE);

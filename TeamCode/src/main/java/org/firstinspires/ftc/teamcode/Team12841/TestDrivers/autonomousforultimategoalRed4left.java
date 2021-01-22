@@ -1,7 +1,5 @@
 
 package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
-/*
-import android.icu.text.UFormat;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -24,6 +22,9 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
@@ -32,13 +33,15 @@ import java.util.Locale;
 @Autonomous(name="Test: autonomous for ultimate goal red4left ", group="Test")
 
 public class autonomousforultimategoalRed4left extends LinearOpMode {
-    public autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline pipeline;
+    public autonomousforultimategoalRed4left.SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
-    // WebcamName webcam2;
+    WebcamName webcam2;
     OpenCvSwitchableWebcam switchableWebcam;
 
-
-
+    public enum cameraSelection {
+        LEFTCAM,
+        RIGHTCAM
+    }
 
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
@@ -52,14 +55,14 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
         }
 
         //
-         // Some color constants
-         //
+        // Some color constants
+        //
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
 
         //
-         // The core values which define the location and size of the sample regions
-         //
+        // The core values which define the location and size of the sample regions
+        //
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(125, 135);
 
         static final int REGION_WIDTH = 40;
@@ -76,20 +79,20 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         //
-         // Working variables
-         //
+        // Working variables
+        //
         Mat region1_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition position = autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition position = autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.FOUR;
 
         //
-         // This function takes the RGB frame, converts to YCrCb,
-         // and extracts the Cb channel to the 'Cb' variable
-         //
+        // This function takes the RGB frame, converts to YCrCb,
+        // and extracts the Cb channel to the 'Cb' variable
+        //
         void inputToCb(Mat input) {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 1);
@@ -115,13 +118,13 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            position = autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if (avg1 > FOUR_RING_THRESHOLD) {
-                position = autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR;
+                position = autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.FOUR;
             } else if (avg1 > ONE_RING_THRESHOLD) {
-                position = autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.ONE;
+                position = autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.ONE;
             } else {
-                position = autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.NONE;
+                position = autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.NONE;
             }
 
             Imgproc.rectangle(
@@ -138,6 +141,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
             return avg1;
         }
     }
+
     BNO055IMU imu;
     // State used for updating telemetry
     Orientation angles;
@@ -145,6 +149,47 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        final autonomousforultimategoalRed4left.cameraSelection camera = autonomousforultimategoalRed4left.cameraSelection.LEFTCAM;
+
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
+        //switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
+
+        switchableWebcam.openCameraDevice();
+        pipeline = new autonomousforultimategoalRed4left.SkystoneDeterminationPipeline();
+        switchableWebcam.setPipeline(pipeline);
+        switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                //pick desired webcam here
+
+                if (camera == cameraSelection.RIGHTCAM) {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.setActiveCamera(webcam1);
+                } else {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.setActiveCamera(webcam2);
+                }
+            }
+
+        });
+
+        autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition path = pipeline.position;
+
+        while (!isStarted()) {
+            path = pipeline.position;
+            telemetry.addData("Number of Rings", path);
+            telemetry.update();
+        }
+
+        waitForStart();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -162,7 +207,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
         RobotHardware4motors robot = new RobotHardware4motors(hardwareMap, this);
         EncoderDrive4motors encoder = new EncoderDrive4motors(robot);
-        AngleUnit heading;
+        double heading;
         waitForStart();
 
         final double fullturn = 3.14 * 18; //18 inches
@@ -170,7 +215,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
         final double quarterturn = 3.14 * 4.5; //4.5 inches
 
         //kinda red box A (left start)
-        if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.NONE) {
+        if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.NONE) {
             encoder.StartAction(1, 75, 75, 30, true);
 
             //turn left 90 degress
@@ -183,7 +228,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
             //these 2 lines get heading from IMU
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-           // heading = formatAngle(angles.angleUnit, angles.firstAngle);
+            heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
             System.out.println("ValleyX: " + heading);
             while (heading >= -89) {
@@ -203,63 +248,8 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
             encoder.StartAction(1, -22, -22, 30, true);
         }
 
-        //kinda red box B (right start)
-        if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.ONE) {
-            encoder.StartAction(1, 97, 97, 30, true);
-
-            //robot.leftDrive.setPower(-0.80);
-            //robot.rightDrive.setPower(0.80);
-            robot.leftDrivefront.setPower(-0.80);
-            robot.leftDriveback.setPower(-0.80);
-            robot.rightDrivefront.setPower(0.80);
-            robot.rightDriveback.setPower(0.80);
-
-
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-           // heading = formatAngle(angles.angleUnit, angles.firstAngle);
-
-            System.out.println("ValleyX: " + heading);
-            while (heading >= -89) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                heading = format(angles.angleUnit, angles.firstAngle);
-                System.out.println("ValleyX: " + heading);
-            }
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
-
-            sleep(5000);
-
-            //robot.leftDrive.setPower(0.80);
-            //robot.rightDrive.setPower(-0.80);
-            robot.leftDrivefront.setPower(0.80);
-            robot.leftDriveback.setPower(0.80);
-            robot.rightDrivefront.setPower(-0.80);
-            robot.rightDriveback.setPower(-0.80);
-
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            heading = (angles.angleUnit, angles.firstAngle;
-
-            System.out.println("ValleyX: " + heading);
-            while (heading <= 0) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                heading = (angles.angleUnit, angles.firstAngle);
-                System.out.println("ValleyX: " + heading);
-            }
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
-            encoder.StartAction(1, -25, -25, 10, true);
-        }
-
-    //kinda red box C (left start)
-        if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR) {
+        //kinda red box C(left start)
+        if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.FOUR) {
             encoder.StartAction(0.5, 123, 123, 30, true);
             //robot.leftDrive.setPower(0.15);
             //robot.rightDrive.setPower(-0.15);
@@ -275,10 +265,9 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
             System.out.println("ValleyX left: " + heading);
             while (heading >= -89) {
-                //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 //heading = formatAngle(angles.angleUnit, angles.firstAngle);
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
                 System.out.println("ValleyX left: " + heading);
             }
             //robot.leftDrive.setPower(0);
@@ -314,10 +303,9 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
             System.out.println("ValleyX right: " + heading);
             while (heading <= 0) {
-                //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 //heading = formatAngle(angles.angleUnit, angles.firstAngle);
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
                 System.out.println("ValleyX right: " + heading);
             }
             //robot.leftDrive.setPower(0);
@@ -328,99 +316,27 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
             robot.rightDriveback.setPower(0);
             encoder.StartAction(0.5, -54, -54, 30, true);
 
-        //Kinda red box a (right start) // TODO
-        encoder.StartAction(0.65,99,99,30,true);
-        //robot.leftDrive.setPower(0.15);
-        //robot.rightDrive.setPower(-0.15);
-        robot.leftDrivefront.setPower(0.15);
-        robot.leftDriveback.setPower(0.15);
-        robot.rightDrivefront.setPower(-0.15);
-        robot.rightDriveback.setPower(-0.15);
+            //kinda blue box b (left start)
+            if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.ONE){
+                encoder.StartAction(1, 102, 102, 30, true);
+            encoder.StartAction(1, -30, -30, 20, true);
 
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        System.out.println("ValleyX left: " + heading);
-        while (heading >= -178){
-            heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-            System.out.println("ValleyX left: " + heading);
+                }
+            }
         }
-        //robot.leftDrive.setPower(0);
-        //robot.rightDrive.setPower(0);
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
+        double formatAngle (AngleUnit angleUnit,double angle){
+            double degrees = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+            double normalDegrees = AngleUnit.DEGREES.normalize(degrees);
 
-    //kinda red box b (right start)
-        encoder.StartAction(1,99,99,30,true);
-        //robot.leftDrive.setPower(0.2);
-        //robot.rightDrive.setPower(-0.2);
-        robot.leftDrivefront.setPower(0.2);
-        robot.leftDriveback.setPower(0.2);
-        robot.rightDrivefront.setPower(-0.2);
-        robot.rightDriveback.setPower(-0.2);
-
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        System.out.println("ValleyX left: " + heading);
-        while (heading > -90){
-            heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-            System.out.println("ValleyX left: " + heading);
+            return normalDegrees;
+            //double heading =  formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
         }
-        //robot.leftDrive.setPower(0);
-        //robot.rightDrive.setPower(0);
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
 
-        //robot.leftDrive.setPower(-0.2);
-        //robot.rightDrive.setPower(0.2);
-        robot.leftDrivefront.setPower(-0.2);
-        robot.leftDriveback.setPower(-0.2);
-        robot.rightDrivefront.setPower(0.2);
-        robot.rightDriveback.setPower(0.2);
+        String formatDegrees ( double degrees){
+            return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
 
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        System.out.println("ValleyX left: " + heading);
-        while (heading < 0){
-            heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-            System.out.println("ValleyX left: " + heading);
         }
-        //robot.leftDrive.setPower(0);
-        //robot.rightDrive.setPower(0);
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
-
-
-
-
-
-        encoder.StartAction(1,-30,-30,10,true);
-
-    //kinda blue box c (left start)
-        encoder.StartAction(1,102,102,30,true);
-        encoder.StartAction(1,-30,-30,20,true);
-
-
     }
 
-    double formatAngle(AngleUnit angleUnit, double angle) {
-        double degrees = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
-        double normalDegrees = AngleUnit.DEGREES.normalize(degrees);
 
-        return normalDegrees;
-        //double heading =  formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees) {
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-}
-*/
