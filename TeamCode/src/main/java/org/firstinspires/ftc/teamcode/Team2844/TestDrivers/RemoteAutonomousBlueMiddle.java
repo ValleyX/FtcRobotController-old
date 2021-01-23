@@ -52,8 +52,6 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         robot.switchableWebcam.stopStreaming();
         // placement: black lines
 
-
-
         //waitForStart();
 
         //telemetry.addData("path value = ", path);
@@ -66,12 +64,12 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         final double DISTANCETO_BOXAC = 12; //15
         final double DISTANCETO_RINGS = 17;
         final double INITIAL_DISTANCE = 15;
-        final double INITIAL_MOVEMENT = 48;
+        final double INITIAL_MOVEMENT = 50;
 
         robot.intake.setPower(0.8);
 
-        robot.backshot.setPower(0.60);
-        robot.frontshot.setPower(0.60);
+        robot.backshot.setPower(0.66); //0.6
+        robot.frontshot.setPower(0.66);
         encoderDriveHeading.StartAction(0.7, INITIAL_MOVEMENT, 0, 5, true);
         //sleep(2000);
         rotateToHeading.DoIt(0);
@@ -166,10 +164,10 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
              */
 
             //delivering wobble goal
-            encoderDriveHeading.StartAction(0.7, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH-INITIAL_MOVEMENT+33, 0, 10, true);
+            encoderDriveHeading.StartAction(0.7, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH-INITIAL_MOVEMENT+29, 0, 10, true);
             rotateToHeading.DoIt(-90);
             encoderDriveHeading.StartAction(0.7, DISTANCETO_BOXAC, -90, 5, true);
-            rotateToHeading.DoIt(-60);
+            rotateToHeading.DoIt(-70);
             robot.wobbleServo.setPosition(robot.wobbleDown);
             sleep(1000);
             robot.clasper.setPosition(robot.clasperOpen);
