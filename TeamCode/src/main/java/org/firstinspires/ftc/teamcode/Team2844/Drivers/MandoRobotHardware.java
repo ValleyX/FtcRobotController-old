@@ -107,13 +107,15 @@ public class MandoRobotHardware
 
     public final double wobbleUp = 0.0;
     public final double wobbleDown = 1.0;
-    public final double wobbleMid = 0.5;
+    public final double clasperMid = 0.5;
     public final double clasperOpen = 0.5;
     public final double clasperClosed = 0.0;
 
+    //public final double wobbleGround = 1.8;
+
     public final double nucketyUp = 0.05;
     public final double nucketyDown = 0.5;
-    public final double sweepyOut = 0.75;
+    public final double sweepyOut = 0.85;
     public final double sweepyPush = 0.5;
 
     public enum cameraSelection
@@ -190,6 +192,11 @@ public class MandoRobotHardware
 
         frontshot.setDirection(DcMotor.Direction.REVERSE);
         backshot.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         leftFrontDrive.setPower(0);

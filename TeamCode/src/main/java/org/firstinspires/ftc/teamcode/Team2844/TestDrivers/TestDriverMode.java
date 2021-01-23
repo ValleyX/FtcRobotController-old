@@ -61,6 +61,13 @@ public class TestDriverMode extends LinearOpMode
              {
                  robot.clasper.setPosition(0.0);
              }
+/*
+             if (gamepad1.right_bumper)
+             {
+                 robot.wobbleServo.setPosition(robot.wobbleGround);
+             }
+
+ */
              telemetry.addData("LeftStickY = ",left);
              telemetry.addData("RightStickY = ", right);
 
@@ -124,18 +131,18 @@ public class TestDriverMode extends LinearOpMode
                  robot.nucketyServo.setPosition(robot.nucketyUp);
                  sleep(2000);
                  robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(1000);
+                 sleep(500);
                  robot.sweepyServo.setPosition(robot.sweepyOut);
                  sleep(2000);
                  robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(1000);
+                 sleep(500);
                  robot.sweepyServo.setPosition(robot.sweepyOut);
                  sleep(2000);
                  robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(1000);
+                 sleep(500);
                  robot.sweepyServo.setPosition(robot.sweepyOut);
-                 sleep(1000);
-                 robot.nucketyServo.setPosition(robot.nucketyDown);
+                 //sleep(1000);
+                 //robot.nucketyServo.setPosition(robot.nucketyDown);
                  robot.backshot.setPower(0.0);
                  robot.frontshot.setPower(0.0);
              }

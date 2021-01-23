@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -53,6 +54,7 @@ import java.util.Locale;
 //import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Autonomous(name="Test: autonomous for ultimate goal blue4 right", group="Test")
+@Disabled
 public class autonomousforultimategoalBlue4Right extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,6 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @TeleOp (name="DriverTest")
+@Disabled
 public class TestDrive1 extends LinearOpMode
 
 {

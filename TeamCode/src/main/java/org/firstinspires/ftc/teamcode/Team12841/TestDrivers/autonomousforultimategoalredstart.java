@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
 import java.util.Locale;
 
 @Autonomous(name="Test: autonomous for ultimate goal red ", group="Test")
-
+@Disabled
 public class autonomousforultimategoalredstart extends LinearOpMode {
 
     BNO055IMU imu;

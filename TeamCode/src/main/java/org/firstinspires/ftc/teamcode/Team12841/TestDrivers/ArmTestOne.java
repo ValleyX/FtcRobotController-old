@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware4motors;
-
+@Disabled
 public class ArmTestOne extends LinearOpMode {
 
     static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle

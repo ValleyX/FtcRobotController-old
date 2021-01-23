@@ -22,6 +22,7 @@
 //package org.firstinspires.ftc.teamcode.vision;
 package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -40,6 +41,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @TeleOp
+@Disabled
 public class EasyOpenCVExample1 extends LinearOpMode
 {
 
