@@ -64,15 +64,17 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         final double DISTANCETO_BOXAC = 12; //15
         final double DISTANCETO_RINGS = 17;
         final double INITIAL_DISTANCE = 15;
-        final double INITIAL_MOVEMENT = 50;
+        final double INITIAL_MOVEMENT = 50; //50
 
         robot.intake.setPower(0.8);
 
-        robot.backshot.setPower(0.66); //0.6
-        robot.frontshot.setPower(0.66);
+        robot.backshot.setPower(0.635); //0.66
+        robot.frontshot.setPower(0.635);
         encoderDriveHeading.StartAction(0.7, INITIAL_MOVEMENT, 0, 5, true);
+        rotateToHeading.DoIt(-2);
+        sleep(1000);
         //sleep(2000);
-        rotateToHeading.DoIt(0);
+        //rotateToHeading.DoIt(0);
         robot.sweepyServo.setPosition(robot.sweepyPush);
         sleep(500);
         robot.sweepyServo.setPosition(robot.sweepyOut);
@@ -85,6 +87,7 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         sleep(500);
         robot.sweepyServo.setPosition(robot.sweepyOut);
         sleep(1000);
+        rotateToHeading.DoIt(0);
         robot.backshot.setPower(0.0);
         robot.frontshot.setPower(0.0);
         if (path == MandoRobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
