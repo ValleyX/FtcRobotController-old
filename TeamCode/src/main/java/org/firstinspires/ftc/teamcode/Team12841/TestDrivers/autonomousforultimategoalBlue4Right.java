@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -49,10 +50,9 @@ import java.util.Locale;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-//package org.firstinspires.ftc.teamcode.vision;
-//import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="Test: autonomous for ultimate goal blue4 right", group="Test")
+@Autonomous(name="blue4 right", group="Test")
+//@Disabled
 public class autonomousforultimategoalBlue4Right extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
@@ -65,31 +65,9 @@ public class autonomousforultimategoalBlue4Right extends LinearOpMode {
         RIGHTCAM
     }
 
-
-/*
-class SamplePipeline extends OpenCvPipeline
-{
-    @Override
-    public Mat processFrame(Mat input)
-    {
-        Imgproc.rectangle(
-                input,
-                new Point(
-                        input.cols()/4,
-                        input.rows()/4),
-                new Point(
-                        input.cols()*(3f/4f),
-                        input.rows()*(3f/4f)),
-                new Scalar(0, 255, 0), 4);
-
-        return input;
-    }
-}
-*/
-
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
         /*
-         * An enum to define the skystone position
+         * An enum to define the Ringposition
          */
         public enum RingPosition {
             FOUR,
@@ -106,7 +84,7 @@ class SamplePipeline extends OpenCvPipeline
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 125);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 135);
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 40;
@@ -189,88 +167,53 @@ class SamplePipeline extends OpenCvPipeline
     BNO055IMU imu;
     // State used for updating telemetry
     Orientation angles;
-    Acceleration gravity;
     RobotHardware4motors robot;
+    SkystoneDeterminationPipeline.RingPosition path = SkystoneDeterminationPipeline.RingPosition.FOUR;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        robot = new RobotHardware4motors(hardwareMap, this);
+        EncoderDrive4motors encoder = new EncoderDrive4motors(robot);
 
-        //    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
-        {
-            final cameraSelection camera = cameraSelection.RIGHTCAM;
-            //change to right cam to switch cams
-            //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        final cameraSelection camera = cameraSelection.RIGHTCAM;
 
-            webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-            webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
 
-            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
-            //switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
 
-            switchableWebcam.openCameraDevice();
-            pipeline = new SkystoneDeterminationPipeline();
-            switchableWebcam.setPipeline(pipeline);
+        switchableWebcam.openCameraDevice();
+        pipeline = new SkystoneDeterminationPipeline();
+        switchableWebcam.setPipeline(pipeline);
 
-            switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-            {
-                @Override
-                public void onOpened()
-                {
-                    //pick desired webcam here
+        switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                //pick desired webcam here
 
-                    if (camera == cameraSelection.RIGHTCAM)
-                    {
-                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-                        switchableWebcam.setActiveCamera(webcam1);
-                    }
-                    else
-                    {
-                        switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-                        switchableWebcam.setActiveCamera(webcam2);
-                    }
-                }
-
-            });
-
-
-            SkystoneDeterminationPipeline.RingPosition path = pipeline.position;
-
-            while (!isStarted())
-            {
-                path = pipeline.position;
-                telemetry.addData("Number of Rings", path);
-                telemetry.update();
-            }
-            //switchableWebcam.stopStreaming();
-/*
-            while (opModeIsActive()) {
-                telemetry.addLine("PRESS A/B TO SWITCH CAMERA\n");
-                telemetry.addData("Frame Count", switchableWebcam.getFrameCount());
-                telemetry.addData("FPS", String.format("%.2f", switchableWebcam.getFps()));
-                telemetry.addData("Total frame time ms", switchableWebcam.getTotalFrameTimeMs());
-                telemetry.addData("Pipeline time ms", switchableWebcam.getPipelineTimeMs());
-                telemetry.addData("Overhead time ms", switchableWebcam.getOverheadTimeMs());
-                telemetry.addData("Theoretical max FPS", switchableWebcam.getCurrentPipelineMaxFps());
-                telemetry.update();
-
-                telemetry.addData("position", pipeline.position);
-                //
-                // To switch the active camera, simply call
-                 // {@link OpenCvSwitchableWebcam#setActiveCamera(WebcamName)}
-                 //
-                if (gamepad1.a) {
+                if (camera == cameraSelection.RIGHTCAM) {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
                     switchableWebcam.setActiveCamera(webcam1);
-                } else if (gamepad1.b) {
-                    switchableWebcam.setActiveCamera(webcam1);
+                } else {
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.setActiveCamera(webcam2);
                 }
-
-                sleep(100);
             }
-            */
+
+        });
+
+
+        robot.Servoarm.setPosition(robot.ARMUP_POS);
+        robot.Servohand.setPosition(robot.HANDCLOSE_POS); //The close on hand
+
+        while (!isStarted()) {
+            path = pipeline.position;
+            telemetry.addData("Number of Rings", path);
+            telemetry.update();
         }
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -287,216 +230,116 @@ class SamplePipeline extends OpenCvPipeline
         imu.initialize(parameters);
 
 
-        //RobotHardware robot = new RobotHardware(hardwareMap, this);
-        robot = new RobotHardware4motors(hardwareMap, this);
-        EncoderDrive4motors encoder = new EncoderDrive4motors(robot);
         double heading;
-        waitForStart();
+        final double TopGoalPower = 0.67;
+        final double DriveUpInches = 28;
+        final double WhitelineInches = 67;
 
-        final double fullturn = 3.14 * 18; //18 inches
-        final double halfturn = 3.14 * 9; // 9 inches
-        final double quarterturn = 3.14 * 4.5; //4.5 inches
-        final double TopGoalBack = 0.65;
+        encoder.StartAction(1, DriveUpInches, DriveUpInches, 5, true); // drive up to shooting line
+        encoder.StartAction(1, 1, -1, 5, true); // turn one inch right
 
-        encoder.StartAction(0.5,5,5,5,true);
+        for (int i = 0; i < 3; i++) {
 
-        robot.shooterfront.setPower(TopGoalBack);
-        robot.shooterback.setPower(TopGoalBack);
+            robot.shooterfront.setPower(TopGoalPower);
+            robot.shooterback.setPower(TopGoalPower);
 
+            sleep(200);
 
-        for (int i = 0; i<3; i++) {
             robot.ringpusher.setPosition(robot.backringpusher_POS);
-            sleep(1000);
+            sleep(700);
             robot.ringpusher.setPosition(robot.frontringpusher_POS);
-            sleep(1000);
+            sleep(950);
+
+            robot.shooterfront.setPower(0);
+            robot.shooterback.setPower(0);
+
+            sleep(2000);
         }
 
+        encoder.StartAction(1, -1, 1, 5, true); // turn one inch left
+
         //kinda blue box A (right start)
-        if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
+        if (path == SkystoneDeterminationPipeline.RingPosition.NONE) {
 
 
-            encoder.StartAction(1, 75, 75, 30, true);
+            encoder.StartAction(1, 65 - DriveUpInches, 65 - DriveUpInches, 5, true);
 
-            //turn left 90 degress
-            //robot.leftDrive.setPower(-0.80);
-            //robot.rightDrive.setPower(0.80);
-            robot.leftDrivefront.setPower(-0.80);
-            robot.leftDriveback.setPower(-0.80);
-            robot.rightDrivefront.setPower(0.80);
-            robot.rightDriveback.setPower(0.80);
+            robot.turntoheading(1,-90);
+            /*robot.turnleft(1);
 
             //these 2 lines get heading from IMU
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             heading = formatAngle(angles.angleUnit, angles.firstAngle);
 
             System.out.println("ValleyX: " + heading);
-            while (heading <= 89) {
+            while (heading <= 90) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                //heading = formatAngle(angles.angleUnit, angles.firstAngle);
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX: " + heading);
             }
-            //robot.rightDrive.setPower(0);
-            //robot.leftDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
+            robot.power0drive();*/
 
-            encoder.StartAction(1, 5, 5, 30, true);
+            encoder.StartAction(1, 10, 10, 5, true); // move to box a
 
-            robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-            sleep (500);
-            robot.Servohand.setPosition(robot.HANDOPEN_POS);
-            sleep(500);
-            robot.Servoarm.setPosition(robot.ARMUP_POS);
-            sleep(500);
+            robot.ArmsSetWabbleGoal();
 
-            encoder.StartAction(1, -5, -5, 30, true);
+            encoder.StartAction(1, -10, -10, 5, true); // move back for teammate
         }
 
-    //kinda blue box B (right start)
-    if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-        encoder.StartAction(1, 77, 77, 10, true);
+        //kinda blue box B (right start)
+        if (path == SkystoneDeterminationPipeline.RingPosition.ONE) {
+            encoder.StartAction(1, 72 - DriveUpInches, 72 - DriveUpInches, 5, true); // originally 77
+            encoder.StartAction(1, -14, 14, 5, true); // turn left to get wobbble goal into box
 
-        sleep(1000);
-        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-        sleep (1000);
-        robot.Servohand.setPosition(robot.HANDOPEN_POS);
-        sleep(1000);
-        robot.Servoarm.setPosition(robot.ARMUP_POS);
-        sleep(1000);
+            robot.ArmsSetWabbleGoal();
 
-/*
-        //robot.leftDrive.setPower(-0.80);
-        //robot.rightDrive.setPower(0.80);
-        robot.leftDrivefront.setPower(-0.80);
-        robot.leftDriveback.setPower(-0.80);
-        robot.rightDrivefront.setPower(0.80);
-        robot.rightDriveback.setPower(0.80);
+            encoder.StartAction(1, 14, -14, 5, true); // turn right to get robot straight
+            encoder.StartAction(1, -7, -7, 5, true); // back up to white line
 
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        heading = formatAngle(angles.angleUnit, angles.firstAngle);
-
-        System.out.println("ValleyX: " + heading);
-        while (heading <= 89) {
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            heading = formatAngle(angles.angleUnit, angles.firstAngle);
-            System.out.println("ValleyX: " + heading);
         }
-        //robot.rightDrive.setPower(0);
-        //robot.leftDrive.setPower(0);
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
-
-        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-        robot.Servohand.setPosition(robot.HANDOPEN_POS);
-        robot.Servoarm.setPosition(robot.ARMUP_POS);
-
-        //robot.leftDrive.setPower(0.80);
-        //robot.rightDrive.setPower(-0.80);
-        robot.leftDrivefront.setPower(0.80);
-        robot.leftDriveback.setPower(0.80);
-        robot.rightDrivefront.setPower(-0.80);
-        robot.rightDriveback.setPower(-0.80);
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        heading = formatAngle(angles.angleUnit, angles.firstAngle);
-
-        System.out.println("ValleyX: " + heading);
-        while (heading >= 0) {
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            heading = formatAngle(angles.angleUnit, angles.firstAngle);
-            System.out.println("ValleyX: " + heading);
-        }
-
-        //robot.rightDrive.setPower(0);
-        //robot.rightDrive.setPower(0);
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
-
-        encoder.StartAction(1, -25, -25, 10, true);
-
- */
-    }
     /*
     //kinda blue box C (right start)
-
      */
-    if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-        encoder.StartAction(0.5, 123, 123, 30, true);
-        robot.leftDrivefront.setPower(-0.15);
-        robot.leftDriveback.setPower(-0.15);
-        robot.rightDrivefront.setPower(0.15);
-        robot.rightDriveback.setPower(0.15);
+        if (path == SkystoneDeterminationPipeline.RingPosition.FOUR) {
+            encoder.StartAction(1, 105 - DriveUpInches, 105 - DriveUpInches, 5, true); // 110 was original
 
-        //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        //heading = formatAngle(angles.angleUnit, angles.firstAngle);
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            robot.turntoheading(1,-90);
+            /*robot.turnleft(1);
 
-
-        System.out.println("ValleyX left: " + heading);
-        while (heading <= 89) {
-            //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            //heading = formatAngle(angles.angleUnit, angles.firstAngle);
             heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
             System.out.println("ValleyX left: " + heading);
-        }
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
+            while (heading <= 90) {
+                heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        //encoder.StartAction(0.5, 25, 25, 30, true);
+                System.out.println("ValleyX left: " + heading);
+            }
+            robot.power0drive();*/
 
-        robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-        sleep (500);
-        robot.Servohand.setPosition(robot.HANDOPEN_POS);
-        sleep(500);
-        robot.Servoarm.setPosition(robot.ARMUP_POS);
-        sleep(500);
+            encoder.StartAction(1, 10, 10, 5, true); // drive to box c
 
-        //encoder.StartAction(0.5, -25, -25, 30, true);
+            robot.ArmsSetWabbleGoal();
 
-        // robot.leftDrivefront.setPower(0);
-        //robot.rightDrive.setPower(0);
+            encoder.StartAction(1, -14, -14, 5, true); // drive back from box c
 
-        //System.out.println("ValleyX : before sleep");
-        //sleep(3000);
-        //System.out.println("ValleyX : After sleep");
+            robot.turntoheading(1,-1);
+            /*robot.turnright(1);
 
-        robot.leftDrivefront.setPower(0.15);
-        robot.leftDriveback.setPower(0.15);
-        robot.rightDrivefront.setPower(0.15);
-        robot.rightDriveback.setPower(-0.15);
-        System.out.println("ValleyX after power:");
-        //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        //heading = formatAngle(angles.angleUnit, angles.firstAngle);
-        heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            System.out.println("ValleyX after power:");
 
-
-        System.out.println("ValleyX right: " + heading);
-        while (heading >= 0) {
-            //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            //heading = formatAngle(angles.angleUnit, angles.firstAngle);
             heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
+
             System.out.println("ValleyX right: " + heading);
+            while (heading >= 1) {
+                heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+                System.out.println("ValleyX right: " + heading);
+            }
+            robot.power0drive();*/
+
+            encoder.StartAction(1, -45, -45, 5, true); // back to white line
         }
-        robot.leftDrivefront.setPower(0);
-        robot.leftDriveback.setPower(0);
-        robot.rightDrivefront.setPower(0);
-        robot.rightDriveback.setPower(0);
-        //robot.leftDrive.setPower(0);
-        //robot.rightDrive.setPower(0);
-        encoder.StartAction(0.5, -54, -54, 30, true);
-    }
 
     }
 
@@ -504,11 +347,12 @@ class SamplePipeline extends OpenCvPipeline
         double degrees = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
         double normalDegrees = AngleUnit.DEGREES.normalize(degrees);
 
-        return normalDegrees;
+        return -normalDegrees;
         //double heading =  formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
 }

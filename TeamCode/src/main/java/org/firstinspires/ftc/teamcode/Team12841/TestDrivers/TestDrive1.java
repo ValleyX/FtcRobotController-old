@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class TestDrive1 extends LinearOpMode
 
 {
-  final double TopGoalBack = 0.9;
+  final double TopGoalBack = 0.72;
     //static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     //static final int CYCLE_MS = 1000;     // period of each cycle
    // static final double MAX_POS = 0.8;     // Maximum rotational position
@@ -65,6 +65,13 @@ public class TestDrive1 extends LinearOpMode
             robot.rightDrivefront.setPower(right);
             robot.leftDriveback.setPower(left);
             robot.rightDriveback.setPower(right);
+
+            if (gamepad1.right_bumper){
+                robot.mouth.setPower(1);
+            }
+            if (gamepad1.left_bumper){
+                robot.mouth.setPower(0);
+            }
 
             if (gamepad2.right_bumper) {
                 robot.shooterfront.setPower(TopGoalBack);
@@ -119,6 +126,14 @@ public class TestDrive1 extends LinearOpMode
                 dpadrightisfirst = true;
             }
 
+            if (gamepad2.left_stick_button) {
+                robot.bucket.setPosition(1);
+            }
+            if (gamepad2.right_stick_button){
+                robot.bucket.setPosition(0);
+            }
+            // todo the bucket ones have to be changed because it is gonna be different values. the ones set are just holders.
+            //todo I REPEAT. DO NOT TEST WITH THOSE NUMBERS. it will break the servo
 
             telemetry.addData("speed = ",speed );
             telemetry.addData("LeftStick = ", left);

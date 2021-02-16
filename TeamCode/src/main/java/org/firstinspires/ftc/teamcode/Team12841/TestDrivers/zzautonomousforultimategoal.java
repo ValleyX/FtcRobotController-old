@@ -272,7 +272,7 @@ class SamplePipeline extends OpenCvPipeline
 
         //kinda blue box A (right start)
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(1, 75, 75, 30, true);
+            encoder.StartAction(1, 75, 75, 5, true);
 
             //turn left 90 degress
             robot.leftDrive.setPower(-0.80);
@@ -300,13 +300,13 @@ class SamplePipeline extends OpenCvPipeline
            //robot.rightDrivefront.setPower(0);
             //robot.rightDriveback.setPower(0);
 
-            encoder.StartAction(1, 22, 22, 30, true);
-            encoder.StartAction(1, -22, -22, 30, true);
+            encoder.StartAction(1, 22, 22, 5, true);
+            encoder.StartAction(1, -22, -22, 5, true);
         }
 
     //kinda blue box B (right start)
     if(pipeline.position == SkystoneDeterminationPipeline.RingPosition.ONE) {
-        encoder.StartAction(1, 97, 97, 30, true);
+        encoder.StartAction(1, 97, 97, 5, true);
 
         robot.leftDrive.setPower(-0.80);
         robot.rightDrive.setPower(0.80);
@@ -364,14 +364,8 @@ class SamplePipeline extends OpenCvPipeline
 
  */
 if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
-    encoder.StartAction(0.5, 123, 123, 30, true);
-   // robot.leftDrivefront.setPower(-0.15);
-   // robot.leftDriveback.setPower(-0.15);
-   // robot.rightDrivefront.setPower(0.15);
-   // robot.rightDriveback.setPower(0.15);
+    encoder.StartAction(0.5, 123, 123, 5, true);
 
-    //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-    //heading = formatAngle(angles.angleUnit, angles.firstAngle);
     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
 
@@ -383,14 +377,10 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
 
         System.out.println("ValleyX left: " + heading);
     }
-   // robot.leftDrivefront.setPower(0);
-   // robot.leftDriveback.setPower(0);
-  //  robot.rightDrivefront.setPower(0);
- //   robot.rightDriveback.setPower(0);
 
-    encoder.StartAction(0.5, 25, 25, 30, true);
+    encoder.StartAction(0.5, 25, 25, 5, true);
 
-    encoder.StartAction(0.5,-25,-25,30,true);
+    encoder.StartAction(0.5,-25,-25,5,true);
 
    // robot.leftDrivefront.setPower(0);
     robot.rightDrive.setPower(0);
@@ -401,13 +391,9 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
 
     robot.leftDrive.setPower(0.15);
     robot.rightDrive.setPower(-0.15);
-        //      robot.leftDrivefront.setPower(0.15);
-        //      robot.rightDrivefront.setPower(-0.15);
-        //      robot.leftDriveback.setPower(0.15);
-        //       robot.rightDriveback.setPower(-0.15);
+
     System.out.println("ValleyX after power:");
-    //angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-    //heading = formatAngle(angles.angleUnit, angles.firstAngle);
+
     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
 
@@ -421,11 +407,8 @@ if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR)
     }
     robot.leftDrive.setPower(0);
     robot.rightDrive.setPower(0);
-        //      robot.leftDrivefront.setPower(0);
-        //      robot.rightDrivefront.setPower(0);
-        //      robot.leftDriveback.setPower(0);
-        //       robot.rightDriveback.setPower(0);
-    encoder.StartAction(0.5,-54,-54,30,true);
+
+    encoder.StartAction(0.5,-54,-54,5,true);
 
 /*
 //Kinda blue box a (left start)

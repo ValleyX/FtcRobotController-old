@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.EncoderDrive;
 import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
 
         @Autonomous(name="AutonomousTest")
+        @Disabled
         public class AutonomousTest1 extends LinearOpMode {
             ColorSensor sensorColor;
             DistanceSensor sensorDistance;
@@ -58,10 +60,6 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
                 robot.rightDrive.setPower(0.15);
                 robot.leftDrive.setPower(0.15);
 
-                //      robot.leftDrivefront.setPower(-0.15);
-                //      robot.rightDrivefront.setPower(0.15);
-                //      robot.leftDriveback.setPower(-0.15);
-                //       robot.rightDriveback.setPower(0.15);
 
                 while (opModeIsActive()) {
                     Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
@@ -79,11 +77,6 @@ import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
                     if (!((hsvValues[0] >=100) && (hsvValues[0] <= 120))) {
                         robot.leftDrive.setPower(0);
                         robot.rightDrive.setPower(0);
-
-                        //      robot.leftDrivefront.setPower(0);
-                        //      robot.rightDrivefront.setPower(0);
-                        //      robot.leftDriveback.setPower(0);
-                        //       robot.rightDriveback.setPower(0);
 
 
                     }

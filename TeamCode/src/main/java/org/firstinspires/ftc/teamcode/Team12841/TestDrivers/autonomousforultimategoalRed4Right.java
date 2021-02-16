@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -26,6 +27,7 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import java.util.Locale;
 
 @Autonomous(name="Test: autonomous for ultimate goal red4Right ", group="Test")
+@Disabled
 
 public class autonomousforultimategoalRed4Right extends LinearOpMode {
     public autonomousforultimategoalRed4Right.SkystoneDeterminationPipeline pipeline;
@@ -165,15 +167,15 @@ public class autonomousforultimategoalRed4Right extends LinearOpMode {
 
             //Kinda red box a (right start) redo this
         if (pipeline.position == autonomousforultimategoalRed4Right.SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(0.5,75,75,30,true);
+            encoder.StartAction(0.5,75,75,5,true);
         }
 
         //kinda red box B (right start)
         if (pipeline.position == autonomousforultimategoalRed4Right.SkystoneDeterminationPipeline.RingPosition.ONE) {
-            encoder.StartAction(1,99,99,30,true);
+            encoder.StartAction(1,99,99,5,true);
 
-
-            robot.leftDrivefront.setPower(0.2);
+            robot.turntoheading(1,90);
+            /*robot.leftDrivefront.setPower(0.2);
             robot.leftDriveback.setPower(0.2);
             robot.rightDrivefront.setPower(-0.2);
             robot.rightDriveback.setPower(-0.2);
@@ -186,12 +188,11 @@ public class autonomousforultimategoalRed4Right extends LinearOpMode {
 
                 System.out.println("ValleyX left: " + heading);
             }
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
 
-            robot.leftDrivefront.setPower(-0.2);
+            robot.power0drive();*/
+
+            robot.turntoheading(1,0);
+            /*robot.leftDrivefront.setPower(-0.2);
             robot.leftDriveback.setPower(-0.2);
             robot.rightDrivefront.setPower(0.2);
             robot.rightDriveback.setPower(0.2);
@@ -204,17 +205,15 @@ public class autonomousforultimategoalRed4Right extends LinearOpMode {
 
                 System.out.println("ValleyX left: " + heading);
             }
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
+
+            robot.power0drive();*/
 
             encoder.StartAction(1,-30,-30,10,true);
         }
         // kinda red box c (right start)
         if (pipeline.position == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-            encoder.StartAction(1, 102, 102, 30, true);
-            encoder.StartAction(1, -30, -30, 20, true);
+            encoder.StartAction(1, 102, 102, 5, true);
+            encoder.StartAction(1, -30, -30, 5, true);
         }
 
     }

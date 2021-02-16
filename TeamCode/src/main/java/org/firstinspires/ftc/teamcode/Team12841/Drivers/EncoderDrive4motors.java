@@ -99,8 +99,8 @@ public class  EncoderDrive4motors
             {
                 //then spin here making sure opmode is active, there is available time, action is still running
                 while (robot_.OpMode_.opModeIsActive() &&
-                      (runtime_.seconds() < timeoutS) /*&&
-                      !IsActionDone()*/)
+                      (runtime_.seconds() < timeoutS) &&
+                      !IsActionDone())
                 {
                     // Display it for the driver.
                     robot_.OpMode_.telemetry.addData("Path1", "Running to %7d :%7d : %7d : %7d",
@@ -111,36 +111,29 @@ public class  EncoderDrive4motors
                             robot_.rightDrivefront.getCurrentPosition(),
                             robot_.rightDriveback.getCurrentPosition());
                     robot_.OpMode_.telemetry.update();
-                   // robot_.OpMode_.sleep(30000);
                     robot_.OpMode_.idle();
                 }
                 StopAction();
             }
-            /*
-            robot_.leftDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.leftDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.rightDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.rightDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-             */
+
+
+
         }
     }
 
     //check if the motors have hit their target
     public boolean IsActionDone()
     {
-      //  return !robot_.leftDrivefront.isBusy() && robot_.leftDriveback.isBusy() && !robot_.rightDrivefront.isBusy() && !robot_.rightDriveback.isBusy();
-        return !robot_.leftDrivefront.isBusy() || robot_.leftDriveback.isBusy() || !robot_.rightDrivefront.isBusy() || !robot_.rightDriveback.isBusy();
+
+        return !robot_.leftDrivefront.isBusy() || !robot_.leftDriveback.isBusy() || !robot_.rightDrivefront.isBusy() || !robot_.rightDriveback.isBusy();
     }
 
     //stop the motors
     public void StopAction()
     {
         // Stop all motion;
-        robot_.leftDrivefront.setPower(0);
-        robot_.leftDriveback.setPower(0);
-        robot_.rightDrivefront.setPower(0);
-        robot_.rightDriveback.setPower(0);
+        robot_.power0drive();
 
         // Turn off RUN_TO_POSITION
         robot_.leftDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

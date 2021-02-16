@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -26,6 +27,7 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
 import java.util.Locale;
 @Autonomous(name = "Test: autonomous for ultimate goal blue left", group = "Test")
+@Disabled
 public class zzautonomousforultimategoaalblueleft extends LinearOpMode {
         public zzautonomousforultimategoal.SkystoneDeterminationPipeline pipeline;
         WebcamName webcam1;
@@ -238,7 +240,7 @@ class SamplePipeline extends OpenCvPipeline
 
 //Kinda blue box a (left start)
 if (pipeline.position == zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.NONE)
-    encoder.StartAction(0.5,99,99,30,true);
+    encoder.StartAction(0.5,99,99,5,true);
     robot.leftDrive.setPower(0.15);
     robot.rightDrive.setPower(-0.15);
       //      leftDrivefront.setPower(0.15);

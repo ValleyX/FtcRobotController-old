@@ -262,53 +262,66 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
         imu.initialize(parameters);
 
 
-        //RobotHardware robot = new RobotHardware(hardwareMap, this);
         robot = new RobotHardware4motors(hardwareMap, this);
         EncoderDrive4motors encoder = new EncoderDrive4motors(robot);
         double heading;
         waitForStart();
 
-        final double fullturn = 3.14 * 18; //18 inches
-        final double halfturn = 3.14 * 9; // 9 inches
-        final double quarterturn = 3.14 * 4.5; //4.5 inches
+        final double TopGoalPower = 0.67;
+        final double DriveUpInches = 28;
+        final double WhitelineInches = 67;
+
+        encoder.StartAction(1, DriveUpInches, DriveUpInches, 5, true); // drive up to shooting line
+        encoder.StartAction(1, 1, -1, 5, true); // turn one inch right
+
+        for (int i = 0; i < 3; i++) {
+
+            robot.shooterfront.setPower(TopGoalPower);
+            robot.shooterback.setPower(TopGoalPower);
+
+            sleep(200);
+
+            robot.ringpusher.setPosition(robot.backringpusher_POS);
+            sleep(700);
+            robot.ringpusher.setPosition(robot.frontringpusher_POS);
+            sleep(950);
+
+            robot.shooterfront.setPower(0);
+            robot.shooterback.setPower(0);
+
+            sleep(2000);
+        }
+
+        encoder.StartAction(1, -1, 1, 5, true); // turn one inch left
 
 
 //Kinda blue box a (left start)
         if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(0.5, 75, 75, 30, true);
+            encoder.StartAction(1, 65 - DriveUpInches, 65- DriveUpInches, 5, true);
 
-            robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-            robot.Servohand.setPosition(robot.HANDOPEN_POS);
-            robot.Servoarm.setPosition(robot.ARMUP_POS);
+            robot.ArmsSetWabbleGoal();
 
+            robot.turntoheading(1,-5);
 
-
-            robot.leftDrivefront.setPower(0.15);
-            robot.leftDriveback.setPower(0.15);
-            robot.rightDrivefront.setPower(-0.15);
-            robot.rightDriveback.setPower(-0.15);
+            /*robot.turnleft(1);
 
             heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
             System.out.println("ValleyX left: " + heading);
-            while (heading >= -178) {
+            while (heading <= 5) {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
                 System.out.println("ValleyX left: " + heading);
             }
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDriveback.setPower(0);
-            robot.rightDriveback.setPower(0);
+
+            robot.power0drive();*/
         }
 //kinda blue box b (left start)
             if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.ONE) {
-                encoder.StartAction(1, 99, 99, 30, true);
+                encoder.StartAction(1, 99, 99, 5, true);
 
-                robot.leftDrivefront.setPower(0.2);
-                robot.leftDriveback.setPower(0.2);
-                robot.rightDrivefront.setPower(-0.2);
-                robot.rightDriveback.setPower(-0.2);
+                robot.turntoheading(1,90);
+                /*robot.turnleft(1);
 
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -318,19 +331,13 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
 
                     System.out.println("ValleyX left: " + heading);
                 }
-                robot.leftDrivefront.setPower(0);
-                robot.leftDriveback.setPower(0);
-                robot.rightDrivefront.setPower(0);
-                robot.rightDriveback.setPower(0);
 
-                robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-                robot.Servohand.setPosition(robot.HANDOPEN_POS);
-                robot.Servoarm.setPosition(robot.ARMUP_POS);
+                robot.power0drive();*/
 
-                robot.leftDrivefront.setPower(-0.2);
-                robot.leftDriveback.setPower(-0.2);
-                robot.rightDrivefront.setPower(0.2);
-                robot.rightDriveback.setPower(0.2);
+                robot.ArmsSetWabbleGoal();
+
+                robot.turntoheading(1,0);
+               /* robot.turnleft(1);
 
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -341,24 +348,18 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
                     System.out.println("ValleyX left: " + heading);
                 }
 
-                robot.leftDrivefront.setPower(0);
-                robot.leftDriveback.setPower(0);
-                robot.rightDrivefront.setPower(0);
-                robot.rightDriveback.setPower(0);
+                robot.power0drive();*/
 
-                encoder.StartAction(1, -30, -30, 10, true);
+                encoder.StartAction(1, -30, -30, 5, true);
 
             }
 //kinda blue box c (left start)
             if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.FOUR) {
-                encoder.StartAction(1, 102, 102, 30, true);
+                encoder.StartAction(1, 102, 102, 5, true);
 
-                robot.Servoarm.setPosition(robot.ARMDOWN_POS);
-                robot.Servohand.setPosition(robot.HANDOPEN_POS);
-                robot.Servoarm.setPosition(robot.ARMUP_POS);
+                robot.ArmsSetWabbleGoal();
 
-                encoder.StartAction(1, -30, -30, 20, true);
-
+                encoder.StartAction(1, -30, -30, 5, true);
             }
         }
         double formatAngle (AngleUnit angleUnit,double angle){

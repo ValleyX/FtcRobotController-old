@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -31,6 +32,7 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import java.util.Locale;
 
 @Autonomous(name="Test: autonomous for ultimate goal red4left ", group="Test")
+@Disabled
 
 public class autonomousforultimategoalRed4left extends LinearOpMode {
     public autonomousforultimategoalRed4left.SkystoneDeterminationPipeline pipeline;
@@ -216,11 +218,10 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
 
         //kinda red box A (left start)
         if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(1, 75, 75, 30, true);
+            encoder.StartAction(1, 75, 75, 5, true);
 
-            //turn left 90 degress
-            //robot.leftDrive.setPower(0.80);
-            //robot.rightDrive.setPower(-0.80);
+            robot.turntoheading(1,89);
+            /*//turn left 90 degress
             robot.leftDrivefront.setPower(0.80);
             robot.leftDriveback.setPower(0.80);
             robot.rightDrivefront.setPower(-0.80);
@@ -237,23 +238,19 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX: " + heading);
             }
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
 
-            encoder.StartAction(1, 22, 22, 30, true);
-            encoder.StartAction(1, -22, -22, 30, true);
+            robot.power0drive();*/
+
+            encoder.StartAction(1, 22, 22, 5, true);
+            encoder.StartAction(1, -22, -22, 5, true);
         }
 
         //kinda red box C(left start)
         if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.FOUR) {
-            encoder.StartAction(0.5, 123, 123, 30, true);
-            //robot.leftDrive.setPower(0.15);
-            //robot.rightDrive.setPower(-0.15);
-            robot.leftDrivefront.setPower(0.15);
+            encoder.StartAction(0.5, 123, 123, 5, true);
+
+            robot.turntoheading(1,89);
+            /*robot.leftDrivefront.setPower(0.15);
             robot.leftDriveback.setPower(0.15);
             robot.rightDrivefront.setPower(-0.15);
             robot.rightDriveback.setPower(-0.15);
@@ -270,28 +267,20 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX left: " + heading);
             }
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
-            encoder.StartAction(0.5, 25, 25, 30, true);
+            robot.power0drive();*/
 
-            encoder.StartAction(0.5, -25, -25, 30, true);
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
+            encoder.StartAction(0.5, 25, 25, 5, true);
+
+            encoder.StartAction(0.5, -25, -25, 5, true);
+
+            robot.power0drive();
+
             System.out.println("ValleyX : before sleep");
             sleep(3000);
             System.out.println("ValleyX : After sleep");
 
-            //robot.leftDrive.setPower(-0.15);
-            //robot.rightDrive.setPower(0.15);
-            robot.leftDrivefront.setPower(-0.15);
+            robot.turntoheading(1,0);
+            /*robot.leftDrivefront.setPower(-0.15);
             robot.leftDriveback.setPower(-0.15);
             robot.rightDrivefront.setPower(0.15);
             robot.rightDriveback.setPower(0.15);
@@ -308,17 +297,13 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX right: " + heading);
             }
-            //robot.leftDrive.setPower(0);
-            //robot.rightDrive.setPower(0);
-            robot.leftDrivefront.setPower(0);
-            robot.leftDriveback.setPower(0);
-            robot.rightDrivefront.setPower(0);
-            robot.rightDriveback.setPower(0);
-            encoder.StartAction(0.5, -54, -54, 30, true);
+            robot.power0drive();*/
+
+            encoder.StartAction(0.5, -54, -54, 5, true);
 
             //kinda blue box b (left start)
             if (pipeline.position == autonomousforultimategoalRed4left.SkystoneDeterminationPipeline.RingPosition.ONE){
-                encoder.StartAction(1, 102, 102, 30, true);
+                encoder.StartAction(1, 102, 102, 5, true);
             encoder.StartAction(1, -30, -30, 20, true);
 
 
