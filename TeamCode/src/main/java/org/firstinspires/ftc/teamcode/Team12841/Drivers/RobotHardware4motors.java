@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -79,8 +80,8 @@ public class RobotHardware4motors {
     public final double ARMDOWN_POS = 0.1;     // Minimum rotational position
     public final double HANDOPEN_POS = 0.4;     // Maximum rotational position
     public final double HANDCLOSE_POS = 0.2;     // Minimum rotational position
-    public final double backringpusher_POS = 0.9;     // Back all the way
-    public final double frontringpusher_POS = 0.45;     // Forward all the wa/* Constructor */
+    public final double backringpusher_POS = 0;     // Back all the way
+    public final double frontringpusher_POS = 1;     // Forward all the wa/* Constructor */
 
     public RobotHardware4motors(HardwareMap ahwMap, LinearOpMode opMode) {
         /* Public OpMode members. */
@@ -93,15 +94,19 @@ public class RobotHardware4motors {
         rightDriveback = ahwMap.get(DcMotor.class, "rmotorback");
         shooterfront = ahwMap.get(DcMotor.class, "shooterfront");
         shooterback = ahwMap.get(DcMotor.class, "shooterback");
+        mouth = ahwMap.get(DcMotor.class, "mouth");
         ringpusher = ahwMap.get(Servo.class, "ringpusher");
+
 
         Servoarm = ahwMap.get(Servo.class, "ARM");
         Servohand = ahwMap.get(Servo.class, "HAND");
+        bucket= ahwMap.get(Servo.class, "bucket");
 
         leftDrivefront.setDirection(DcMotor.Direction.FORWARD);
         rightDrivefront.setDirection(DcMotor.Direction.REVERSE);
         leftDriveback.setDirection(DcMotor.Direction.FORWARD);
         rightDriveback.setDirection(DcMotor.Direction.REVERSE);
+        mouth.setDirection(DcMotor.Direction.REVERSE);
 
         leftDrivefront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrivefront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

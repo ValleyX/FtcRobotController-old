@@ -154,7 +154,6 @@ public class autonomousforultimategoalRed4Right extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-
         RobotHardware4motors robot = new RobotHardware4motors(hardwareMap, this);
         EncoderDrive4motors encoder = new EncoderDrive4motors(robot);
         double heading;
@@ -164,12 +163,10 @@ public class autonomousforultimategoalRed4Right extends LinearOpMode {
         final double halfturn = 3.14 * 9; // 9 inches
         final double quarterturn = 3.14 * 4.5; //4.5 inches
 
-
             //Kinda red box a (right start) redo this
         if (pipeline.position == autonomousforultimategoalRed4Right.SkystoneDeterminationPipeline.RingPosition.NONE) {
             encoder.StartAction(0.5,75,75,5,true);
         }
-
         //kinda red box B (right start)
         if (pipeline.position == autonomousforultimategoalRed4Right.SkystoneDeterminationPipeline.RingPosition.ONE) {
             encoder.StartAction(1,99,99,5,true);

@@ -35,8 +35,8 @@ public class TestDrive1 extends LinearOpMode
         // Change the text in quotes to match any servo name on your robot.
 
         // Wait for the start button
-        telemetry.addData(">", "Press Start to scan Servo.");
-        telemetry.update();
+       // telemetry.addData(">", "Press Start to scan Servo.");
+        //telemetry.update();
         waitForStart();
 
         RobotHardware4motors robot = new RobotHardware4motors(hardwareMap, this);
@@ -127,10 +127,10 @@ public class TestDrive1 extends LinearOpMode
             }
 
             if (gamepad2.left_stick_button) {
-                robot.bucket.setPosition(1);
+                robot.bucket.setPosition(0.5);
             }
             if (gamepad2.right_stick_button){
-                robot.bucket.setPosition(0);
+                robot.bucket.setPosition(0.05);
             }
             // todo the bucket ones have to be changed because it is gonna be different values. the ones set are just holders.
             //todo I REPEAT. DO NOT TEST WITH THOSE NUMBERS. it will break the servo
