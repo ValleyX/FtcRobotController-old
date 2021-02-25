@@ -23,15 +23,8 @@ public class AutonomousBlueMiddle extends LinearOpMode
         EncoderDriveHeading encoderDriveHeading = new EncoderDriveHeading(robot);
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
         RotateToHeading rotateToHeading = new RotateToHeading(robot, rotatePrecise);
-        // EasyOpenCVExample RingDetection = new EasyOpenCVExample();
-
-        //robot.pipeline.getAnalysis();
-
-
-        //int location = robot.pipeline.getAnalysis();
 
         RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
-
 
         while (!isStarted())
         {
@@ -44,7 +37,6 @@ public class AutonomousBlueMiddle extends LinearOpMode
 
         waitForStart();
 
-        //telemetry.addData("path value = ", path);
         System.out.println("path value = " + path);
 
         final double WHITELINE_DISTANCE = 68; //72
@@ -54,7 +46,6 @@ public class AutonomousBlueMiddle extends LinearOpMode
         final double DISTANCETO_BOXAC = 15;
         final double DISTANCETO_RINGS = 17;
         final double INITIAL_DISTANCE = 15;
-
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
@@ -70,7 +61,6 @@ public class AutonomousBlueMiddle extends LinearOpMode
         if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
         {
             // getting rings
-            // grab wobble goal
             encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
             rotateToHeading.DoIt(-30);
             encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, -30, 10, true);

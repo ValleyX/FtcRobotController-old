@@ -14,26 +14,19 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeadingFourWheelDrive;
 
 @Autonomous (name="RemoteBlueMiddle")
-// hello
 public class RemoteAutonomousBlueMiddle extends LinearOpMode
 {
     //@Override
     public void runOpMode() throws InterruptedException
     {
         MandoRobotHardware robot = new MandoRobotHardware(this, 260, 170, MandoRobotHardware.cameraSelection.RIGHT);
-        //EncoderFourWheelDriveHeading encoderDrive = new EncoderFourWheelDriveHeading(robot);
         EncoderFourWheelDriveHeading encoderDriveHeading = new EncoderFourWheelDriveHeading(robot);
         RotatePreciseFourWheelDrive rotatePrecise =  new RotatePreciseFourWheelDrive(robot);
         RotateToHeadingFourWheelDrive rotateToHeading = new RotateToHeadingFourWheelDrive(robot, rotatePrecise);
-        // EasyOpenCVExample RingDetection = new EasyOpenCVExample();
-
-        //robot.pipeline.getAnalysis();
-
-
-        //int location = robot.pipeline.getAnalysis();
 
         MandoRobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
 
+        // initialize wobble arm to hold wobble goal, and bucket and sweeper to be in the right spot
         robot.wobbleServo.setPosition(robot.wobbleUp);
         sleep(500);
         robot.clasper.setPosition(robot.clasperClosed);
@@ -49,32 +42,28 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             telemetry.addData("Number of Rings", robot.pipeline.position);
             telemetry.update();
         }
+
         robot.switchableWebcam.stopStreaming();
         // placement: black lines
 
-        //waitForStart();
-
-        //telemetry.addData("path value = ", path);
         System.out.println("path value = " + path);
 
+        // variables
         final double WHITELINE_DISTANCE = 68;
         final double BOXLENGTH = 27;
-        final double DISTANCETO_BOXB = 12; //11
-        final double EXTRALENGTH = 0; //9
-        final double DISTANCETO_BOXAC = 12; //15
-        final double DISTANCETO_RINGS = 17;
-        final double INITIAL_DISTANCE = 15;
-        final double INITIAL_MOVEMENT = 50; //50
+        final double DISTANCETO_BOXAC = 12;
+        final double INITIAL_MOVEMENT = 50;
 
-        robot.intake.setPower(0.8);
+        //robot.intake.setPower(0.8);
 
-        robot.backshot.setPower(0.635); //0.66
+        // shooting 3 rings (same for all positions)
+        robot.backshot.setPower(0.635);
         robot.frontshot.setPower(0.635);
+        // drive up to white line to shoot (more accurate)
         encoderDriveHeading.StartAction(0.7, INITIAL_MOVEMENT, 0, 5, true);
+        // slightly off center, so turn to make up for it
         rotateToHeading.DoIt(-2);
         sleep(1000);
-        //sleep(2000);
-        //rotateToHeading.DoIt(0);
         robot.sweepyServo.setPosition(robot.sweepyPush);
         sleep(500);
         robot.sweepyServo.setPosition(robot.sweepyOut);
@@ -90,9 +79,12 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         rotateToHeading.DoIt(0);
         robot.backshot.setPower(0.0);
         robot.frontshot.setPower(0.0);
+
+        // continues on depending on how many rings it saw
         if (path == MandoRobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
         {
-            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH-INITIAL_MOVEMENT+8, 0, 8, true);
+            // drive up the rest of the way, and drop off wobble goal, and come back to the white line
+            encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-INITIAL_MOVEMENT+8, 0, 8, true);
             rotateToHeading.DoIt(-90);
             encoderDriveHeading.StartAction(0.8, DISTANCETO_BOXAC, -90, 5, true);
             robot.wobbleServo.setPosition(robot.wobbleDown);
@@ -112,28 +104,7 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
 
         if (path == MandoRobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
         {
-            // getting rings
-
-            /*
-            encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
-            rotateToHeading.DoIt(-30);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, -30, 10, true);
-            // intake ring
-            sleep(2000);
-            // shoot ring
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, -30, 10, true);
-            rotateToHeading.DoIt(0);
-             */
-
-            //delivering wobble goal
-            /*
-            encoderDriveHeading.StartAction(0.6, WHITELINE_DISTANCE-INITIAL_DISTANCE-INITIAL_MOVEMENT+6, 0, 10, true);
-            rotateToHeading.DoIt(30);
-            encoderDriveHeading.StartAction(0.6, BOXLENGTH+20, 30, 10, true);
-            rotateToHeading.DoIt(-90);
-            encoderDriveHeading.StartAction(0.6, DISTANCETO_BOXB, -90, 5, true);
-
-             */
+            // drive up in front of the box, and drop off the wobble goal (ends on the white line so no need to back up)
             encoderDriveHeading.StartAction(0.6, WHITELINE_DISTANCE-INITIAL_MOVEMENT+5, 0, 10, true);
             robot.wobbleServo.setPosition(robot.wobbleDown);
             sleep(1000);
@@ -145,29 +116,13 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             sleep(1000);
             robot.wobbleServo.setPosition(robot.wobbleUp);
             sleep(1000);
-            //encoderDriveHeading.StartAction(0.6, -DISTANCETO_BOXB+5, -90, 5, true);
             rotateToHeading.DoIt(0);
-            //encoderDriveHeading.StartAction(0.6, -BOXLENGTH+2, 0, 10, true); //+4
         }
 
         if (path == MandoRobotHardware.SkystoneDeterminationPipeline.RingPosition.FOUR) // Square C, 4 rings
         {
-            // getting rings
-
-            /*
-            encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
-            rotateToHeading.DoIt(-30);
-            encoderDriveHeading.StartAction(0.8, DISTANCETO_RINGS, -30, 10, true);
-            // intake ring
-            sleep(2000);
-            // shoot ring
-            encoderDriveHeading.StartAction(0.8, -DISTANCETO_RINGS, -30, 10, true);
-            rotateToHeading.DoIt(0);
-
-             */
-
-            //delivering wobble goal
-            encoderDriveHeading.StartAction(0.7, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH-INITIAL_MOVEMENT+29, 0, 10, true);
+            // drive up to farthest box, place wobble goal, and drive back to white line
+            encoderDriveHeading.StartAction(0.7, WHITELINE_DISTANCE+BOXLENGTH-INITIAL_MOVEMENT+29, 0, 10, true);
             rotateToHeading.DoIt(-90);
             encoderDriveHeading.StartAction(0.7, DISTANCETO_BOXAC, -90, 5, true);
             rotateToHeading.DoIt(-70);
@@ -185,8 +140,6 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             encoderDriveHeading.StartAction(0.6, -DISTANCETO_BOXAC-20, -90, 5, true);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.6, -BOXLENGTH-15, 0, 10, true);
-
-            robot.wobbleServo.setPosition(robot.wobbleDown);
         }
     }
 }

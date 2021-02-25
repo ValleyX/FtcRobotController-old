@@ -120,18 +120,25 @@ public class TestDriverMode extends LinearOpMode
              telemetry.addData("current speed: ", currentSpeed);
              telemetry.update();
 
-
              // box (servo), presets for intake and loading
-             if (gamepad2.a)
-             {
+             if (gamepad2.a) {
                  robot.nucketyServo.setPosition(robot.nucketyDown); // down
              }
              if (gamepad2.b)
              {
-                 robot.nucketyServo.setPosition(robot.nucketyUp); //up
+                 robot.nucketyServo.setPosition(robot.nucketyUp); // up
+             }
+             if (gamepad2.x)
+             {
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+             }
+             if (gamepad2.y)
+             {
+                 robot.sweepyServo.setPosition(robot.sweepyPush);
              }
              // box ring pushing servo (incorporate into box preset buttons??)
-             if (gamepad2.x)
+
+             /*if (gamepad2.x)
              {
                  robot.sweepyServo.setPosition(robot.sweepyOut);
                  sleep(500);
@@ -139,6 +146,9 @@ public class TestDriverMode extends LinearOpMode
                  sleep(1000);
                  robot.sweepyServo.setPosition(robot.sweepyOut);
              }
+              */
+
+
              /*
              if (gamepad2.y)
              {
@@ -147,6 +157,7 @@ public class TestDriverMode extends LinearOpMode
 
 
               */
+             /*
              if (gamepad2.right_bumper)
              {
                  robot.intake.setPower(0.0);
@@ -155,6 +166,8 @@ public class TestDriverMode extends LinearOpMode
              {
                  robot.intake.setPower(-1.0);
              }
+
+              */
            // inake reverse
 
              /*

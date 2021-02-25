@@ -117,7 +117,7 @@ public class RotatePrecise {
             //robot_.leftBackDrive.setPower(leftPower);
             robot_.rightDrive.setPower(rightPower);
             //robot_.rightBackDrive.setPower(rightPower);
-            robot_.OpMode_.idle();
+            robot_.OpMode_.idle(); // chill for a sec
         }
         //   return this.correctCount;
     }

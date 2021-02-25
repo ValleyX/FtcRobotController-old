@@ -112,6 +112,7 @@ public class RobotHardware
         /* Public OpMode members */
         OpMode_ = opMode;
 
+        /*
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
@@ -149,7 +150,7 @@ public class RobotHardware
                 }
             }
         });
-
+         */
 
         // Define and Initialize Motors
         leftDrive = OpMode_.hardwareMap.get(DcMotor.class, "lmotor"); // motor 0
@@ -271,5 +272,27 @@ public class RobotHardware
         {
             return avg1;
         }
+    }
+
+    public void RPSCounter()
+    {
+        double requiredRPS = 0; // TODO test
+        int time = 500;
+        double conversion = 1000;
+
+        double firstFront = leftDrive.getCurrentPosition();
+        OpMode_.sleep(time);
+        double secondFront = leftDrive.getCurrentPosition();
+
+        double firstBack = rightDrive.getCurrentPosition();
+        OpMode_.sleep(time);
+        double secondBack = rightDrive.getCurrentPosition();
+
+        double RPSFront = (secondFront - firstFront)/(time/conversion);
+        double RPSBack = (secondBack - firstBack)/(time/conversion);
+
+        OpMode_.telemetry.addData("Left RPS = %d", RPSFront);
+        OpMode_.telemetry.addData("Right RPS = %d", RPSBack);
+        OpMode_.telemetry.update();
     }
 }

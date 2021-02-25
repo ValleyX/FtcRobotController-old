@@ -70,14 +70,7 @@ public class RotateToHeading {
             System.out.println("ValleyX: Gyro not calibrated");
         }
 
-        //System.out.println("ValleyX: imu calib status" + robot_.imu.getCalibrationStatus().toString());
-        //robot_.OpMode_.telemetry.addData("Mode", "calibrated");
-        //robot_.OpMode_.telemetry.update();
         double gyroActual = robot_.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        //robot_.OpMode_.telemetry.addData("imu heading", gyroActual);
-        //robot_.OpMode_.telemetry.update();
-        //System.out.println("ValleyX imu heading " + gyroActual);
     }
 
     public void DoIt(double heading) {
@@ -89,20 +82,15 @@ public class RotateToHeading {
         if (heading == 0.0) {
             heading = 0.1;
         }
-        //System.out.println("ValleyX passed heading " + heading);
         double gyroActual = robot_.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         gyroActual = 360 - gyroActual;
         gyroActual += 360.0;
         gyroActual %= 360;
-        //robot_.OpMode_.telemetry.addData("gyroActual", Double.toString(gyroActual));
-        //System.out.println("ValleyX gyroActual from RotateToHeading " + gyroActual);
         double turnAngle = heading - gyroActual;
 
         if (turnAngle > 180.0) turnAngle -= 360.0; //makes delta between -180 and 180
         if (turnAngle < -180.0) turnAngle += 360.0; //makes delta between -180 and 180
 
-        //System.out.println("ValleyX turnAngle " + turnAngle);
-        //System.out.println("ValleyX moving to rotate precise");
         rotatePrecise_.RotatePrecise(turnAngle, gyroRange, minSpeed, addSpeed, timesCorrect);
     }
 }

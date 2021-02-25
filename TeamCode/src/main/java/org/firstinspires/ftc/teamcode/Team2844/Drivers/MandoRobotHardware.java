@@ -50,23 +50,6 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
-
 public class MandoRobotHardware
 {
     LinearOpMode OpMode_;
@@ -84,18 +67,12 @@ public class MandoRobotHardware
     public DcMotor  frontshot;
     public DcMotor  backshot;
 
-    public DcMotor intake;
+    //public DcMotor  intake;
 
     public SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; //
     public WebcamName webcamRight; //
     public OpenCvSwitchableWebcam switchableWebcam;
-
-    // wobble goal arm servo
-    // shooter motor 1st
-    // shooter motor 2nd
-    // box servo
-    // ring pushing servo
 
     public BNO055IMU imu;
 
@@ -111,10 +88,8 @@ public class MandoRobotHardware
     public final double clasperOpen = 0.5;
     public final double clasperClosed = 0.0;
 
-    //public final double wobbleGround = 1.8;
-
     public final double nucketyUp = 0.05;
-    public final double nucketyDown = 0.5;
+    public final double nucketyDown = 0.40;
     public final double sweepyOut = 0.85;
     public final double sweepyPush = 0.5;
 
@@ -123,6 +98,12 @@ public class MandoRobotHardware
         LEFT,
         RIGHT
     }
+/*
+    MandoRobotHardware robot = new MandoRobotHardware(OpMode_, 260, 170, MandoRobotHardware.cameraSelection.RIGHT);
+    RotatePreciseFourWheelDrive rotatePrecise =  new RotatePreciseFourWheelDrive(robot);
+    RotateToHeadingFourWheelDrive rotateToHeading = new RotateToHeadingFourWheelDrive(robot, rotatePrecise);
+
+ */
 
     /* Constructor */
     public MandoRobotHardware(LinearOpMode opMode, int x, int y, final cameraSelection camera)
@@ -134,19 +115,10 @@ public class MandoRobotHardware
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new SkystoneDeterminationPipeline(x, y);
-        //webcam.setPipeline(pipeline);
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam.openCameraDevice();
-
-
-        //OpMode_.sleep(1000);
-
         switchableWebcam.setPipeline(pipeline);
-
-        //switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-        //switchableWebcam.setActiveCamera(webcamFront);
-        //final boolean usefront = true;
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -154,7 +126,6 @@ public class MandoRobotHardware
             public void onOpened()
             {
                 //pick desired camera here
-
                 if (camera == cameraSelection.LEFT)
                 {
                     switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
@@ -168,22 +139,21 @@ public class MandoRobotHardware
             }
         });
 
-
         // Define and Initialize Motors
         leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 2
         leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 3
         rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 0
         rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 1
 
-        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 2
-        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 3
-        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // ch servo 1
-        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 0
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // eh servo 0
+        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // eh servo 1
+        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // eh servo 3
+        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // eh servo 2
 
         frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 0
         backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 1
 
-        intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 2
+        //intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 2
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -215,7 +185,7 @@ public class MandoRobotHardware
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
-        //An enum to define the skystone position
+        //An enum to define the ring stack size
         public enum RingPosition
         {
             FOUR,
@@ -229,8 +199,6 @@ public class MandoRobotHardware
 
         //The core values which define the location and size of the sample regions
         //box location and dimensions
-        //static final
-        //Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(x,y); // 200, 165
         Point REGION1_TOPLEFT_ANCHOR_POINT;
 
         static final int REGION_WIDTH = 50;
@@ -316,4 +284,58 @@ public class MandoRobotHardware
             return avg1;
         }
     }
+
+    public void RPSCounter(double idealRPS)
+    {
+        int time = 500;
+        double RPSFront = 0;
+        double RPSBack = 0;
+
+        do {
+            int firstFront = frontshot.getCurrentPosition();
+            OpMode_.sleep(time);
+            int secondFront = frontshot.getCurrentPosition();
+
+            int firstBack = backshot.getCurrentPosition();
+            OpMode_.sleep(time);
+            int secondBack = backshot.getCurrentPosition();
+
+            RPSFront = (secondFront - firstFront) / ((double)time / 1000.0);
+            RPSBack = (secondBack - firstBack) / ((double)time / 1000.0);
+
+            OpMode_.telemetry.addData("Frontshot RPS = %d", RPSFront);
+            OpMode_.telemetry.addData("Backshot RPS = %d", RPSBack);
+            OpMode_.telemetry.update();
+
+        } while ((RPSFront < idealRPS) && (RPSBack < idealRPS));
+    }
+
+    public void ThreeRingLaunch(double idealRPS)
+    {
+        int Time = 500;
+        for (int s = 0; s < 3; s++) {
+            RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyPush);
+            OpMode_.sleep(Time);
+            //RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyOut);
+            RPSCounter(idealRPS);
+        }
+    }
+    /*
+    public void PowershotRingLaunch(double idealRPS)
+    {
+        int Time = 500;
+        for (int s = 0; s < 3; s++) {
+            rotatePrecise.RotatePrecise(10, 2, 0.6, 0.1, 5);
+            RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyPush);
+            OpMode_.sleep(Time);
+            //RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyOut);
+            RPSCounter(idealRPS);
+        }
+    }
+
+     */
 }

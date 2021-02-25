@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeading;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RotateToHeadingFourWheelDrive;
 
 @Autonomous (name="RemoteBlueWall")
-// hello
+@Disabled
 public class RemoteAutonomousBlueWall extends LinearOpMode
 {
     //@Override
