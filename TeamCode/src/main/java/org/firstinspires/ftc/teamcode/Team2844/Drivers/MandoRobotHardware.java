@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Team2844.Drivers;
 import android.graphics.Region;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -98,12 +99,6 @@ public class MandoRobotHardware
         LEFT,
         RIGHT
     }
-/*
-    MandoRobotHardware robot = new MandoRobotHardware(OpMode_, 260, 170, MandoRobotHardware.cameraSelection.RIGHT);
-    RotatePreciseFourWheelDrive rotatePrecise =  new RotatePreciseFourWheelDrive(robot);
-    RotateToHeadingFourWheelDrive rotateToHeading = new RotateToHeadingFourWheelDrive(robot, rotatePrecise);
-
- */
 
     /* Constructor */
     public MandoRobotHardware(LinearOpMode opMode, int x, int y, final cameraSelection camera)
@@ -287,7 +282,7 @@ public class MandoRobotHardware
 
     public void RPSCounter(double idealRPS)
     {
-        int time = 500;
+        int time = 100;
         double RPSFront = 0;
         double RPSBack = 0;
 
@@ -310,10 +305,10 @@ public class MandoRobotHardware
         } while ((RPSFront < idealRPS) && (RPSBack < idealRPS));
     }
 
-    public void ThreeRingLaunch(double idealRPS)
+    public void ThreeRingLaunch(double idealRPS, int rings)
     {
         int Time = 500;
-        for (int s = 0; s < 3; s++) {
+        for (int s = 0; (s < rings) && OpMode_.opModeIsActive(); s++) {
             RPSCounter(idealRPS);
             sweepyServo.setPosition(sweepyPush);
             OpMode_.sleep(Time);
@@ -322,20 +317,4 @@ public class MandoRobotHardware
             RPSCounter(idealRPS);
         }
     }
-    /*
-    public void PowershotRingLaunch(double idealRPS)
-    {
-        int Time = 500;
-        for (int s = 0; s < 3; s++) {
-            rotatePrecise.RotatePrecise(10, 2, 0.6, 0.1, 5);
-            RPSCounter(idealRPS);
-            sweepyServo.setPosition(sweepyPush);
-            OpMode_.sleep(Time);
-            //RPSCounter(idealRPS);
-            sweepyServo.setPosition(sweepyOut);
-            RPSCounter(idealRPS);
-        }
-    }
-
-     */
 }
