@@ -43,9 +43,15 @@ public class TestDriverMode extends LinearOpMode
              robot.rightBackDrive.setPower(right);
 
              // intake
-             rtrigger = gamepad1.right_trigger;
-             ltrigger = gamepad1.left_trigger;
+             rtrigger = gamepad2.right_trigger;
+             ltrigger = -gamepad2.left_trigger;
              // set intake motors to l and r triggers
+             robot.intake.setPower(rtrigger);
+             robot.intake.setPower(ltrigger);
+             if (robot.intake.getPower() != 0)
+             {
+                 robot.nucketyServo.setPosition(robot.nucketyDown);
+             }
 
              // wobble goal arm
              if (gamepad1.x)

@@ -19,7 +19,7 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
     //@Override
     public void runOpMode() throws InterruptedException
     {
-        MandoRobotHardware robot = new MandoRobotHardware(this, 265, 160, MandoRobotHardware.cameraSelection.RIGHT); //260, 170
+        MandoRobotHardware robot = new MandoRobotHardware(this, 255, 170, MandoRobotHardware.cameraSelection.RIGHT); //265, 160
         EncoderFourWheelDriveHeading encoderDriveHeading = new EncoderFourWheelDriveHeading(robot);
         RotatePreciseFourWheelDrive rotatePrecise =  new RotatePreciseFourWheelDrive(robot);
         RotateToHeadingFourWheelDrive rotateToHeading = new RotateToHeadingFourWheelDrive(robot, rotatePrecise);
@@ -57,8 +57,9 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         //robot.intake.setPower(0.8);
 
         // shooting 3 rings (same for all positions)
-        robot.backshot.setPower(0.58);
-        robot.frontshot.setPower(0.58);
+        robot.backshot.setPower(0.56); //0.58
+        robot.frontshot.setPower(0.56);
+        int rpsCount = 1280; //1310
         // drive up to white line to shoot (more accurate)
         encoderDriveHeading.StartAction(0.7, INITIAL_MOVEMENT, 0, 5, true);
         // slightly off center, so turn to make up for it
@@ -80,15 +81,15 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
         rotateToHeading.DoIt(0);
          */
 
-        double changeHeading = 6;
+        double changeHeading = 5;
         rotateToHeading.DoItSpecify(changeHeading, .65, 0.41, 0.1, 5);
-        robot.ThreeRingLaunch(1310, 1); //1440
+        robot.ThreeRingLaunch(rpsCount, 1); //1440
         changeHeading+=4.5;
         rotateToHeading.DoItSpecify(changeHeading, .65, 0.41, 0.1, 5);
-        robot.ThreeRingLaunch(1310, 1); //1440
-        changeHeading+=6;
+        robot.ThreeRingLaunch(rpsCount, 1); //1440
+        changeHeading+=5; //6
         rotateToHeading.DoItSpecify(changeHeading, .65, 0.41, 0.1, 5);
-        robot.ThreeRingLaunch(1310, 1); //1440
+        robot.ThreeRingLaunch(rpsCount, 1); //1440
         robot.backshot.setPower(0.0);
         robot.frontshot.setPower(0.0);
 
@@ -104,11 +105,13 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             robot.clasper.setPosition(robot.clasperOpen);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.clasperMid);
+            /*
             sleep(1000);
             robot.clasper.setPosition(robot.clasperClosed);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.wobbleUp);
             sleep(1000);
+             */
             encoderDriveHeading.StartAction(0.8, -DISTANCETO_BOXAC-20, -90, 5, true);
             rotateToHeading.DoIt(0);
             encoderDriveHeading.StartAction(0.8, -5, 0, 5, true);
@@ -123,11 +126,13 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             robot.clasper.setPosition(robot.clasperOpen);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.clasperMid);
+            /*
             sleep(1000);
             robot.clasper.setPosition(robot.clasperClosed);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.wobbleUp);
             sleep(1000);
+             */
             rotateToHeading.DoIt(0);
         }
 
@@ -143,11 +148,13 @@ public class RemoteAutonomousBlueMiddle extends LinearOpMode
             robot.clasper.setPosition(robot.clasperOpen);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.clasperMid);
+            /*
             sleep(1000);
             robot.clasper.setPosition(robot.clasperClosed);
             sleep(1000);
             robot.wobbleServo.setPosition(robot.wobbleUp);
             sleep(1000);
+             */
             rotateToHeading.DoIt(-90);
             encoderDriveHeading.StartAction(0.6, -DISTANCETO_BOXAC-20, -90, 5, true);
             rotateToHeading.DoIt(0);

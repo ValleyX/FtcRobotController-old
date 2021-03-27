@@ -32,14 +32,14 @@ public class RPSCounterTest extends LinearOpMode
         telemetry.addLine("Started");
         telemetry.update();
 
-        robot.frontshot.setPower(0.59);//63
-        robot.backshot.setPower(0.59);
+        robot.frontshot.setPower(0.62);//59
+        robot.backshot.setPower(0.62);
 
        // robot.frontshot.setPower(0.59);//63
        // robot.backshot.setPower(0.59);
 
 
-        encoderDriveHeading.StartAction(0.7, 57, 0, 5, true);
+        //encoderDriveHeading.StartAction(0.7, 57, 0, 5, true);
 
         sleep(500);
         //robot.RPSCounter(1400);
@@ -47,6 +47,7 @@ public class RPSCounterTest extends LinearOpMode
 //        for (int i = 0; i < 3; i++)
 //        {
         //angled case
+        /*
         double changeHeading = 6;
         rotateToHeading.DoItSpecify(changeHeading, .65, 0.41, 0.1, 5);
         robot.ThreeRingLaunch(1300, 1); //1440
@@ -57,6 +58,9 @@ public class RPSCounterTest extends LinearOpMode
         rotateToHeading.DoItSpecify(changeHeading, .65, 0.41, 0.1, 5);
         robot.ThreeRingLaunch(1300, 1); //1440
 
+         */
+
+        robot.ThreeRingLaunch(1400, 3);
 
 /*
         //straight on case

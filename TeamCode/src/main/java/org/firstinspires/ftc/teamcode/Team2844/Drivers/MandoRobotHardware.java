@@ -68,7 +68,7 @@ public class MandoRobotHardware
     public DcMotor  frontshot;
     public DcMotor  backshot;
 
-    //public DcMotor  intake;
+    public DcMotor  intake;
 
     public SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; //
@@ -89,10 +89,10 @@ public class MandoRobotHardware
     public final double clasperOpen = 0.5;
     public final double clasperClosed = 0.0;
 
-    public final double nucketyUp = 0.05;
+    public final double nucketyUp = 0; //0.05
     public final double nucketyDown = 0.40;
-    public final double sweepyOut = 0.85;
-    public final double sweepyPush = 0.5;
+    public final double sweepyOut = 0.60;
+    public final double sweepyPush = 0.90;
 
     public enum cameraSelection
     {
@@ -135,20 +135,20 @@ public class MandoRobotHardware
         });
 
         // Define and Initialize Motors
-        leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 2
-        leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 3
-        rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 0
-        rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 1
+        leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 0
+        leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 2
+        rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 1
+        rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 3
 
-        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // eh servo 0
-        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // eh servo 1
-        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // eh servo 3
-        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // eh servo 2
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 0
+        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 1
+        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // eh servo 0
+        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 2
 
-        frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 0
-        backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 1
+        frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 1
+        backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 3
 
-        //intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 2
+        intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 0
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
