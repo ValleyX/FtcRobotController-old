@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class TestDrive1 extends LinearOpMode
 
 {
-  final double TopGoalBack = 0.72;
+  final double TopGoalBack = 0.58;
     //static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     //static final int CYCLE_MS = 1000;     // period of each cycle
    // static final double MAX_POS = 0.8;     // Maximum rotational position
@@ -46,10 +46,19 @@ public class TestDrive1 extends LinearOpMode
         double speed = 0.5;
         boolean dpadrightisfirst= true;
         boolean dpadleftisfirst= true;
+        double checkone;
+        double checktwo;
+        double frontaveragerpm;
+        double checkoneback;
+        double checktwoback;
+        double backaveragerpm;
+        int time = 500; //ms
 
         waitForStart();
 
         while (opModeIsActive()) {
+
+
             left = -gamepad1.left_stick_y;
             right = -gamepad1.right_stick_y;
 
@@ -68,9 +77,16 @@ public class TestDrive1 extends LinearOpMode
 
             if (gamepad1.right_bumper){
                 robot.mouth.setPower(1);
+                telemetry.addLine("intake on");
             }
             if (gamepad1.left_bumper){
                 robot.mouth.setPower(0);
+                telemetry.addLine("intake off");
+            }
+
+            if (gamepad1.right_stick_button){
+                robot.mouth.setPower(-1);
+                telemetry.addLine("intake on backward");
             }
 
             if (gamepad2.right_bumper) {
@@ -81,6 +97,7 @@ public class TestDrive1 extends LinearOpMode
             if (gamepad2.left_bumper) {
                 robot.shooterfront.setPower(0);
                 robot.shooterback.setPower(0);
+                telemetry.addLine("shooter off");
             }
             if (gamepad2.dpad_up) {
                 robot.ringpusher.setPosition(robot.frontringpusher_POS);//TODO
@@ -92,15 +109,19 @@ public class TestDrive1 extends LinearOpMode
             }
             if (gamepad2.y) {
                 robot.Servoarm.setPosition(robot.ARMUP_POS);
+                telemetry.addLine("arm up");
             }
             if (gamepad2.b) {
                 robot.Servoarm.setPosition(robot.ARMDOWN_POS);
+                telemetry.addLine("arm down");
             }
             if (gamepad2.x) {
                 robot.Servohand.setPosition(robot.HANDOPEN_POS); //The open for hand
+                telemetry.addLine("hand open");
             }
             if (gamepad2.a) {
                 robot.Servohand.setPosition(robot.HANDCLOSE_POS); //The close on hand
+                telemetry.addLine("hand close");
             }
             if (gamepad2.dpad_left) {
                 if (dpadleftisfirst) {
@@ -127,14 +148,35 @@ public class TestDrive1 extends LinearOpMode
             }
 
             if (gamepad2.left_stick_button) {
-                robot.bucket.setPosition(0.5);
+                robot.bucket.setPosition(robot.bucketDown_POS);
+                telemetry.addLine("bucket down");
             }
             if (gamepad2.right_stick_button){
-                robot.bucket.setPosition(0.05);
+                robot.bucket.setPosition(robot.bucketUp_POS);
+                telemetry.addLine("bucket up");
             }
-            // todo the bucket ones have to be changed because it is gonna be different values. the ones set are just holders.
-            //todo I REPEAT. DO NOT TEST WITH THOSE NUMBERS. it will break the servo
+/*
+            //rpm thing
+            checkone = robot.shooterfront.getCurrentPosition();
 
+            sleep(time);
+
+            checktwo = robot.shooterfront.getCurrentPosition();
+
+            frontaveragerpm = (checktwo - checkone) / ((double)time / 1000.0);
+            telemetry.addData("rpmfront: ", frontaveragerpm);
+
+
+            checkoneback = robot.shooterback.getCurrentPosition();
+
+            sleep(time);
+
+            checktwoback = robot.shooterback.getCurrentPosition();
+
+            backaveragerpm = (checktwoback - checkoneback) / ((double)time / 1000.0);
+
+            telemetry.addData("rpmback: ", backaveragerpm);
+*/
             telemetry.addData("speed = ",speed );
             telemetry.addData("LeftStick = ", left);
             telemetry.addData("RightStick = ", right);

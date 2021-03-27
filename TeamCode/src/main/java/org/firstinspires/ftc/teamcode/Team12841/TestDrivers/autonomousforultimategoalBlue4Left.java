@@ -268,7 +268,7 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
         waitForStart();
 
         final double TopGoalPower = 0.67;
-        final double DriveUpInches = 28;
+        final double DriveUpInches = 48;
         final double WhitelineInches = 67;
 
         encoder.StartAction(1, DriveUpInches, DriveUpInches, 5, true); // drive up to shooting line
@@ -303,52 +303,14 @@ public class autonomousforultimategoalBlue4Left extends LinearOpMode {
 
             robot.turntoheading(1,-5);
 
-            /*robot.turnleft(1);
-
-            heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-            System.out.println("ValleyX left: " + heading);
-            while (heading <= 5) {
-                heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-                System.out.println("ValleyX left: " + heading);
-            }
-
-            robot.power0drive();*/
         }
 //kinda blue box b (left start)
             if (pipeline.position == autonomousforultimategoalBlue4Left.SkystoneDeterminationPipeline.RingPosition.ONE) {
                 encoder.StartAction(1, 99, 99, 5, true);
 
                 robot.turntoheading(1,90);
-                /*robot.turnleft(1);
-
-                heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-                System.out.println("ValleyX left: " + heading);
-                while (heading > -90) {
-                    heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-                    System.out.println("ValleyX left: " + heading);
-                }
-
-                robot.power0drive();*/
-
-                robot.ArmsSetWabbleGoal();
 
                 robot.turntoheading(1,0);
-               /* robot.turnleft(1);
-
-                heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-                System.out.println("ValleyX left: " + heading);
-                while (heading < 0) {
-                    heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-                    System.out.println("ValleyX left: " + heading);
-                }
-
-                robot.power0drive();*/
 
                 encoder.StartAction(1, -30, -30, 5, true);
 

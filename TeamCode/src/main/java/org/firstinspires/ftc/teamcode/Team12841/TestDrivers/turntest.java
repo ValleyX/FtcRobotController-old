@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode.Team12841.TestDrivers;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.EncoderDrive;
 import org.firstinspires.ftc.teamcode.Team12841.Drivers.EncoderDrive4motors;
-import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.Team12841.Drivers.RobotHardware4motors;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -50,9 +43,9 @@ import java.util.Locale;
  * SOFTWARE.
  */
 
-@Autonomous(name="blue4 right", group="Test")
+@Autonomous(name="TurnTest", group="Test")
 //@Disabled
-public class autonomousforultimategoalBlue4Right extends LinearOpMode {
+public class turntest extends LinearOpMode {
     public SkystoneDeterminationPipeline pipeline;
     WebcamName webcam1;
     WebcamName webcam2;
@@ -82,7 +75,7 @@ public class autonomousforultimategoalBlue4Right extends LinearOpMode {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(125, 180);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 135);
 
         static final int REGION_WIDTH = 50;
         static final int REGION_HEIGHT = 40;
@@ -214,92 +207,16 @@ public class autonomousforultimategoalBlue4Right extends LinearOpMode {
         }
 
         double heading;
-        final double TopGoalPower1 = 0.57;
-        final double TopGoalPower = 0.57;
-        final double DriveUpInches = 60;
+        final double TopGoalPower = 0.63;
+        final double DriveUpInches = 48;
         final double WhitelineInches = 67;
 
-        robot.mouth.setPower(-0.7);
-        encoder.StartAction(1, DriveUpInches, DriveUpInches, 5, true); // drive up to shooting line
-        encoder.StartAction(1,-1,1,5,true);
+        System.out.println("ValleyX: before turn");
 
-        robot.shooting();
+        robot.turntoheading(1,90);
 
-/*
-        robot.shooterfront.setPower(TopGoalPower1);
-        robot.shooterback.setPower(TopGoalPower1);
-
-        sleep(1000);
-
-        robot.ringpusher.setPosition(robot.backringpusher_POS);
-        sleep(900);
-        robot.ringpusher.setPosition(robot.frontringpusher_POS);
-        sleep(800);
-
-        for (int i = 0; i < 2; i++) {
-            robot.shooterback.setPower(TopGoalPower);
-            robot.shooterfront.setPower(TopGoalPower);
-
-            robot.ringpusher.setPosition(robot.backringpusher_POS);
-            sleep(1000);
-            robot.ringpusher.setPosition(robot.frontringpusher_POS);
-            //robot.shooterfront.setPower(0);
-            //robot.shooterback.setPower(0);
-
-            sleep(1000);
-        }
-        encoder.StartAction(1,1,-1,5,true);
-
- */
-
-        encoder.StartAction(1,1,-1,5,true);
-        //kinda blue box A (right start)
-        if (path == SkystoneDeterminationPipeline.RingPosition.NONE) {
-            encoder.StartAction(1, 70 - DriveUpInches, 70 - DriveUpInches, 5, true);
-            System.out.println("ValleyX: Before Turn"); //Kaden Changed the drive up Value from 61 to 70
-
-            robot.turntoheading(1,-89);
-            System.out.println("ValleyX: After Turn");
-
-            encoder.StartAction(1, 11, 11, 5, true); // move to box A
-            robot.ArmsSetWabbleGoal();
-
-            encoder.StartAction(1, -11, -11, 5, true); // move back for teammate
-        }
-
-        //kinda blue box B (right start)
-        if (path == SkystoneDeterminationPipeline.RingPosition.ONE) {
-            encoder.StartAction(1, 83 - DriveUpInches, 83 - DriveUpInches, 5, true); // originally 77
-            sleep(200);
-            encoder.StartAction(1, -10, 10, 5, true); // turn left to get wobbble goal into box
-
-            robot.ArmsSetWabbleGoal();
-
-            encoder.StartAction(1, 10, -10, 5, true); // turn right to get robot straight
-            sleep(200);
-            encoder.StartAction(1, -7, -7, 5, true); // back up to white line
-
-            //encoder.StartAction(1,-65,-65,5,true); todo I (kaden) commented this out because it made the robot go too far back
-
-        }
-    /*
-    //kinda blue box C (right start)
-     */
-        if (path == SkystoneDeterminationPipeline.RingPosition.FOUR) {
-            encoder.StartAction(1, 124 - DriveUpInches, 124 - DriveUpInches, 5, true); // 110 was original
-
-            robot.turntoheading(1,-90);
-
-            encoder.StartAction(1, 14, 14, 5, true); // drive to box c
-
-            robot.ArmsSetWabbleGoal();
-
-            encoder.StartAction(1, -14, -14, 5, true); // drive back from box c
-
-            robot.turntoheading(1,-1);
-
-            encoder.StartAction(1, -45, -45, 5, true); // back to white line
-        }
+        robot.power0drive();
+        System.out.println("ValleyX: after turn");
     }
 
     double formatAngle(AngleUnit angleUnit, double angle) {
