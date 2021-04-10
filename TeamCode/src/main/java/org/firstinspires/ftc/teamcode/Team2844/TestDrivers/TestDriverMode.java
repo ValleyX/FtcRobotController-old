@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.MandoRobotHardware;
 import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
@@ -10,17 +11,34 @@ import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
 
 public class TestDriverMode extends LinearOpMode
 {
+    private ElapsedTime runtime_ = new ElapsedTime();
+    MandoRobotHardware robot = new MandoRobotHardware(this, 0, 0, MandoRobotHardware.cameraSelection.RIGHT);
+
+    public void driveWhileWaiting(int waitTime)
+    {
+        while (waitTime < runtime_.milliseconds())
+        {
+            sleep(200);
+
+            double left = -gamepad1.left_stick_y;
+            double right = -gamepad1.right_stick_y;
+            robot.leftFrontDrive.setPower(left);
+            robot.leftBackDrive.setPower(left);
+            robot.rightFrontDrive.setPower(right);
+            robot.rightBackDrive.setPower(right);
+        }
+    }
+
     @Override
-    public void runOpMode ()
+    public void runOpMode()
     {
          MandoRobotHardware robot = new MandoRobotHardware(this, 0, 0, MandoRobotHardware.cameraSelection.RIGHT);
          System.out.println("ValleyX: In Innit");
          waitForStart();
 
-         boolean bDpadup = false;
-         boolean bDpaddown = false;
-         double currentSpeed = 0.5;
-
+         double idealSpeed = 0.4; //0.6
+         double powerShot = 0.35;
+         boolean bucketDown = true;
 
         while (opModeIsActive())
          {
@@ -29,18 +47,81 @@ public class TestDriverMode extends LinearOpMode
              double rtrigger;
              double ltrigger;
 
-             // Gamepad 1
+             /***************************************Gamepad 1 - Driver*************************************/
              // driving
              left = -gamepad1.left_stick_y;
              right = -gamepad1.right_stick_y;
-
-             rtrigger = gamepad2.right_trigger;
-             ltrigger = gamepad2.left_trigger;
-
              robot.leftFrontDrive.setPower(left);
              robot.leftBackDrive.setPower(left);
              robot.rightFrontDrive.setPower(right);
              robot.rightBackDrive.setPower(right);
+
+             // wobble goal arm
+             if (gamepad1.x) {
+                 robot.wobbleServo.setPosition(robot.wobbleDown); //down
+             }
+             if (gamepad1.y) {
+                 robot.clasper.setPosition(robot.clasperClosed); // make sure clasper is closed before moving the wobble goal arm
+                 driveWhileWaiting(500);
+                 robot.wobbleServo.setPosition(robot.wobbleUp); //up
+             }
+             if (gamepad1.a) {
+                 robot.clasper.setPosition(robot.clasperOpen);
+             }
+             if (gamepad1.b) {
+                 robot.clasper.setPosition(robot.clasperClosed);
+             }
+
+             telemetry.addData("LeftStickY = ",left);
+             telemetry.addData("RightStickY = ", right);
+
+             /***************************************Gamepad 2 - Manipulator*************************************/
+             // shooter (motors)
+             if (gamepad2.left_bumper) // turn on shooter wheels
+             {
+                 robot.backshot.setPower(idealSpeed);
+                 robot.frontshot.setPower(idealSpeed);
+             }
+             if (gamepad2.right_bumper) // turn off shooter wheels
+             {
+                 robot.backshot.setPower(0.0);
+                 robot.frontshot.setPower(0.0);
+             }
+
+             //bucket
+             if (gamepad2.dpad_up) // bucket up, and make sure sweepy out
+             {
+                 robot.nucketyServo.setPosition(robot.nucketyUp);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+
+                 robot.backshot.setPower(idealSpeed);
+                 robot.frontshot.setPower(idealSpeed);
+
+                 bucketDown = false;
+             }
+             if (gamepad2.dpad_down) // bucket down, and make sure sweepy out
+             {
+                 robot.nucketyServo.setPosition(robot.nucketyDown);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+
+                 robot.backshot.setPower(0.0);
+                 robot.frontshot.setPower(0.0);
+                 bucketDown = true;
+             }
+
+             //sweepy push and back out to launch rings
+             if (gamepad2.a && bucketDown == false)
+             {
+                 robot.sweepyServo.setPosition(robot.sweepyPush);
+                 driveWhileWaiting(500);
+                 robot.sweepyServo.setPosition(robot.sweepyOut);
+             }
+
+             if (gamepad2.dpad_right)
+             {
+                 robot.backshot.setPower(powerShot);
+                 robot.frontshot.setPower(powerShot);
+             }
 
              // intake
              rtrigger = gamepad2.right_trigger;
@@ -48,163 +129,14 @@ public class TestDriverMode extends LinearOpMode
              // set intake motors to l and r triggers
              robot.intake.setPower(rtrigger);
              robot.intake.setPower(ltrigger);
+             // make sure bucket is down and sweepy is out while intaking
              if (robot.intake.getPower() != 0)
              {
                  robot.nucketyServo.setPosition(robot.nucketyDown);
-             }
-
-             // wobble goal arm
-             if (gamepad1.x)
-             {
-                 robot.wobbleServo.setPosition(1.0); //down
-             }
-             if (gamepad1.y)
-             {
-                 robot.wobbleServo.setPosition(0.0); //up
-             }
-             if (gamepad1.a)
-             {
-                 robot.clasper.setPosition(0.5);
-             }
-             if (gamepad1.b)
-             {
-                 robot.clasper.setPosition(0.0);
-             }
-/*
-             if (gamepad1.right_bumper)
-             {
-                 robot.wobbleServo.setPosition(robot.wobbleGround);
-             }
-
- */
-             telemetry.addData("LeftStickY = ",left);
-             telemetry.addData("RightStickY = ", right);
-
-             // Gamepad 2
-             // shooter (motors)
-             if (gamepad2.dpad_up)
-             {
-                 if (!bDpadup) {
-                     bDpadup = true;
-                     currentSpeed = currentSpeed - 0.05;
-                 }
-                 robot.backshot.setPower(currentSpeed);
-                 robot.frontshot.setPower(currentSpeed);
-             }
-             else
-             {
-                 bDpadup = false;
-             }
-             if (gamepad2.dpad_down)
-             {
-                 if (!bDpaddown)
-                 {
-                     bDpaddown = true;
-                     currentSpeed = currentSpeed + 0.05;
-                 }
-                 robot.backshot.setPower(currentSpeed);
-                 robot.frontshot.setPower(currentSpeed);
-             }
-             else
-             {
-                 bDpaddown = false;
-             }
-
-             if (gamepad2.dpad_left)
-             {
-                 currentSpeed = 0.0;
-                 robot.backshot.setPower(currentSpeed);
-                 robot.frontshot.setPower(currentSpeed);
-             }
-             if (gamepad2.dpad_right)
-             {
-                 currentSpeed = 1.0;
-                 robot.backshot.setPower(currentSpeed);
-                 robot.frontshot.setPower(currentSpeed);
-             }
-
-             telemetry.addData("current speed: ", currentSpeed);
-             telemetry.update();
-
-             // box (servo), presets for intake and loading
-             if (gamepad2.a) {
-                 robot.nucketyServo.setPosition(robot.nucketyDown); // down
-             }
-             if (gamepad2.b)
-             {
-                 robot.nucketyServo.setPosition(robot.nucketyUp); // up
-             }
-             if (gamepad2.x)
-             {
                  robot.sweepyServo.setPosition(robot.sweepyOut);
-             }
-             if (gamepad2.y)
-             {
-                 robot.sweepyServo.setPosition(robot.sweepyPush);
-             }
-             // box ring pushing servo (incorporate into box preset buttons??)
-
-             /*if (gamepad2.x)
-             {
-                 robot.sweepyServo.setPosition(robot.sweepyOut);
-                 sleep(500);
-                 robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(1000);
-                 robot.sweepyServo.setPosition(robot.sweepyOut);
-             }
-              */
-
-
-             /*
-             if (gamepad2.y)
-             {
-                 robot.sweepyServo.setPosition(robot.sweepyPush); //push
-             }
-
-
-              */
-             /*
-             if (gamepad2.right_bumper)
-             {
-                 robot.intake.setPower(0.0);
-             }
-             if (gamepad2.left_bumper)
-             {
-                 robot.intake.setPower(-1.0);
-             }
-
-              */
-           // inake reverse
-
-             /*
-             if (gamepad2.x) // shoot three rings
-             {
-                 robot.backshot.setPower(0.7);
-                 robot.frontshot.setPower(0.7);
-                 robot.nucketyServo.setPosition(robot.nucketyUp);
-                 sleep(2000);
-                 robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(500);
-                 robot.sweepyServo.setPosition(robot.sweepyOut);
-                 sleep(2000);
-                 robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(500);
-                 robot.sweepyServo.setPosition(robot.sweepyOut);
-                 sleep(2000);
-                 robot.sweepyServo.setPosition(robot.sweepyPush);
-                 sleep(500);
-                 robot.sweepyServo.setPosition(robot.sweepyOut);
-                 sleep(1000);
-                 robot.nucketyServo.setPosition(robot.nucketyDown);
                  robot.backshot.setPower(0.0);
                  robot.frontshot.setPower(0.0);
-
-
              }
-
-              */
-
-             // lights
          }
     }
 }

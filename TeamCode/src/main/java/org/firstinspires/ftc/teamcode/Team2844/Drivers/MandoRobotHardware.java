@@ -7,8 +7,10 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -69,6 +71,8 @@ public class MandoRobotHardware
     public DcMotor  backshot;
 
     public DcMotor  intake;
+
+    public DistanceSensor distance;
 
     public SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; //
@@ -140,7 +144,7 @@ public class MandoRobotHardware
         rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 1
         rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 3
 
-        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 0
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 5
         clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 1
         nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // eh servo 0
         sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 2
@@ -149,6 +153,8 @@ public class MandoRobotHardware
         backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 3
 
         intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 0
+
+        distance = OpMode_.hardwareMap.get(DistanceSensor.class, "distance"); // ch sensor 1
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -174,6 +180,9 @@ public class MandoRobotHardware
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
     }
