@@ -32,8 +32,8 @@ public class RPSCounterTest extends LinearOpMode
         telemetry.addLine("Started");
         telemetry.update();
 
-        robot.frontshot.setPower(0.62);//59
-        robot.backshot.setPower(0.62);
+        robot.frontshot.setPower(0.405);//39
+        robot.backshot.setPower(0.405);
 
        // robot.frontshot.setPower(0.59);//63
        // robot.backshot.setPower(0.59);
@@ -41,7 +41,7 @@ public class RPSCounterTest extends LinearOpMode
 
         //encoderDriveHeading.StartAction(0.7, 57, 0, 5, true);
 
-        sleep(500);
+        sleep(2000);
         //robot.RPSCounter(1400);
 
 //        for (int i = 0; i < 3; i++)
@@ -60,7 +60,9 @@ public class RPSCounterTest extends LinearOpMode
 
          */
 
-        robot.ThreeRingLaunch(1400, 3);
+     //   robot.ThreeRingLaunch(1500, 3);
+        robot.ThreeRingLaunch(1390, 3);
+        sleep(500);
 
 /*
         //straight on case

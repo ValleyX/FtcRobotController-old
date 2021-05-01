@@ -93,8 +93,8 @@ public class MandoRobotHardware
     public final double clasperOpen = 0.5;
     public final double clasperClosed = 0.0;
 
-    public final double nucketyUp = 0; //0.05
-    public final double nucketyDown = 0.40;
+    public final double nucketyUp = 0.08; //0.05
+    public final double nucketyDown = 0.50; //0.45
     public final double sweepyOut = 0.60;
     public final double sweepyPush = 0.90;
 
@@ -139,22 +139,22 @@ public class MandoRobotHardware
         });
 
         // Define and Initialize Motors
-        leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 0
-        leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 2
-        rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 1
-        rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 3
+        leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 2
+        leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 3
+        rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 0
+        rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 1
 
-        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 5
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 0
         clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 1
-        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // eh servo 0
-        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 2
+        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // ch servo 2
+        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 3
 
-        frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 1
-        backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 3
+        frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 0
+        backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 1
 
-        intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 0
+        intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 3
 
-        distance = OpMode_.hardwareMap.get(DistanceSensor.class, "distance"); // ch sensor 1
+        distance = OpMode_.hardwareMap.get(DistanceSensor.class, "distance"); // eh sensor 1
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -180,6 +180,7 @@ public class MandoRobotHardware
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         frontshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -323,6 +324,7 @@ public class MandoRobotHardware
             OpMode_.sleep(Time);
             //RPSCounter(idealRPS);
             sweepyServo.setPosition(sweepyOut);
+            OpMode_.sleep(Time);
             RPSCounter(idealRPS);
         }
     }
