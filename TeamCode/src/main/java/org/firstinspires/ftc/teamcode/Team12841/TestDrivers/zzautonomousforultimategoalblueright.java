@@ -29,8 +29,9 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import java.util.Locale;
 @Autonomous(name="Test: autonomous for ultimate goal blue right", group="Test")
 @Disabled
-public class autonomousforultimategoalblueright extends LinearOpMode {
-        public org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline pipeline;
+
+public class zzautonomousforultimategoalblueright extends LinearOpMode {
+        public zzautonomousforultimategoal.SkystoneDeterminationPipeline pipeline;
         WebcamName webcam1;
         // WebcamName webcam2;
         OpenCvSwitchableWebcam switchableWebcam;
@@ -102,7 +103,7 @@ class SamplePipeline extends OpenCvPipeline
             int avg1;
 
             // Volatile since accessed by OpMode thread w/o synchronization
-            public volatile org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition position = org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR;
+            public volatile zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition position = zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR;
 
             /*
              * This function takes the RGB frame, converts to YCrCb,
@@ -133,13 +134,13 @@ class SamplePipeline extends OpenCvPipeline
                         BLUE, // The color the rectangle is drawn in
                         2); // Thickness of the rectangle lines
 
-                position = org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+                position = zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
                 if (avg1 > FOUR_RING_THRESHOLD) {
-                    position = org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR;
+                    position = zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR;
                 } else if (avg1 > ONE_RING_THRESHOLD) {
-                    position = org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.ONE;
+                    position = zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.ONE;
                 } else {
-                    position = org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.NONE;
+                    position = zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.NONE;
                 }
 
                 Imgproc.rectangle(
@@ -182,7 +183,7 @@ class SamplePipeline extends OpenCvPipeline
                 switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam1);
 
                 switchableWebcam.openCameraDevice();
-                pipeline = new org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline();
+                pipeline = new zzautonomousforultimategoal.SkystoneDeterminationPipeline();
                 switchableWebcam.setPipeline(pipeline);
                 switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
 
@@ -241,7 +242,7 @@ class SamplePipeline extends OpenCvPipeline
 
 
             //kinda blue box A (right start)
-            if (pipeline.position == org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.NONE) {
+            if (pipeline.position == zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.NONE) {
                 encoder.StartAction(1, 75, 75, 30, true);
 
                 //turn left 90 degress
@@ -275,7 +276,7 @@ class SamplePipeline extends OpenCvPipeline
             }
 
             //kinda blue box B (right start)
-            if(pipeline.position == org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.ONE) {
+            if(pipeline.position == zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.ONE) {
                 System.out.println("ValleyX:  Starting encoder B");
 
                 encoder.StartAction(1, 97, 97, 30, true);
@@ -349,7 +350,7 @@ class SamplePipeline extends OpenCvPipeline
 //kinda blue box C (right start)
 
  */
-            if (pipeline.position == org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR)
+            if (pipeline.position == zzautonomousforultimategoal.SkystoneDeterminationPipeline.RingPosition.FOUR)
                 encoder.StartAction(1, 120, 120, 30, true);
 
             robot.leftDrive.setPower(-0.5);

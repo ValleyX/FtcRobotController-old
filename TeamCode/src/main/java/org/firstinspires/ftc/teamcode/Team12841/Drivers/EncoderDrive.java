@@ -51,10 +51,6 @@ public class EncoderDrive
             robot_.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot_.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            //robot_.leftDrivefront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //robot_.rightDrivefront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //robot_.leftDriveback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            //robot_.rightDriveback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             robot_.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -79,10 +75,6 @@ public class EncoderDrive
             robot_.leftDrive.setPower(Math.abs(speed));
             robot_.rightDrive.setPower(Math.abs(speed));
 
-            //robot_.leftDrivefront.setPower(Math.abs(speed));
-            //robot_.rightDrivefront.setPower(Math.abs(speed));
-            //robot_.leftDriveback.setPower(Math.abs(speed));
-            //robot_.rightDriveback.setPower(Math.abs(speed));
 
             runtime_.reset();
 
@@ -119,10 +111,7 @@ public class EncoderDrive
         robot_.leftDrive.setPower(0);
         robot_.rightDrive.setPower(0);
 
-        //         leftDrivefront.setPower(0);
-        //         rightDrivefront.setPower(0);
-        //         leftDriveback.setPower(0);
-        //         rightDriveback.setPower(0);
+
 
         // Turn off RUN_TO_POSITION
         robot_.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

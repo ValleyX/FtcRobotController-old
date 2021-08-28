@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Team12841.Drivers;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static android.os.SystemClock.sleep;
+
 public class  EncoderDrive4motors
 {
     private RobotHardware4motors robot_;
@@ -38,8 +40,10 @@ public class  EncoderDrive4motors
     {
         waiting_ = waiting;
 
-        int newLeftTarget;
-        int newRightTarget;
+        int newLeftFrontTarget;
+        int newLeftBackTarget;
+        int newRightFrontTarget;
+        int newRightBackTarget;
 
         // Ensure that the opmode is still active
         if (robot_.OpMode_.opModeIsActive()) {
@@ -64,16 +68,18 @@ public class  EncoderDrive4motors
                     robot_.leftDriveback.getCurrentPosition(),
                     robot_.rightDrivefront.getCurrentPosition(),
                     robot_.rightDrivefront.getCurrentPosition());
-            robot_.OpMode_.telemetry.update();
+            //robot_.OpMode_.telemetry.update();
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot_.leftDrivefront.getCurrentPosition() + (int) (leftInches * robot_.COUNTS_PER_INCH);
-           // newLeftTarget = robot_.leftDriveback.getCurrentPosition() + (int) (leftInches * robot_.COUNTS_PER_INCH);
-            newRightTarget = robot_.rightDrivefront.getCurrentPosition() + (int) (rightInches * robot_.COUNTS_PER_INCH);
-            robot_.leftDrivefront.setTargetPosition(newLeftTarget);
-            robot_.leftDriveback.setTargetPosition(newLeftTarget);
-            robot_.rightDrivefront.setTargetPosition(newRightTarget);
-            robot_.rightDriveback.setTargetPosition(newRightTarget);
+            newLeftFrontTarget = robot_.leftDrivefront.getCurrentPosition() + (int) (leftInches * robot_.COUNTS_PER_INCH);
+            newLeftBackTarget = robot_.leftDriveback.getCurrentPosition() + (int) (leftInches * robot_.COUNTS_PER_INCH);
+            newRightFrontTarget = robot_.rightDrivefront.getCurrentPosition() + (int) (rightInches * robot_.COUNTS_PER_INCH);
+            newRightBackTarget = robot_.rightDriveback.getCurrentPosition() + (int) (rightInches * robot_.COUNTS_PER_INCH);
+
+            robot_.leftDrivefront.setTargetPosition(newLeftFrontTarget);
+            robot_.leftDriveback.setTargetPosition(newLeftBackTarget);
+            robot_.rightDrivefront.setTargetPosition(newRightFrontTarget);
+            robot_.rightDriveback.setTargetPosition(newRightBackTarget);
 
             // Turn On RUN_TO_POSITION
             robot_.leftDrivefront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -97,8 +103,8 @@ public class  EncoderDrive4motors
                       !IsActionDone())
                 {
                     // Display it for the driver.
-                    robot_.OpMode_.telemetry.addData("Path1", "Running to %7d :%7d",
-                            newLeftTarget, newRightTarget);
+                    robot_.OpMode_.telemetry.addData("Path1", "Running to %7d :%7d : %7d : %7d",
+                            newLeftFrontTarget, newRightFrontTarget, newLeftBackTarget, newRightBackTarget);
                     robot_.OpMode_.telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
                             robot_.leftDrivefront.getCurrentPosition(),
                             robot_.leftDriveback.getCurrentPosition(),
@@ -107,28 +113,27 @@ public class  EncoderDrive4motors
                     robot_.OpMode_.telemetry.update();
                     robot_.OpMode_.idle();
                 }
+                StopAction();
             }
-            robot_.leftDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.leftDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.rightDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot_.rightDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+
         }
     }
 
     //check if the motors have hit their target
     public boolean IsActionDone()
     {
-        return !robot_.leftDrivefront.isBusy() && robot_.leftDriveback.isBusy() && !robot_.rightDrivefront.isBusy() && !robot_.rightDriveback.isBusy();
+
+        return !robot_.leftDrivefront.isBusy() || !robot_.leftDriveback.isBusy() || !robot_.rightDrivefront.isBusy() || !robot_.rightDriveback.isBusy();
     }
 
     //stop the motors
     public void StopAction()
     {
         // Stop all motion;
-        robot_.leftDrivefront.setPower(0);
-        robot_.leftDriveback.setPower(0);
-        robot_.rightDrivefront.setPower(0);
-        robot_.rightDriveback.setPower(0);
+        robot_.power0drive();
 
         // Turn off RUN_TO_POSITION
         robot_.leftDrivefront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
