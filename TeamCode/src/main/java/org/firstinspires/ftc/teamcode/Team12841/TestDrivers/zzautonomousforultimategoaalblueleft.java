@@ -28,13 +28,9 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import java.util.Locale;
 @Autonomous(name = "Test: autonomous for ultimate goal blue left", group = "Test")
 @Disabled
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Team12841/TestDrivers/autonomousforultimategoaalblueleft.java
-public class autonomousforultimategoaalblueleft extends LinearOpMode {
-        public org.firstinspires.ftc.teamcode.Team12841.TestDrivers.autonomousforultimategoal.SkystoneDeterminationPipeline pipeline;
-=======
+
 public class zzautonomousforultimategoaalblueleft extends LinearOpMode {
         public zzautonomousforultimategoal.SkystoneDeterminationPipeline pipeline;
->>>>>>> origin/master:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Team12841/TestDrivers/zzautonomousforultimategoaalblueleft.java
         WebcamName webcam1;
         // WebcamName webcam2;
         OpenCvSwitchableWebcam switchableWebcam;

@@ -229,7 +229,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
             encoder.StartAction(1, 75, 75, 5, true);
 
             robot.turntoheading(1,89);
-            /*//turn left 90 degress
+            /*turn left 90 degress
             robot.leftDrivefront.setPower(0.80);
             robot.leftDriveback.setPower(0.80);
             robot.rightDrivefront.setPower(-0.80);
@@ -247,7 +247,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 System.out.println("ValleyX: " + heading);
             }
 
-            robot.power0drive();*/
+            robot.power0drive();
 
             encoder.StartAction(1, 22, 22, 5, true);
             encoder.StartAction(1, -22, -22, 5, true);
@@ -275,7 +275,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX left: " + heading);
             }
-            robot.power0drive();*/
+            robot.power0drive();
 
             encoder.StartAction(0.5, 25, 25, 5, true);
 
@@ -305,7 +305,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
                 heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                 System.out.println("ValleyX right: " + heading);
             }
-            robot.power0drive();*/
+            robot.power0drive();
 
             encoder.StartAction(0.5, -54, -54, 5, true);
 
@@ -330,6 +330,7 @@ public class autonomousforultimategoalRed4left extends LinearOpMode {
             return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
 
         }
+
     }
 
-
+*/

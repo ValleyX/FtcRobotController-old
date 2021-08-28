@@ -137,7 +137,6 @@ public class zzautonomousforultimategoalRedstart extends LinearOpMode {
         }
     }
 
->>>>>>> origin/master:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Team12841/TestDrivers/zzautonomousforultimategoalRedstart.java
 
     BNO055IMU imu;
     // State used for updating telemetry
