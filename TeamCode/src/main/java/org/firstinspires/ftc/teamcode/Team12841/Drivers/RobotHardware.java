@@ -63,7 +63,6 @@ public class RobotHardware
     //   public DcMotor  leftDriveback;
     //   public DcMotor  rightDriveback;
 
-
     private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
     private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
     private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
@@ -79,17 +78,8 @@ public class RobotHardware
         leftDrive = ahwMap.get(DcMotor.class, "lmotor");
         rightDrive = ahwMap.get(DcMotor.class, "rmotor");
 
-       // leftDrivefront = ahwMap.get(DcMotor.class, "lfmotor");
-      //  leftDriveback = ahwMap.get(DcMotor.class, "lbmotor");
-     //   rightDrivefront = ahwMap.get(DcMotor.class, "rfmotor");
-     //   rightDriveback = ahwMap.get(DcMotor.class, "rbmotor");
-
-
         leftDrive.setDirection(DcMotor.Direction.FORWARD); // TODO determine which motor should be reversed
-        leftDrive.setDirection(DcMotor.Direction.FORWARD); //  TODO determine which motor should be reversed
-
-        //leftDrivefront.setDirection(DcMotor.Direction.FORWARD); //
-        //leftDriveback.setDirection(DcMotor.Direction.FORWARD); //
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);// TODO determine which motor should be reversed
 
         // Set all motors to zero power
         leftDrive.setPower(0);
