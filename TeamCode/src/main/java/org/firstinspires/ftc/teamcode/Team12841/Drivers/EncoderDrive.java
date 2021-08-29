@@ -51,6 +51,7 @@ public class EncoderDrive
             robot_.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot_.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+
             robot_.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -73,6 +74,7 @@ public class EncoderDrive
             // reset the timeout time and start motion.
             robot_.leftDrive.setPower(Math.abs(speed));
             robot_.rightDrive.setPower(Math.abs(speed));
+
 
             runtime_.reset();
 
@@ -108,6 +110,8 @@ public class EncoderDrive
         // Stop all motion;
         robot_.leftDrive.setPower(0);
         robot_.rightDrive.setPower(0);
+
+
 
         // Turn off RUN_TO_POSITION
         robot_.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

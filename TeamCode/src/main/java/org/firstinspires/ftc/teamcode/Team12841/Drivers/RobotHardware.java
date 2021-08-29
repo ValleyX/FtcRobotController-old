@@ -44,6 +44,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  *
  * Motor channel:  Left  drive motor:        "left_drive"
  * Motor channel:  Right drive motor:        "right_drive"
+ *  //Motor channel:  Left  drive front motor:        "left_drive"
+ *  //Motor channel:  Right drive front motor:        "right_drive"
+ *   // Motor channel:  Left  drive back motor:        "left_drive"
+ *  // Motor channel:  Right drive back motor:        "right_drive"
  *
  *
  */
@@ -54,6 +58,10 @@ public class RobotHardware
     public DcMotor  leftDrive;
     public DcMotor  rightDrive;
 
+    //   public DcMotor  leftDrivefront;
+    //   public DcMotor  rightDrivefront;
+    //   public DcMotor  leftDriveback;
+    //   public DcMotor  rightDriveback;
 
     private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
     private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
@@ -77,9 +85,19 @@ public class RobotHardware
         leftDrive.setPower(0);
         rightDrive.setPower(0);
 
+        //         leftDrivefront.setPower(0);
+        //         rightDrivefront.setPower(0);
+        //         leftDriveback.setPower(0);
+        //         rightDriveback.setPower(0);
+
         // Set all motors to run without encoders by default
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //         leftDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //         rightDrivefront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //         leftDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //         rightDriveback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
  }
 
