@@ -1,14 +1,23 @@
-package org.firstinspires.ftc.teamcode.Team2844.Drivers;
+package org.firstinspires.ftc.teamcode.Drivers;
 
-import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.SwitchableWebcamExample;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -39,66 +48,50 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Team2844.TestDrivers.EasyOpenCVExample;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvSwitchableWebcam;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.PARAMETER;
-
-/**
- * This is NOT an opmode.
- *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
-
-public class RobotHardware
+public class MandoRobotHardware
 {
     LinearOpMode OpMode_;
 
-    public DcMotor  leftDrive;
-    public DcMotor  rightDrive;
+    public DcMotor  leftFrontDrive;
+    public DcMotor  leftBackDrive;
+    public DcMotor  rightFrontDrive;
+    public DcMotor  rightBackDrive;
+
+    public Servo    wobbleServo;
+    public Servo    clasper;
+    public Servo    nucketyServo;
+    public Servo    sweepyServo;
+
+    public DcMotor  frontshot;
+    public DcMotor  backshot;
+
+    public DcMotor  intake;
+
+    public DistanceSensor distance;
+
     public SkystoneDeterminationPipeline pipeline;
-    public WebcamName webcamLeft; // USB 3.0
-    public WebcamName webcamRight; // USB 2.0
+    public WebcamName webcamLeft; //
+    public WebcamName webcamRight; //
     public OpenCvSwitchableWebcam switchableWebcam;
 
     public BNO055IMU imu;
 
     private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    private final double     DRIVE_GEAR_REDUCTION    = 40.0;   // This is < 1.0 if geared UP
+    private final double     DRIVE_GEAR_REDUCTION    = 21.321;   // This is < 1.0 if geared UP
     private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
     private final double     WHEEL_CIRCUMFERENCE     = 4 * (3.14159265);
     public final double      COUNTS_PER_INCH         = ONE_MOTOR_COUNT / WHEEL_CIRCUMFERENCE;  //TODO determine in class
+
+    public final double wobbleUp = 0.0;
+    public final double wobbleDown = 1.0;
+    public final double clasperMid = 0.5;
+    public final double clasperOpen = 0.5;
+    public final double clasperClosed = 0.0;
+
+    public final double nucketyUp = 0.08; //0.05
+    public final double nucketyDown = 0.50; //0.45
+    public final double sweepyOut = 0.60;
+    public final double sweepyPush = 0.90;
 
     public enum cameraSelection
     {
@@ -107,29 +100,19 @@ public class RobotHardware
     }
 
     /* Constructor */
-    public RobotHardware(LinearOpMode opMode, int x, int y, final cameraSelection camera)
+    public MandoRobotHardware(LinearOpMode opMode, int x, int y, final cameraSelection camera)
     {
         /* Public OpMode members */
         OpMode_ = opMode;
 
-        /*
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new SkystoneDeterminationPipeline(x, y);
-        //webcam.setPipeline(pipeline);
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam.openCameraDevice();
-
-
-        //OpMode_.sleep(1000);
-
         switchableWebcam.setPipeline(pipeline);
-
-        //switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-        //switchableWebcam.setActiveCamera(webcamFront);
-        //final boolean usefront = true;
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -137,42 +120,72 @@ public class RobotHardware
             public void onOpened()
             {
                 //pick desired camera here
-
                 if (camera == cameraSelection.LEFT)
                 {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
                     switchableWebcam.setActiveCamera(webcamLeft);
                 }
                 else
                 {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     switchableWebcam.setActiveCamera(webcamRight);
                 }
             }
         });
-         */
 
         // Define and Initialize Motors
-        leftDrive = OpMode_.hardwareMap.get(DcMotor.class, "lmotor"); // motor 0
-        rightDrive = OpMode_.hardwareMap.get(DcMotor.class, "rmotor"); // motor 1
+        leftFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "lfmotor"); // ch motor 2
+        leftBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "lbmotor"); // ch motor 3
+        rightFrontDrive = OpMode_.hardwareMap.get(DcMotor.class, "rfmotor"); // ch motor 0
+        rightBackDrive = OpMode_.hardwareMap.get(DcMotor.class, "rbmotor"); // ch motor 1
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        wobbleServo = OpMode_.hardwareMap.get(Servo.class, "wobble"); // ch servo 0
+        clasper = OpMode_.hardwareMap.get(Servo.class, "clasper"); // ch servo 1
+        nucketyServo = OpMode_.hardwareMap.get(Servo.class, "nuckety"); // ch servo 2
+        sweepyServo = OpMode_.hardwareMap.get(Servo.class, "sweepy"); // ch servo 3
+
+        frontshot = OpMode_.hardwareMap.get(DcMotor.class, "fshot"); // eh motor 0
+        backshot = OpMode_.hardwareMap.get(DcMotor.class, "bshot"); // eh motor 1
+
+        intake = OpMode_.hardwareMap.get(DcMotor.class, "intake"); // eh motor 3
+
+        distance = OpMode_.hardwareMap.get(DistanceSensor.class, "distance"); // eh sensor 1
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        frontshot.setDirection(DcMotor.Direction.REVERSE);
+        backshot.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
 
         // Set all motors to run without encoders by default
-        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backshot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
     }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
-        //An enum to define the skystone position
+        //An enum to define the ring stack size
         public enum RingPosition
         {
             FOUR,
@@ -186,8 +199,6 @@ public class RobotHardware
 
         //The core values which define the location and size of the sample regions
         //box location and dimensions
-        //static final
-        //Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(x,y); // 200, 165
         Point REGION1_TOPLEFT_ANCHOR_POINT;
 
         static final int REGION_WIDTH = 50;
@@ -274,25 +285,42 @@ public class RobotHardware
         }
     }
 
-    public void RPSCounter()
+    public void RPSCounter(double idealRPS)
     {
-        double requiredRPS = 0; // TODO test
-        int time = 500;
-        double conversion = 1000;
+        int time = 100;
+        double RPSFront = 0;
+        double RPSBack = 0;
 
-        double firstFront = leftDrive.getCurrentPosition();
-        OpMode_.sleep(time);
-        double secondFront = leftDrive.getCurrentPosition();
+        do {
+            int firstFront = frontshot.getCurrentPosition();
+            OpMode_.sleep(time);
+            int secondFront = frontshot.getCurrentPosition();
 
-        double firstBack = rightDrive.getCurrentPosition();
-        OpMode_.sleep(time);
-        double secondBack = rightDrive.getCurrentPosition();
+            int firstBack = backshot.getCurrentPosition();
+            OpMode_.sleep(time);
+            int secondBack = backshot.getCurrentPosition();
 
-        double RPSFront = (secondFront - firstFront)/(time/conversion);
-        double RPSBack = (secondBack - firstBack)/(time/conversion);
+            RPSFront = (secondFront - firstFront) / ((double)time / 1000.0);
+            RPSBack = (secondBack - firstBack) / ((double)time / 1000.0);
 
-        OpMode_.telemetry.addData("Left RPS = %d", RPSFront);
-        OpMode_.telemetry.addData("Right RPS = %d", RPSBack);
-        OpMode_.telemetry.update();
+            OpMode_.telemetry.addData("Frontshot RPS = %d", RPSFront);
+            OpMode_.telemetry.addData("Backshot RPS = %d", RPSBack);
+            OpMode_.telemetry.update();
+
+        } while ((RPSFront < idealRPS) && (RPSBack < idealRPS));
+    }
+
+    public void ThreeRingLaunch(double idealRPS, int rings)
+    {
+        int Time = 500;
+        for (int s = 0; (s < rings) && OpMode_.opModeIsActive(); s++) {
+            RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyPush);
+            OpMode_.sleep(Time);
+            //RPSCounter(idealRPS);
+            sweepyServo.setPosition(sweepyOut);
+            OpMode_.sleep(Time);
+            RPSCounter(idealRPS);
+        }
     }
 }

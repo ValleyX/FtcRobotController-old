@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
+package org.firstinspires.ftc.teamcode.TestDrivers;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -35,8 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Team2844.Drivers.EncoderDrive;
-import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
+import org.firstinspires.ftc.teamcode.Drivers.EncoderDrive;
+import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 
 /**
  * This file is designed to test out the EncoderDrive class

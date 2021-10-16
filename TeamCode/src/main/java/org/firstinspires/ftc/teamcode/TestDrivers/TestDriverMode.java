@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.Team2844.TestDrivers;
+package org.firstinspires.ftc.teamcode.TestDrivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Team2844.Drivers.MandoRobotHardware;
-import org.firstinspires.ftc.teamcode.Team2844.Drivers.RobotHardware;
+import org.firstinspires.ftc.teamcode.Drivers.MandoRobotHardware;
 
 @TeleOp (name="TestDriverMode")
 
