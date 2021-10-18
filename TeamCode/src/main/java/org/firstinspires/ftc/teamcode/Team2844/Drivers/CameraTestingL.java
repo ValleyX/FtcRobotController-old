@@ -27,7 +27,7 @@ public class CameraTestingL
 {
     LinearOpMode OpMode_;
 
-    public MandoRobotHardware.SkystoneDeterminationPipeline pipeline;
+//    public MandoRobotHardware.SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; //
     public WebcamName webcamRight; //
     public OpenCvSwitchableWebcam switchableWebcam;

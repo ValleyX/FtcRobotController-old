@@ -2,14 +2,14 @@ package org.firstinspires.ftc.team2844.Drivers;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+/*
 public class EncoderDrive
 {
     private RobotHardware robot_;
     private ElapsedTime runtime_;
     private boolean waiting_;
 
-    /* Constructor setup all class variables here */
+    /* Constructor setup all class variables here
     public EncoderDrive(RobotHardware robot) {
         robot_ = robot;
         runtime_ = new ElapsedTime();
@@ -29,7 +29,7 @@ public class EncoderDrive
      *  and to stop the motors when complete
      *  This feature allow the main program to start up multiple robot actions
      *  in parallel in a larger loop checking multiple robots actions for completion
-     */
+
     public void StartAction(double speed,
                             double leftInches,
                             double rightInches,
@@ -118,3 +118,6 @@ public class EncoderDrive
     }
 
 }
+
+
+*/
