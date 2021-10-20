@@ -13,7 +13,7 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class Testmechaauto extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this);
+        RobotHardware robot = new RobotHardware(hardwareMap, this,0,0, RobotHardware.cameraSelection.LEFT);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
 
         waitForStart();
