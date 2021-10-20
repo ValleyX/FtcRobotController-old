@@ -109,7 +109,7 @@ public class MechabotAutoDriveByGyro_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        robot_   = new RobotHardware(hardwareMap, this);
+        robot_   = new RobotHardware(hardwareMap, this,0,0, RobotHardware.cameraSelection.LEFT);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
 
