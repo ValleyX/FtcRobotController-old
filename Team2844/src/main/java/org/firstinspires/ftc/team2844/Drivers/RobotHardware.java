@@ -51,18 +51,18 @@ public class RobotHardware
 {
     LinearOpMode OpMode_;
 
-    DcMotor  leftFront;
-    DcMotor  rightFront;
-    DcMotor  leftBack;
-    DcMotor  rightBack;
+    public DcMotor  leftFront;
+    public DcMotor  rightFront;
+    public DcMotor  leftBack;
+    public DcMotor  rightBack;
 
 
 
-    private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    private final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
-    private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    private final double     Distance_in_one_rev     = 4.0  * 3.14; //in
-    final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine in class
+    public final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    public final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
+    public final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    public final double     Distance_in_one_rev     = 4.0  * 3.14; //in
+    public final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine in class
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode) {

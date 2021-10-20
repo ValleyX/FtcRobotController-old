@@ -5,18 +5,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="TestMechaWheels")
+@TeleOp(name="TestMechaWheelsDriver")
 public class TestTheMechaWheels extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        //the same name for the motor on the phone
         DcMotor leftFront = hardwareMap.get(DcMotor.class,"leftFront");
         DcMotor rightFront = hardwareMap.get(DcMotor.class,"rightFront");
         DcMotor leftBack = hardwareMap.get(DcMotor.class,"leftBack");
         DcMotor rightBack = hardwareMap.get(DcMotor.class,"rightBack");
+
+        //motors have to be reversed because of the gears or the orientation of the motors
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
         waitForStart();
         while(opModeIsActive()) {
+            //using different buttons on controller
             double strafeR = gamepad1.right_trigger;
             double strafeL = gamepad1.left_trigger;
             double lefty = gamepad1.left_stick_y;
@@ -43,7 +48,7 @@ public class TestTheMechaWheels extends LinearOpMode {
                 rightBack.setPower(righty);
             }
 
-//telemetry for phone for driving
+            //telemetry for phone for driving
             telemetry.addData("leftstick y", lefty);
             telemetry.addData("rightstick y", righty);
             telemetry.addData("strafeR y", strafeR);
