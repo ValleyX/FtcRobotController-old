@@ -70,12 +70,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Disabled
 public class SensorColor extends LinearOpMode {
 
-  /** The colorSensor field will contain a reference to our color sensor hardware object */
+  /**
+   * The colorSensor field will contain a reference to our color sensor hardware object
+   */
   NormalizedColorSensor colorSensor;
 
-  /** The relativeLayout field is used to aid in providing interesting visual feedback
+  /**
+   * The relativeLayout field is used to aid in providing interesting visual feedback
    * in this sample application; you probably *don't* need this when you use a color sensor on your
-   * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
+   * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller.
+   */
   View relativeLayout;
 
   /**
@@ -88,7 +92,8 @@ public class SensorColor extends LinearOpMode {
    * block around the main, core logic, and an easy way to make that all clear was to separate
    * the former from the latter in separate methods.
    */
-  @Override public void runOpMode() {
+  @Override
+  public void runOpMode() {
 
     // Get a reference to the RelativeLayout so we can later change the background
     // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -107,7 +112,7 @@ public class SensorColor extends LinearOpMode {
           relativeLayout.setBackgroundColor(Color.WHITE);
         }
       });
-      }
+    }
   }
 
   protected void runSample() {
@@ -140,7 +145,7 @@ public class SensorColor extends LinearOpMode {
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
     if (colorSensor instanceof SwitchableLight) {
-      ((SwitchableLight)colorSensor).enableLight(true);
+      ((SwitchableLight) colorSensor).enableLight(true);
     }
 
     // Wait for the start button to be pressed.
@@ -176,7 +181,7 @@ public class SensorColor extends LinearOpMode {
         // If the button is (now) down, then toggle the light
         if (xButtonCurrentlyPressed) {
           if (colorSensor instanceof SwitchableLight) {
-            SwitchableLight light = (SwitchableLight)colorSensor;
+            SwitchableLight light = (SwitchableLight) colorSensor;
             light.enableLight(!light.isLightOn());
           }
         }
@@ -216,35 +221,26 @@ public class SensorColor extends LinearOpMode {
       if (colorSensor instanceof DistanceSensor) {
         telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
       }
-                  //Colors to detect and telling
+      //Colors to detect and telling
       if ((red <= 10.0) && (green <= 10.0) && (blue <= 10.0)) {
         System.out.println("It is Black");
         telemetry.addLine("It is black");
 
-      }
-      else if ((red >= 250.0) && (green >= 250.0) && (blue >= 250.0)) {
+      } else if ((red >= 250.0) && (green >= 250.0) && (blue >= 250.0)) {
         System.out.println("It is White");
         telemetry.addLine("It is White");
-      }
-      else if ((red >= 100.0) && (green <= 20.0) && (blue <= 20.0)) {
+      } else if ((red >= 100.0) && (green <= 20.0) && (blue <= 20.0)) {
         System.out.println("It is Red");
         telemetry.addLine("It is Red");
-      }
-      else if ((red <= 20.0) && (green <= 20.0) && (blue >= 100.0)) {
+      } else if ((red <= 20.0) && (green <= 20.0) && (blue >= 100.0)) {
         System.out.println("It is Blue");
         telemetry.addLine("It is Blue");
-      }
-      else if ((140.0 <= red && red <= 160.0) && (200.0 <= green && green <= 210.0) && (25.0 < blue && blue <= 60)) {
+      } else if ((140.0 <= red && red <= 160.0) && (200.0 <= green && green <= 210.0) && (25.0 < blue && blue <= 60)) {
         System.out.println("It is yellow");
         telemetry.addLine("It is Yellow");
-        }
-       } else {
+      } else {
         System.out.println("...");
       }
-
-
-
-
 
 
       telemetry.update();
@@ -257,4 +253,5 @@ public class SensorColor extends LinearOpMode {
       });
     }
   }
+}
 
