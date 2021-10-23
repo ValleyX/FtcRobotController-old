@@ -16,8 +16,14 @@ public class Testmechaauto extends LinearOpMode{
         RobotHardware robot = new RobotHardware(hardwareMap, this,0,0, RobotHardware.cameraSelection.LEFT);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
 
+
         waitForStart();
         encodermecha.StartAction(0.5,5,5,5,true);
+
+
+
+
+
 
 
     }

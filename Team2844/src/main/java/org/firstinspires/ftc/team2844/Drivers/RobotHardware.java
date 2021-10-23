@@ -29,6 +29,7 @@ package org.firstinspires.ftc.team2844.Drivers;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -82,18 +83,28 @@ public class RobotHardware
         RIGHT
     }
 
+    BNO055IMU imu = null;
 
+
+    //encoder
     public final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
     public final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
     public final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
     public final double     Distance_in_one_rev     = 4.0  * 3.14; //in
-    public final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine in class
+    public final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine// in class
+
+    //imu (turny thingy)
+    static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
+    static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
+    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
+    static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
+    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
-
+/*
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
@@ -116,7 +127,7 @@ public class RobotHardware
                 }
             }
         });
-
+*/
         // Define and Initialize Motors
          leftFront = ahwMap.get(DcMotor.class,"leftFront");
          rightFront = ahwMap.get(DcMotor.class,"rightFront");
