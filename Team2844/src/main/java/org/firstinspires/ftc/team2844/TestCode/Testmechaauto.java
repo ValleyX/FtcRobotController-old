@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.team2844.Drivers.EncoderDriveMecha;
+import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 
 @Autonomous(name="Testmechaauto")
@@ -15,10 +16,13 @@ public class Testmechaauto extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(hardwareMap, this,0,0, RobotHardware.cameraSelection.LEFT);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
+        MechaImuDriver headingdrive = new MechaImuDriver(robot);
 
 
         waitForStart();
-        encodermecha.StartAction(0.5,5,5,5,true);
+        //encodermecha.StartAction(0.5,5,5,5,true);
+
+        headingdrive.gyroTurn(1,90);
 
 
 
