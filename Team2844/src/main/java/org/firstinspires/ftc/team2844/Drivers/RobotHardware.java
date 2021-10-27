@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -74,6 +75,7 @@ public class RobotHardware
     public DcMotor  rightFront;
     public DcMotor  leftBack;
     public DcMotor  rightBack;
+    public DistanceSensor sensorRange;
 
     public WebcamName webcamLeft; //
     public WebcamName webcamRight; //
@@ -137,7 +139,12 @@ public class RobotHardware
          leftBack = ahwMap.get(DcMotor.class,"leftBack");
          rightBack = ahwMap.get(DcMotor.class,"rightBack");
 
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+         //test
+        sensorRange = ahwMap.get(DistanceSensor.class, "distance");
+        //test
+
+
+            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
@@ -171,7 +178,21 @@ public class RobotHardware
         imu = ahwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        opMode.sleep(2000);
+        ///TEST CODE
+        while (!OpMode_.isStopRequested() && !imu.isGyroCalibrated()) {
+            OpMode_.sleep(50);
+            OpMode_.idle();
+        }
+
+        if (!imu.isGyroCalibrated()) {
+            System.out.println("ValleyX: Gyro not calibrated");
+        }
+
+        System.out.println("ValleyX: imu calib status" + imu.getCalibrationStatus().toString());
+        OpMode_.telemetry.addData("Mode", "calibrated");
+        OpMode_.telemetry.update();
+        ///TEST CODE
+
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
 

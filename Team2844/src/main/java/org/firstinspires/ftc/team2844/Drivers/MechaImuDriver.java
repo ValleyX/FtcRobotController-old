@@ -269,7 +269,8 @@ telemetry.addData("Speed.", "%5.2f:%5.2f:%5.2f:%5.2f", leftFrontSpeed, rightFron
 
         while (robotError > 180) robotError -= 360;
         while (robotError <= -180) robotError += 360;
-/*
+/**
+* used for debugging angles
         robot_.OpMode_.telemetry.addData("current angel is", gyroActual);
         robot_.OpMode_.telemetry.addData("robot error is", robotError);
         robot_.OpMode_.telemetry.addData("targetangle is", targetAngle);

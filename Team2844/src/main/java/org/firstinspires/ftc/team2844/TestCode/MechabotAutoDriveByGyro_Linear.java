@@ -199,6 +199,8 @@ public class MechabotAutoDriveByGyro_Linear extends LinearOpMode {
         // Put a hold after each turn
         waitForStart();
 
+
+
         gyroDrive(DRIVE_SPEED, 5.0, 0.0);    // Drive FWD 48 inches
         gyroTurn( TURN_SPEED, 90.0);         // Turn  CCW to -45 Degrees
         gyroHold( TURN_SPEED, 90.0, 1);    // Hold -45 Deg heading for a 1/2 second
@@ -351,7 +353,7 @@ public class MechabotAutoDriveByGyro_Linear extends LinearOpMode {
 *  2) Driver stops the opmode running.
 *
 * @param speed Desired speed of turn.
-* @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+* @param angle      Absolutye Angle (in Degrees) relative to last gyro reset.
 *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
 *                   If a relative angle is required, add/subtract from current heading.
 */
