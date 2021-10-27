@@ -31,6 +31,7 @@ package org.firstinspires.ftc.team12841.Drivers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -50,14 +51,19 @@ public class RobotHardware
 {
     LinearOpMode OpMode_;
 
-    DcMotor  leftDrive;
-    DcMotor  rightDrive;
+    DcMotor  LfMotor;
+    DcMotor  RfMotor;
+    DcMotor  LbMotor;
+    DcMotor  RbMotor;
 
 
-    //private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    //private final double     DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
-    //private final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    final double             COUNTS_PER_INCH         = 1.0;  //TODO determine in class
+    private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    private final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
+    private final double     ONE_MOTOR_COUNT_IN_ONE_REV  = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    private final double     WHEEL_CIRCUMFRANSE      = 4.0;
+    private final double     PI                      = 3.14159;
+    private final double     INCHES_IN_ONE_REV       = WHEEL_CIRCUMFRANSE * PI;
+    final double             COUNTS_PER_INCH         =  ONE_MOTOR_COUNT_IN_ONE_REV / INCHES_IN_ONE_REV; //TODO determine in class
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode) {
@@ -65,19 +71,29 @@ public class RobotHardware
         OpMode_ = opMode;
 
         // Define and Initialize Motors
-        leftDrive = ahwMap.get(DcMotor.class, "lmotor");
-        rightDrive = ahwMap.get(DcMotor.class, "rmotor");
+        LfMotor = ahwMap.get(DcMotor.class, "LfMotor");
+        RfMotor = ahwMap.get(DcMotor.class, "RfMotor");
+        LbMotor = ahwMap.get(DcMotor.class, "LbMotor");
+        RbMotor = ahwMap.get(DcMotor.class, "RbMotor");
 
-        leftDrive.setDirection(DcMotor.Direction.REVERSE); // TODO determine which motor should be reversed
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);// TODO determine which motor should be reversed
+        // set the direction of left motor to reverse so wheels go the same directions.
+        LfMotor.setDirection(DcMotor.Direction.REVERSE);
+        LbMotor.setDirection(DcMotor.Direction.REVERSE);
+        RfMotor.setDirection(DcMotor.Direction.FORWARD);
+        RbMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        LfMotor.setPower(0);
+        LbMotor.setPower(0);
+        RfMotor.setPower(0);
+        RbMotor.setPower(0);
+
 
         // Set all motors to run without encoders by default
-        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LbMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RbMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
  }
 
