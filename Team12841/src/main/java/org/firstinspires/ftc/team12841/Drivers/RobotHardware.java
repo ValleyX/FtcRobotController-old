@@ -55,6 +55,7 @@ public class RobotHardware
     DcMotor  RfMotor;
     DcMotor  LbMotor;
     DcMotor  RbMotor;
+    // public DcMotor WheelMotor;
 
 
     private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
@@ -75,18 +76,26 @@ public class RobotHardware
         RfMotor = ahwMap.get(DcMotor.class, "RfMotor");
         LbMotor = ahwMap.get(DcMotor.class, "LbMotor");
         RbMotor = ahwMap.get(DcMotor.class, "RbMotor");
+        //WheelMotor = ahwMap.get(DcMotor.class, "WheelMotor");
 
         // set the direction of left motor to reverse so wheels go the same directions.
         LfMotor.setDirection(DcMotor.Direction.REVERSE);
         LbMotor.setDirection(DcMotor.Direction.REVERSE);
         RfMotor.setDirection(DcMotor.Direction.FORWARD);
         RbMotor.setDirection(DcMotor.Direction.FORWARD);
+        //WheelMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        LfMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RfMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         LfMotor.setPower(0);
         LbMotor.setPower(0);
         RfMotor.setPower(0);
         RbMotor.setPower(0);
+        //WheelMotor.setPower(0);
 
 
         // Set all motors to run without encoders by default
@@ -94,6 +103,7 @@ public class RobotHardware
         LbMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RbMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //WheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
  }
 
