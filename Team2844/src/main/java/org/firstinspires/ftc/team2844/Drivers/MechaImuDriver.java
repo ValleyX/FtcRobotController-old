@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team2844.Drivers;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -45,6 +47,11 @@ public class MechaImuDriver {
         // Ensure that the opmode is still active
         if (robot_.OpMode_.opModeIsActive()) {
 
+            robot_.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
             // Determine new target position, and pass to motor controller
             moveCounts = (int) (distance * robot_.COUNTS_PER_INCH);
             newLeftFrontTarget = robot_.leftFront.getCurrentPosition() + moveCounts;
@@ -53,6 +60,8 @@ public class MechaImuDriver {
             newRightBackTarget = robot_.rightBack.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
+            /** used to determine direction of the front
+             * */
             robot_.leftFront.setTargetPosition(newLeftFrontTarget);
             robot_.rightFront.setTargetPosition(newRightFrontTarget);
             robot_.leftBack.setTargetPosition(newLeftBackTarget);
@@ -91,16 +100,18 @@ public class MechaImuDriver {
 
 
                 // Normalize speeds if either one exceeds +/- 1.0;
-                maxfront = Math.max(Math.abs(leftFrontSpeed), Math.abs(rightFrontSpeed));
-                maxback = Math.max(Math.abs(leftBackSpeed), Math.abs(rightBackSpeed));
-                max = maxback + maxfront;
+                max = Math.max(Math.abs(leftFrontSpeed), Math.abs(rightFrontSpeed));
+                //maxback = Math.max(Math.abs(leftBackSpeed);//, Math.abs(rightBackSpeed));
+                //max = maxback + maxfront;
 
-                if (maxfront > 1.0 && maxback > 1.0) {
+                if (max > 1.0/* && maxback > 1.0*/) {
                     leftFrontSpeed /= max;
                     rightBackSpeed /= max;
                     leftBackSpeed /= max;
                     rightFrontSpeed /= max;
                 }
+
+
 
                 robot_.leftFront.setPower(leftFrontSpeed);
                 robot_.rightFront.setPower(rightFrontSpeed);
@@ -108,12 +119,17 @@ public class MechaImuDriver {
                 robot_.rightBack.setPower(rightBackSpeed);
 
                 // Display drive status for the driver.
-                //telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
-                // telemetry.addData("Target", "%7d:%7d:%7d:%7d", newLeftFrontTarget, newRightFrontTarget, newLeftBackTarget, newRightBackTarget);
-                //telemetry.addData("Actual", "%7d:%7d:%7d:%7d", robot_.leftFront.getCurrentPosition(),robot_.rightFront.getCurrentPosition(), robot_.leftBack.getCurrentPosition(), robot_.rightBack.getCurrentPosition());
+                robot_.OpMode_.telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
+                robot_.OpMode_.telemetry.addData("Targetfront", "%7d:%7d", newLeftFrontTarget, newRightFrontTarget);
+                robot_.OpMode_.telemetry.addData("Targetback", "%7d:%7d", newLeftBackTarget, newRightBackTarget);
 
-                //telemetry.addData("Speed", "%5.2f:%5.2f:%5.2f:%5.f", leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed);
-                //robot_.OpMode_.telemetry.update();
+                robot_.OpMode_.telemetry.addData("Actualfront", "%7d:%7d", robot_.leftFront.getCurrentPosition(),robot_.rightFront.getCurrentPosition());
+                robot_.OpMode_.telemetry.addData("Actualback", "%7d:%7d", robot_.leftBack.getCurrentPosition(), robot_.rightBack.getCurrentPosition());
+
+                robot_.OpMode_.telemetry.addData("Speedfront", "%5.2f:%5.2f", leftFrontSpeed, rightFrontSpeed);
+                robot_.OpMode_.telemetry.addData("Speedback", "%5.2f:%5.2f", leftBackSpeed, rightBackSpeed);
+
+                robot_.OpMode_.telemetry.update();
 
 
             }
@@ -122,7 +138,7 @@ public class MechaImuDriver {
             robot_.leftFront.setPower(0);
             robot_.rightFront.setPower(0);
             robot_.leftBack.setPower(0);
-            robot_.leftBack.setPower(0);
+            robot_.rightBack.setPower(0);
 
             // Turn off RUN_TO_POSITION
             robot_.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
