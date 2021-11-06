@@ -20,11 +20,11 @@ public class BlueWheel extends LinearOpMode {
         waitForStart();
 
         //move to wheel
-        encoderDrive.StartAction(0.75, 30, 30, 5, true);
+        encoderDrive.StartAction(0.5, 5, 5, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.75, 10, -10, 5, true);
+        encoderDrive.StartAction(0.5, 19, -19, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.75, -39, -39, 5, true);
+        encoderDrive.StartAction(0.5, -23, -23, 5, true);
         sleep(200);
 
         //Below is the turntable spinning motor
@@ -32,8 +32,8 @@ public class BlueWheel extends LinearOpMode {
 
 
 
-        encoderDrive.StartAction(.75, 24, -24, 5, true);
-        encoderDrive.StartAction(.75, -20, -20, 5, true);
+        encoderDrive.StartAction(0.5, -21, 21, 5, true);
+        encoderDrive.StartAction(.5, 21, 21, 5, true);
     }
   }
 

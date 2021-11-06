@@ -17,8 +17,8 @@ public class RedWarehouse extends LinearOpMode {
         waitForStart();
 
         //move to warehouse
-        encoderDrive.StartAction(0.75, 25, 25, 5, true);
-        encoderDrive.StartAction(1, -17.5, 17.5, 5, true);
+        encoderDrive.StartAction(0.75, 20, 20, 5, true);
+        encoderDrive.StartAction(1, -18, 18, 5, true);
         encoderDrive.StartAction(1, 55, 55, 5, true);
 
 
