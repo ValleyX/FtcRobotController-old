@@ -19,6 +19,11 @@ public class TestTheMechaWheels extends LinearOpMode {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         waitForStart();
         while(opModeIsActive()) {
             //using different buttons on controller
