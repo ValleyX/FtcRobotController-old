@@ -146,7 +146,7 @@ public class RobotHardware
         //test
 
 
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
@@ -310,5 +310,20 @@ public class RobotHardware
         rightBack.setPower(0);
         rightFront.setPower(0);
     }
+
+    public void StraifRight(double speed) {
+        leftFront.setPower(speed);
+        leftBack.setPower(-speed);
+        rightBack.setPower(speed);
+        rightFront.setPower(-speed);
+    }
+
+    public void StraifLeft(double speed) {
+        leftFront.setPower(-speed);
+        leftBack.setPower(speed);
+        rightBack.setPower(-speed);
+        rightFront.setPower(speed);
+    }
+
  }
 
