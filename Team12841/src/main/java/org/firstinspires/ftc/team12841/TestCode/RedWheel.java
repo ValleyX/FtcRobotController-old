@@ -35,6 +35,7 @@ public class RedWheel extends LinearOpMode {
 
         encoderDrive.StartAction(.5, 8.25, -8.25, 5, true);
         encoderDrive.StartAction(.5, 21, 21, 5, true);
+        // might change with final bot
     }
 }
 

@@ -34,6 +34,7 @@ public class BlueWheel extends LinearOpMode {
 
         encoderDrive.StartAction(0.5, -21, 21, 5, true);
         encoderDrive.StartAction(.5, 21, 21, 5, true);
+        //might need change with final bot
     }
   }
 
