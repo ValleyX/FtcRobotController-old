@@ -146,6 +146,12 @@ public class MechaImuDriver {
             robot_.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+        /*
+        robot_.leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot_.rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot_.leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot_.rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+*/
     }
 
     /*

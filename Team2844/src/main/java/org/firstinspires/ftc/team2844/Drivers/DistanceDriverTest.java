@@ -52,6 +52,8 @@ public class DistanceDriverTest {
         if (robot_.OpMode_.opModeIsActive()) {
             double currentdistance = robot_.sensorRange.getDistance(DistanceUnit.INCH);
             double distancedrived = -(distancefromobject - currentdistance); // - is temporary
+            System.out.println("ValleyXcurrent: "+ currentdistance);
+            System.out.println("ValleyXDrived: "+ distancedrived);
 
             imudriver_.gyroDrive(speed, distancedrived, angle);
 
