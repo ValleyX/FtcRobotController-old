@@ -439,10 +439,29 @@ public class RobotHardware
         {
             return avgRight;
         }
-
-
-
-
     }
- }
+
+    public void zeropower() {
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+        rightFront.setPower(0);
+    }
+
+    public void StraifRight(double speed) {
+        leftFront.setPower(speed);
+        leftBack.setPower(-speed);
+        rightBack.setPower(speed);
+        rightFront.setPower(-speed);
+    }
+
+    public void StraifLeft(double speed) {
+        leftFront.setPower(-speed);
+        leftBack.setPower(speed);
+        rightBack.setPower(-speed);
+        rightFront.setPower(speed);
+    }
+
+
+}
 
