@@ -109,7 +109,7 @@ public class RobotHardware
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
-/*
+
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
@@ -132,7 +132,7 @@ public class RobotHardware
                 }
             }
         });
-*/
+
         // Define and Initialize Motors
          leftFront = ahwMap.get(DcMotor.class,"leftFront");
          rightFront = ahwMap.get(DcMotor.class,"rightFront");
@@ -140,7 +140,7 @@ public class RobotHardware
          rightBack = ahwMap.get(DcMotor.class,"rightBack");
 
          //test
-        sensorRange = ahwMap.get(DistanceSensor.class, "distance");
+        //sensorRange = ahwMap.get(DistanceSensor.class, "distance");
         //test
 
 
@@ -206,46 +206,96 @@ public class RobotHardware
             ONE,
             NONE
         }
+
+        public enum MarkerPosition
+        {
+            Left,
+            Middle,
+            Right
+        }
         //Some color constants
         static final Scalar BLUE = new Scalar(0, 255, 0);
         static final Scalar GREEN = new Scalar(255, 255, 255);
+        //Team Color Blue = 109 Average
 
         //The core values which define the location and size of the sample regions
         //box location and dimensions
-        Point REGION1_TOPLEFT_ANCHOR_POINT;
+
+        //Point REGION1_TOPLEFT_ANCHOR_POINT;
+
+        Point REGION1_TOPLEFT_ANCHOR_POINTLEFT;
+        Point REGION1_TOPLEFT_ANCHOR_POINTMIDDLE;
+        Point REGION1_TOPLEFT_ANCHOR_POINTRIGHT;
+
 
         static final int REGION_WIDTH = 60;
-        static final int REGION_HEIGHT = 30;
+        static final int REGION_HEIGHT = 60;
 
         public final int  FOUR_RING_THRESHOLD = 150;
 
         public final int  ONE_RING_THRESHOLD = 135;
 
-        Point region1_pointA;
-        Point region1_pointB;
+        Point region1Middle_pointA;
+        Point region1Middle_pointB;
+
+        Point region1Left_pointA;
+        Point region1Left_pointB;
+
+        Point region1Right_pointA;
+        Point region1Right_pointB;
+
+
+
 
         //Working variables
-        Mat region1_Cb;
+        Mat region1Middle_Cb;
+        Mat region1Left_Cb;
+        Mat region1Right_Cb;
+
+
+
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
-        int avg1;
+        int avgMiddle;
+
+        int avgLeft;
+
+        int avgRight;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
-        public volatile int SkystoneAverage;
+        public volatile SkystoneDeterminationPipeline.MarkerPosition position = SkystoneDeterminationPipeline.MarkerPosition.Middle;
+        public volatile int SkystoneAverageMiddle;
+        public volatile int SkystoneAverageLeft;
+        public volatile int SkystoneAverageRight;
+
 
         public SkystoneDeterminationPipeline(int x, int y)
         {
+            /*
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(x, y); // 200, 165
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+             */
+            REGION1_TOPLEFT_ANCHOR_POINTMIDDLE = new Point(x, y); // 200, 165
+            region1Middle_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.x, REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.y);
+            region1Middle_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.y + REGION_HEIGHT);
+
+            REGION1_TOPLEFT_ANCHOR_POINTLEFT = new Point(2, y); // 200, 165
+            region1Left_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTLEFT.x, REGION1_TOPLEFT_ANCHOR_POINTLEFT.y);
+            region1Left_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTLEFT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTLEFT.y + REGION_HEIGHT);
+
+            REGION1_TOPLEFT_ANCHOR_POINTRIGHT = new Point(259, y); // 200, 165
+            region1Right_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y);
+            region1Right_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y + REGION_HEIGHT);
+
+
         }
 
         //This function takes the RGB frame, converts to YCrCb, and extracts the Cb channel to the 'Cb' variable
         void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
+            Core.extractChannel(YCrCb, Cb, 2);
         }
 
         @Override
@@ -253,7 +303,9 @@ public class RobotHardware
         {
             inputToCb(firstFrame);
 
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+            region1Middle_Cb = Cb.submat(new Rect(region1Middle_pointA, region1Middle_pointB));
+            region1Left_Cb = Cb.submat(new Rect(region1Left_pointA, region1Left_pointB));
+            region1Right_Cb = Cb.submat(new Rect(region1Right_pointA, region1Right_pointB));
         }
 
         @Override
@@ -261,22 +313,27 @@ public class RobotHardware
         {
             inputToCb(input);
 
-            avg1 = (int) Core.mean(region1_Cb).val[0];
+            avgMiddle = (int) Core.mean(region1Middle_Cb).val[0];
+            avgLeft = (int) Core.mean(region1Left_Cb).val[0];
+            avgRight= (int) Core.mean(region1Right_Cb).val[0];
 
+
+
+            //middle
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
+                    region1Middle_pointA, // First point which defines the rectangle
+                    region1Middle_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
-
-            SkystoneAverage = avg1;
+/*
+            SkystoneAverageMiddle = avgMiddle;
             //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD)
+            if(avgMiddle > FOUR_RING_THRESHOLD)
             {
                 position = SkystoneDeterminationPipeline.RingPosition.FOUR;
             }
-            else if (avg1 > ONE_RING_THRESHOLD)
+            else if (avgMiddle > ONE_RING_THRESHOLD)
             {
                 position = SkystoneDeterminationPipeline.RingPosition.ONE;
             }
@@ -284,20 +341,103 @@ public class RobotHardware
             {
                 position = SkystoneDeterminationPipeline.RingPosition.NONE;
             }
-
+*/
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
+                    region1Middle_pointA, // First point which defines the rectangle
+                    region1Middle_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
 
-            return input;
+
+
+
+
+            //Left
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1Left_pointA, // First point which defines the rectangle
+                    region1Left_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                            2); // Thickness of the rectangle lines
+/*
+            SkystoneAverageLeft = avgLeft;
+            //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+                if(avgLeft> FOUR_RING_THRESHOLD)
+            {
+                position = SkystoneDeterminationPipeline.RingPosition.FOUR;
+            }
+                else if (avgLeft > ONE_RING_THRESHOLD)
+            {
+                position = SkystoneDeterminationPipeline.RingPosition.ONE;
+            }
+                else
+            {
+                position = SkystoneDeterminationPipeline.RingPosition.NONE;
+            }
+*/
+            Imgproc.rectangle(
+                input, // Buffer to draw on
+                region1Left_pointA, // First point which defines the rectangl
+                region1Left_pointB, // Second point which defines the rectangle
+                GREEN, // The color the rectangle is drawn in
+                            -1); // Negative thickness means solid fill
+
+
+
+
+
+
+            //Right
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1Right_pointA, // First point which defines the rectangle
+                    region1Right_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                            2); // Thickness of the rectangle lines
+
+            SkystoneAverageRight = avgRight;
+            //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            if((avgRight > avgLeft) && (avgRight > avgMiddle))
+            {
+                position = SkystoneDeterminationPipeline.MarkerPosition.Right;
+            }
+            else if ((avgLeft > avgRight) && (avgLeft > avgMiddle))
+            {
+                position = SkystoneDeterminationPipeline.MarkerPosition.Left;
+            }
+            else
+            {
+                position = SkystoneDeterminationPipeline.MarkerPosition.Middle;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1Right_pointA, // First point which defines the rectangle
+                    region1Right_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                                -1); // Negative thickness means solid fill
+
+
+
+                    return input;
         }
 
-        public int getAnalysis()
+
+
+        public int getAnalysisMiddle()
         {
-            return avg1;
+            return avgMiddle;
+        }
+
+        public int getAnalysisLeft()
+        {
+            return avgLeft;
+        }
+
+        public int getAnalysisRight()
+        {
+            return avgRight;
         }
 
 
