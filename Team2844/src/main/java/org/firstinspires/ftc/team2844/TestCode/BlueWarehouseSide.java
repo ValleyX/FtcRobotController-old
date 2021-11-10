@@ -21,7 +21,7 @@ public class BlueWarehouseSide extends LinearOpMode {
         waitForStart();
 
         headingdrive.gyroTurn(0.75,20);
-        sleep(500);
+        sleep(510);
         headingdrive.gyroDrive(1,12,20);
         sleep(500);
         headingdrive.gyroTurn(0.75,60);

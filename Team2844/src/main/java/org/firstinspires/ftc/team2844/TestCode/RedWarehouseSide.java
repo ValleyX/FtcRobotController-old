@@ -27,7 +27,7 @@ public class RedWarehouseSide extends LinearOpMode {
         headingdrive.gyroDrive(1,1,-43);
         sleep(1000);
         headingdrive.gyroDrive(1,-4,-40);
-        sleep(500);
+        sleep(510);
         headingdrive.gyroTurn(0.75,90);
         sleep(1000);
         headingdrive.gyroDrive(1,5,90);
