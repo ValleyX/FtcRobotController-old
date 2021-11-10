@@ -24,7 +24,7 @@ public class BlueWheel extends LinearOpMode {
         sleep(200);
         encoderDrive.StartAction(0.5, 19, -19, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.5, -23, -23, 5, true);
+        encoderDrive.StartAction(0.25, -22, -22, 5, true);
         sleep(200);
 
         //Below is the turntable spinning motor
@@ -34,6 +34,7 @@ public class BlueWheel extends LinearOpMode {
 
         encoderDrive.StartAction(0.5, -21, 21, 5, true);
         encoderDrive.StartAction(.5, 21, 21, 5, true);
+        //might need change with final bot
     }
   }
 

@@ -20,20 +20,22 @@ public class RedWheel extends LinearOpMode {
         waitForStart();
 //this all needs reversing:
         //move to wheel
-        encoderDrive.StartAction(0.75, 30, 30, 5, true);
+        encoderDrive.StartAction(0.5, 5, 5, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.75, -8.5, 8.5, 5, true);
+        encoderDrive.StartAction(0.5, -19, 19, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.75, -34, -34, 5, true);
+        encoderDrive.StartAction(0.5, -22, -22, 5, true);
         sleep(200);
+        encoderDrive.StartAction(.5,14,-14,5,true);
 
         //Below is the turntable spinning motor
         //robotHardware.WheelMotor.setPower(0.2);
 
 
 
-        encoderDrive.StartAction(.75, -29, 29, 5, true);
-        encoderDrive.StartAction(.75, -20, -20, 5, true);
+        encoderDrive.StartAction(.5, 8.25, -8.25, 5, true);
+        encoderDrive.StartAction(.5, 21, 21, 5, true);
+        // might change with final bot
     }
 }
 
