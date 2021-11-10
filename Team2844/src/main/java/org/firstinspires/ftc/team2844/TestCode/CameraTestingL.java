@@ -31,16 +31,28 @@ public class CameraTestingL extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this,200,100, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this,145,150, RobotHardware.cameraSelection.LEFT);
 
-        RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+        RobotHardware.SkystoneDeterminationPipeline.MarkerPosition path = robot.pipeline.position;
 
         while (!isStarted())
         {
             path = robot.pipeline.position;
-            telemetry.addData("Average", robot.pipeline.SkystoneAverage);
+            //telemetry.addData("AverageMiddle", robot.pipeline.SkystoneAverageMiddle);
+            //telemetry.addData("AverageLeft", robot.pipeline.SkystoneAverageLeft);
+            //telemetry.addData("AverageRight", robot.pipeline.SkystoneAverageRight);
+            //telemetry.addData("Max avg", Math.max(Math.max(robot.pipeline.SkystoneAverageMiddle, robot.pipeline.SkystoneAverageLeft), robot.pipeline.SkystoneAverageRight));
+            telemetry.addData("Position", path);
             telemetry.update();
         }
+        /** test for actual code
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
+
+        }
+
+*/
+
+
 
     }
 }
