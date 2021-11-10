@@ -103,7 +103,7 @@ public class RobotHardware
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
     static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.06;     // Larger is more responsive, but also less stable 0.1
-    static final double P_DRIVE_COEFF = 0.015;     // Larger is more responsive, but also less stable 0.15
+    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable 0.15
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
