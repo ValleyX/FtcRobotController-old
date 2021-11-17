@@ -69,13 +69,18 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
  */
 public class RobotHardware
 {
+//    public static final double P_DRIVE_COEFF = 2;
     public LinearOpMode OpMode_;
 
     public DcMotor  leftFront;
     public DcMotor  rightFront;
     public DcMotor  leftBack;
+    DcMotor duckySpinner;
     public DcMotor  rightBack;
+   // public DcMotor liftmotor;
     public DistanceSensor sensorRange;
+
+
 
     public WebcamName webcamLeft; //
     public WebcamName webcamRight; //
@@ -93,23 +98,32 @@ public class RobotHardware
 
     //encoder
     public final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    public final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
+    public final double     DRIVE_GEAR_REDUCTION    = 20;     // This is < 1.0 if geared UP
     public final double     ONE_MOTOR_COUNT         = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    public final double     Distance_in_one_rev     = 4.0  * 3.14; //in
-    public final double             COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine// in class
+    public final double     Distance_in_one_rev     = 4.0  * Math.PI; //in
+    public final double     COUNTS_PER_INCH         = ONE_MOTOR_COUNT / Distance_in_one_rev ;  //TODO determine// in class
 
     //imu (turny thingy)
     static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
-    static final double HEADING_THRESHOLD = 1;      // As tight as we can make it with an integer gyro
-    static final double P_TURN_COEFF = 0.06;     // Larger is more responsive, but also less stable 0.1
-    static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable 0.15
+    static final double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
+    static final double P_TURN_COEFF = 0.07;     // Larger is more responsive, but also less stable 0.1
+    static final double P_DRIVE_COEFF = 0.015;     // Larger is more responsive, but also less stable 0.15
+
+    //lift
+    public final double     LIFT_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 60.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
+    public final double     LIFT_DISTANCE_IN_ONE_REV = 7.8  ; //actual bot is 9.5
+    public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+
+
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
-
+/*
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
         webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
@@ -132,20 +146,24 @@ public class RobotHardware
                 }
             }
         });
-
+*/
         // Define and Initialize Motors
          leftFront = ahwMap.get(DcMotor.class,"leftFront");
          rightFront = ahwMap.get(DcMotor.class,"rightFront");
          leftBack = ahwMap.get(DcMotor.class,"leftBack");
          rightBack = ahwMap.get(DcMotor.class,"rightBack");
+        duckySpinner = ahwMap.get(DcMotor.class, "duckSpinner");
+
+         //liftmotor = ahwMap.get(DcMotor.class, "LiftMotor");
+
 
          //test
         //sensorRange = ahwMap.get(DistanceSensor.class, "distance");
         //test
 
 
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -197,16 +215,11 @@ public class RobotHardware
 
 
     }
+
+
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         //An enum to define the ring stack size
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
-        }
-
         public enum MarkerPosition
         {
             Left,
@@ -448,19 +461,30 @@ public class RobotHardware
         rightFront.setPower(0);
     }
 
-    public void StraifRight(double speed) {
+    public void StraifLeft(double speed) {
         leftFront.setPower(speed);
         leftBack.setPower(-speed);
         rightBack.setPower(speed);
         rightFront.setPower(-speed);
     }
 
-    public void StraifLeft(double speed) {
+    public void StraifRight(double speed) {
         leftFront.setPower(-speed);
         leftBack.setPower(speed);
         rightBack.setPower(-speed);
-        rightFront.setPower(speed);
+        rightFront.setPower( speed);
     }
+    public void allpower(double power) {
+        leftFront.setPower(power);
+        leftBack.setPower(power);
+        rightBack.setPower(power);
+        rightFront.setPower(power);
+    }
+
+    public void duckySpins(double power) {
+        duckySpinner.setPower(power);
+    }
+
 
 
 }

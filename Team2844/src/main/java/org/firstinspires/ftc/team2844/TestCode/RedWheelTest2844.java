@@ -24,7 +24,6 @@ public class RedWheelTest2844 extends LinearOpMode {
 
 
     headingdrive.gyroDrive(1,10,0);
-
     sleep(1000);
     headingdrive.gyroTurn(0.5,-125);
     sleep(500);

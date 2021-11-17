@@ -24,17 +24,27 @@ public class RedspinnerTest2844 extends LinearOpMode{
         //sleep(1000);
         headingdrive.gyroTurn(0.5,30);
         //sleep(500);
-        headingdrive.gyroDrive(1,13,30);
+        headingdrive.gyroDrive(1,15,30);
         //sleep(500);
         headingdrive.gyroTurn(0.2,50);
         //sleep(500);
-        headingdrive.gyroDrive(1,-27.5,50);
+        headingdrive.gyroDrive(1,-29.5,50);
         //sleep(500);
-        robot.StraifLeft(1);
+
+        robot.StraifLeft(0.4); //straif into the wall
         sleep(2000);
+        headingdrive.gyroDrive(0.4,-10, 0);
+
+        robot.duckySpins(1);
+        robot.allpower(-0.01);
+        sleep(2500);
+
         robot.StraifRight(1);
         sleep(100);
-        headingdrive.gyroDrive(1,9,0);
+        headingdrive.gyroDrive(0.4,16 ,0);
+
+
+
 
         /*
         headingdrive.gyroTurn(0.5,-15);

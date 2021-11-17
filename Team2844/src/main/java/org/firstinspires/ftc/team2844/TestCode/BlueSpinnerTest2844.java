@@ -16,22 +16,37 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest driveto = new DistanceDriverTest(robot, headingdrive);
+        //LiftDriverTest liftto = new LiftDriverTest(robot);
+
 
 
         waitForStart();
 
         headingdrive.gyroDrive(1,10,0);
         //sleep(1000);
-        headingdrive.gyroTurn(0.5,-30);
+        headingdrive.gyroTurn(0.4,-30);
         //sleep(500);
-        headingdrive.gyroDrive(1,13,-30);
-        //sleep(500);
+        headingdrive.gyroDrive(1,15,-30);
+/*
+        sleep(500);
+       // liftto.LiftToDistance(0.2, 9);
+        sleep(500);
+        //liftto.LiftToDistance(0.3, -9);
+        sleep(500);
+ */
         headingdrive.gyroTurn(0.2,-50);
-        //sleep(500);
-        headingdrive.gyroDrive(1,-28,-50);
-        //sleep(500);
-        robot.StraifRight(1);
+
+        headingdrive.gyroDrive(1,-29.5,-60);
+
+        robot.StraifRight(0.4);
         sleep(2000);
+        headingdrive.gyroDrive(0.4,-10,0);
+
+        robot.duckySpins(-1);
+        robot.allpower(-0.01);
+        sleep(2500);
+        
+
         robot.StraifLeft(1);
         sleep(100);
         headingdrive.gyroDrive(1,5,0);
