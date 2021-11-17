@@ -14,7 +14,7 @@ import java.nio.file.Watchable;
 public class BlueWheel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robotHardware = new RobotHardware(hardwareMap, this);
+        RobotHardware robotHardware = new RobotHardware(hardwareMap, this, 100, 100, RobotHardware.cameraSelection.LEFT);
         EncoderDrive encoderDrive = new EncoderDrive((robotHardware));
 
         waitForStart();

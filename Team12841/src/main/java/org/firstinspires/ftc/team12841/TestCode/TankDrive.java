@@ -18,9 +18,11 @@ public class TankDrive extends LinearOpMode {
         DcMotor LbMotor;
         DcMotor RfMotor;
         DcMotor RbMotor;
+        //ducky wheel motors
+        DcMotor SpinnerMotor;
         //Lift Motors
-        DcMotor LiftMotor;
-        DcMotor InMotor;
+        //DcMotor LiftMotor;
+        DcMotor InMotor;//
 
 
         //more DT motor stuff
@@ -33,27 +35,35 @@ public class TankDrive extends LinearOpMode {
         LbMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //more lift motor stuff
-        LiftMotor = hardwareMap.get(DcMotor.class, "LiftMotor");
-        InMotor = hardwareMap.get(DcMotor.class, "InMotor");
+       // LiftMotor = hardwareMap.get(DcMotor.class, "LiftMotor");
+       // InMotor = hardwareMap.get(DcMotor.class, "InMotor");
 
+        //spinner motor stuff
+        SpinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
 
         waitForStart();
 
         //movement
 
         while (opModeIsActive()) {
-            double ly = gamepad1.left_stick_y;
-            double ry = gamepad1.right_stick_y;
+            double lyOne = gamepad1.left_stick_y;
+            double ryOne = gamepad1.right_stick_y;
+            boolean rbOne = gamepad1.right_bumper;
 
-            LfMotor.setPower(ly);
-            LbMotor.setPower(ly);
-            RfMotor.setPower(ry);
-            RbMotor.setPower(ry);
+            LfMotor.setPower(lyOne);
+            LbMotor.setPower(lyOne);
+            RfMotor.setPower(ryOne);
+            RbMotor.setPower(ryOne);
 
-            //LiftMotor.setPower()
+            if (rbOne) {
+                SpinnerMotor.setPower(.75);
+            } else {
+                SpinnerMotor.setPower(0);
+            }
 
-            telemetry.addData("LeftStickY = ",ly);
-            telemetry.addData("RightStickY = ",ry);
+            telemetry.addData("LeftStickY = ", lyOne);
+            telemetry.addData("RightStickY = ", ryOne);
+            telemetry.addData("RightBumper = ", rbOne);
             telemetry.update();
 
         }

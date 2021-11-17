@@ -11,7 +11,7 @@ import org.firstinspires.ftc.team12841.Drivers.RobotHardware;
 public class BlueWarehouse extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robotHardware = new RobotHardware(hardwareMap, this);
+        RobotHardware robotHardware = new RobotHardware(hardwareMap, this,100,100, RobotHardware.cameraSelection.LEFT);
         EncoderDrive encoderDrive = new EncoderDrive((robotHardware));
 
         waitForStart();
