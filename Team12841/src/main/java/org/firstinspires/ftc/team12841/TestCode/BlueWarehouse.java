@@ -17,9 +17,9 @@ public class BlueWarehouse extends LinearOpMode {
         waitForStart();
 
         //move to warehouse
-        encoderDrive.StartAction(0.75, 15, 15, 5, true);
+        encoderDrive.StartAction(0.75, -15, -15, 5, true);
         encoderDrive.StartAction(1, 17, -17, 5, true);
-        encoderDrive.StartAction(1, 40, 40, 5, true);
+        encoderDrive.StartAction(1, -40, -40, 5, true);
 // might need to be changed with final robot
 
     }

@@ -61,33 +61,31 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  *
  *
  */
-public class RobotHardware
-{
+public class RobotHardware {
     LinearOpMode OpMode_;
 
-    DcMotor  LfMotor;
-    DcMotor  RfMotor;
-    DcMotor  LbMotor;
-    DcMotor  RbMotor;
+    DcMotor LfMotor;
+    DcMotor RfMotor;
+    DcMotor LbMotor;
+    DcMotor RbMotor;
     public DcMotor WheelMotor;
-    public SkystoneDeterminationPipeline pipeline;
+    //public SkystoneDeterminationPipeline pipeline;
     public WebcamName webcamLeft; // USB 3.0
     public WebcamName webcamRight; // USB 2.0
     public OpenCvSwitchableWebcam switchableWebcam;
 
-    public enum cameraSelection
-    {
+    public enum cameraSelection {
         LEFT,
         RIGHT
     }
 
-    private final double     COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    private final double     DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
-    private final double     ONE_MOTOR_COUNT_IN_ONE_REV  = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
-    private final double     WHEEL_CIRCUMFRANSE      = 4.0;
-    private final double     PI                      = 3.14159;
-    private final double     INCHES_IN_ONE_REV       = WHEEL_CIRCUMFRANSE * PI;
-    final double             COUNTS_PER_INCH         =  ONE_MOTOR_COUNT_IN_ONE_REV / INCHES_IN_ONE_REV; //TODO determine in class
+    private final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
+    private final double DRIVE_GEAR_REDUCTION = 20.0;     // This is < 1.0 if geared UP
+    private final double ONE_MOTOR_COUNT_IN_ONE_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    private final double WHEEL_CIRCUMFRANSE = 4.0;
+    private final double PI = 3.14159;
+    private final double INCHES_IN_ONE_REV = WHEEL_CIRCUMFRANSE * PI;
+    final double COUNTS_PER_INCH = ONE_MOTOR_COUNT_IN_ONE_REV / INCHES_IN_ONE_REV; //TODO determine in class
 
     /* Constructor */
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
@@ -127,7 +125,7 @@ public class RobotHardware
         RfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RbMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //WheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+    }
 
 /*
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
@@ -148,7 +146,7 @@ public class RobotHardware
         //switchableWebcam.setActiveCamera(webcamFront);
         //final boolean usefront = true;
 */
-        switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+       /* switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
@@ -273,5 +271,8 @@ public class RobotHardware
             return avg1;
         }
     }
- }
 
+
+ }
+*/
+}

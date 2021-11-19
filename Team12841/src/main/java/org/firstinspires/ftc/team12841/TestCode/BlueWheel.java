@@ -20,20 +20,23 @@ public class BlueWheel extends LinearOpMode {
         waitForStart();
 
         //move to wheel
-        encoderDrive.StartAction(0.5, 5, 5, 5, true);
+        encoderDrive.StartAction(0.5, -5, -5, 5, true);
         sleep(200);
         encoderDrive.StartAction(0.5, 19, -19, 5, true);
         sleep(200);
-        encoderDrive.StartAction(0.25, -22, -22, 5, true);
+        encoderDrive.StartAction(0.25, 20, 20, 5, true);
         sleep(200);
 
         //Below is the turntable spinning motor
-        //robotHardware.WheelMotor.setPower(0.2);
+        robotHardware.WheelMotor.setPower(1);
+        sleep(3500);
+        robotHardware.WheelMotor.setPower(0);
+
 
 
 
         encoderDrive.StartAction(0.5, -21, 21, 5, true);
-        encoderDrive.StartAction(.5, 21, 21, 5, true);
+        encoderDrive.StartAction(.5, -18, -18, 5, true);
         //might need change with final bot
     }
   }

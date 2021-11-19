@@ -49,6 +49,7 @@ public class TankDrive extends LinearOpMode {
             double lyOne = gamepad1.left_stick_y;
             double ryOne = gamepad1.right_stick_y;
             boolean rbOne = gamepad1.right_bumper;
+            boolean lbOne = gamepad1.left_bumper;
 
             LfMotor.setPower(lyOne);
             LbMotor.setPower(lyOne);
@@ -56,16 +57,19 @@ public class TankDrive extends LinearOpMode {
             RbMotor.setPower(ryOne);
 
             if (rbOne) {
-                SpinnerMotor.setPower(.75);
+                SpinnerMotor.setPower(-1);
+            } else if (lbOne){
+                SpinnerMotor.setPower(1);
             } else {
                 SpinnerMotor.setPower(0);
             }
 
-            telemetry.addData("LeftStickY = ", lyOne);
-            telemetry.addData("RightStickY = ", ryOne);
-            telemetry.addData("RightBumper = ", rbOne);
-            telemetry.update();
+                telemetry.addData("LeftStickY = ", lyOne);
+                telemetry.addData("RightStickY = ", ryOne);
+                telemetry.addData("RightBumper = ", rbOne);
+                telemetry.addData("LeftBumper = ", lbOne);
+                telemetry.update();
 
-        }
+            }
     }
 }
