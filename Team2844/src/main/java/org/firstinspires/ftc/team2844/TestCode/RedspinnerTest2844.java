@@ -12,28 +12,66 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class RedspinnerTest2844 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 0, 0, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 145, 120, RobotHardware.cameraSelection.LEFT);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest driveto = new DistanceDriverTest(robot, headingdrive);
+        LiftDriverTest liftto = new LiftDriverTest(robot);
+
+        double dist;
 
 
-        waitForStart();
+        RobotHardware.SkystoneDeterminationPipeline.MarkerPosition path = robot.pipeline.position;
+
+        while (!isStarted())
+        {
+            path = robot.pipeline.position;
+            //telemetry.addData("AverageMiddle", robot.pipeline.SkystoneAverageMiddle);
+            //telemetry.addData("AverageLeft", robot.pipeline.SkystoneAverageLeft);
+            //telemetry.addData("AverageRight", robot.pipeline.SkystoneAverageRight);
+            //telemetry.addData("Max avg", Math.max(Math.max(robot.pipeline.SkystoneAverageMiddle, robot.pipeline.SkystoneAverageLeft), robot.pipeline.SkystoneAverageRight));
+            telemetry.addData("Position", path);
+            telemetry.update();
+        }
+
+
 
         headingdrive.gyroDrive(1,10,0);
         //sleep(1000);
         headingdrive.gyroTurn(0.5,30);
         //sleep(500);
-        headingdrive.gyroDrive(1,15,30);
-        //sleep(500);
+        headingdrive.gyroDrive(1,16,30);
+
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
+            dist = 5;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+        else if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Middle) {
+            dist = 11;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+        else {
+            dist = 17;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+        robot.superintake.setPower(-1);
+        sleep(500);
+        robot.superintake.setPower(0);
+        sleep(500);
+        liftto.LiftToDistance(0.3, -dist);
+        sleep(500);
+
         headingdrive.gyroTurn(0.2,50);
         //sleep(500);
-        headingdrive.gyroDrive(1,-29.5,50);
+        headingdrive.gyroDrive(0.8,-30.5,50);
         //sleep(500);
 
         robot.StraifLeft(0.4); //straif into the wall
         sleep(2000);
-        headingdrive.gyroDrive(0.4,-10, 0);
+        headingdrive.gyroDrive(0.4,-12, 0);
 
         robot.duckySpins(1);
         robot.allpower(-0.01);

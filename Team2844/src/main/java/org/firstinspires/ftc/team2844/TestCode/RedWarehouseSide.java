@@ -28,6 +28,12 @@ public class RedWarehouseSide extends LinearOpMode {
         sleep(1000);
         headingdrive.gyroDrive(1,-4,-40);
         sleep(510);
+
+
+        robot.liftmotor.setPower(1);
+
+
+
         headingdrive.gyroTurn(0.75,90);
         sleep(1000);
         headingdrive.gyroDrive(1,5,90);

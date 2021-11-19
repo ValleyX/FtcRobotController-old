@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
-/*
+
 public class LiftDriverTest {
 
     private RobotHardware robot_;
@@ -38,7 +38,7 @@ public class LiftDriverTest {
 
             // Determine new target position, and pass to motor controller
             moveCounts = (int) (distance * robot_.LIFT_COUNTS_PER_INCH);
-            LiftTarget = robot_.leftFront.getCurrentPosition() + moveCounts;
+            LiftTarget = robot_.liftmotor.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
             // used to determine direction of the front
@@ -55,7 +55,12 @@ public class LiftDriverTest {
             while (robot_.OpMode_.opModeIsActive() &&
                     (robot_.liftmotor.isBusy())) {
 
+                robot_.OpMode_.telemetry.addData("lift position : ", robot_.liftmotor.getCurrentPosition());
+                robot_.OpMode_.telemetry.addData("lift target position : ", robot_.liftmotor.getTargetPosition());
+                robot_.OpMode_.telemetry.update();
 
+                System.out.println("valleyX: " + robot_.liftmotor.getCurrentPosition());
+                System.out.println("valleyX");
 
 
             }
@@ -72,4 +77,4 @@ public class LiftDriverTest {
 
 }
 
- */
+

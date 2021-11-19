@@ -75,9 +75,10 @@ public class RobotHardware
     public DcMotor  leftFront;
     public DcMotor  rightFront;
     public DcMotor  leftBack;
-    DcMotor duckySpinner;
+    public DcMotor duckySpinner;
     public DcMotor  rightBack;
-   // public DcMotor liftmotor;
+    public DcMotor liftmotor;
+    public DcMotor superintake;
     public DistanceSensor sensorRange;
 
 
@@ -112,9 +113,9 @@ public class RobotHardware
 
     //lift
     public final double     LIFT_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 60.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 20.0;     // This is < 1.0 if geared UP
     public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
-    public final double     LIFT_DISTANCE_IN_ONE_REV = 7.8  ; //actual bot is 9.5
+    public final double     LIFT_DISTANCE_IN_ONE_REV     = 2.7* Math.PI; //actual bot is 9.5
     public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
 
 
@@ -123,13 +124,14 @@ public class RobotHardware
     public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
-/*
+
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
-        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
-        webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
+        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"); // USB 3.0
+        //webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new RobotHardware.SkystoneDeterminationPipeline(x, y);
 
-        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
+       // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
         switchableWebcam.openCameraDevice();
         switchableWebcam.setPipeline(pipeline);
 
@@ -142,19 +144,20 @@ public class RobotHardware
                     switchableWebcam.setActiveCamera(webcamLeft);
                 } else {
                     switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                    switchableWebcam.setActiveCamera(webcamRight);
+                    //switchableWebcam.setActiveCamera(webcamRight);
+                    switchableWebcam.setActiveCamera(webcamLeft);
                 }
             }
         });
-*/
+
         // Define and Initialize Motors
          leftFront = ahwMap.get(DcMotor.class,"leftFront");
          rightFront = ahwMap.get(DcMotor.class,"rightFront");
          leftBack = ahwMap.get(DcMotor.class,"leftBack");
          rightBack = ahwMap.get(DcMotor.class,"rightBack");
         duckySpinner = ahwMap.get(DcMotor.class, "duckSpinner");
-
-         //liftmotor = ahwMap.get(DcMotor.class, "LiftMotor");
+         liftmotor = ahwMap.get(DcMotor.class, "liftMotor");
+         superintake = ahwMap.get(DcMotor.class, "superintake");
 
 
          //test
@@ -164,6 +167,7 @@ public class RobotHardware
 
             rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -181,6 +185,8 @@ public class RobotHardware
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;

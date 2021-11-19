@@ -23,16 +23,17 @@ public class Testmechaauto extends LinearOpMode{
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest Driveto = new DistanceDriverTest(robot, headingdrive);
-        //LiftDriverTest liftto = new LiftDriverTest(robot);
+        LiftDriverTest liftto = new LiftDriverTest(robot);
 
         System.out.println("valleyx: im here4");
 
         waitForStart();
         //encodermecha.StartAction(0.5,5,5,5,true);
-        robot.StraifLeft(1);
+        //robot.StraifLeft(1);
+        //robot.allpower(1);
        // headingdrive.gyroDrive(0.2,10,0);
        // headingdrive.gyroTurn(0.8,-90);
-        sleep(1000);
+        //sleep(1000);
         //headingdrive.gyroTurn(0.8,0);
 /*
         telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
@@ -47,9 +48,9 @@ public class Testmechaauto extends LinearOpMode{
 
  */
 
-        //liftto.LiftToDistance(0.4,10);
-        //sleep(1000);
-        //liftto.LiftToDistance(0.4,-10);
+        liftto.LiftToDistance(0.9,12);
+        sleep(5000);
+        //liftto.LiftToDistance(0.2,-4);
 
 
 

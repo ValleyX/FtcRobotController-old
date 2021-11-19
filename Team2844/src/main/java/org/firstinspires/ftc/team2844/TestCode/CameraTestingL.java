@@ -31,7 +31,7 @@ public class CameraTestingL extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this,145,150, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this,145,120, RobotHardware.cameraSelection.LEFT);
 
         RobotHardware.SkystoneDeterminationPipeline.MarkerPosition path = robot.pipeline.position;
 
