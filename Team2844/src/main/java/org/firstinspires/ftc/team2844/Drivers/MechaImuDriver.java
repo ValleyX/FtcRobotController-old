@@ -92,11 +92,17 @@ public class MechaImuDriver {
                 // if driving in reverse, the motor correction also needs to be reversed
                 if (distance < 0)
                     steer *= -1.0;
-
+/*
                 leftFrontSpeed = speed - steer;
                 leftBackSpeed = speed - steer;
                 rightFrontSpeed = speed + steer;
                 rightBackSpeed = speed + steer;
+
+ */
+                leftFrontSpeed = speed + steer;
+                leftBackSpeed = speed + steer;
+                rightFrontSpeed = speed - steer;
+                rightBackSpeed = speed - steer;
 
 
                 // Normalize speeds if either one exceeds +/- 1.0;
@@ -229,6 +235,7 @@ public class MechaImuDriver {
 
 // determine turn power based on +/- error
         error = getError(angle);
+        System.out.println("Valleyx error: " + error);
 
         if (Math.abs(error) <= robot_.HEADING_THRESHOLD) {
             steer= 0;
@@ -240,9 +247,16 @@ public class MechaImuDriver {
         }
         else {
             steer = getSteer(error, PCoeff);
+            /*
             rightBackSpeed  = speed * steer;
             rightFrontSpeed  = speed * steer; // no -
             leftBackSpeed   = -rightBackSpeed; // yep -
+            leftFrontSpeed = -rightFrontSpeed;
+
+             */
+            rightBackSpeed  = speed * -steer;
+            rightFrontSpeed  = speed * -steer; //
+            leftBackSpeed   = -rightBackSpeed; //
             leftFrontSpeed = -rightFrontSpeed;
         }
 
@@ -281,9 +295,9 @@ telemetry.addData("Speed.", "%5.2f:%5.2f:%5.2f:%5.2f", leftFrontSpeed, rightFron
 
 
         double gyroActual = -robot_.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        robotError = targetAngle - gyroActual;
-
+        System.out.println("Valleyx gyroActual" + gyroActual);
+        robotError = targetAngle - gyroActual; // the - on the target determines the direction
+        System.out.println("Valleyx robotError" + robotError);
 
         // calculate error in -179 to +180 range  (
         //robotError = targetAngle - gyro.getIntegratedZValue();
@@ -291,6 +305,7 @@ telemetry.addData("Speed.", "%5.2f:%5.2f:%5.2f:%5.2f", leftFrontSpeed, rightFron
 
         while (robotError > 180) robotError -= 360;
         while (robotError <= -180) robotError += 360;
+        System.out.println("Valleyx robotErrorAdjusted" + robotError);
 /**
 * used for debugging angles
         robot_.OpMode_.telemetry.addData("current angel is", gyroActual);
