@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team2844.TestCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
+@Disabled
 
 @TeleOp (name="TestDriver")
 public class TestDriver extends LinearOpMode {

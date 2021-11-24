@@ -12,51 +12,85 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class BlueSpinnerTest2844 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 0, 0, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 145, 120, RobotHardware.cameraSelection.LEFT);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest driveto = new DistanceDriverTest(robot, headingdrive);
-        //LiftDriverTest liftto = new LiftDriverTest(robot);
+        LiftDriverTest liftto = new LiftDriverTest(robot);
+        double dist;
 
 
 
-        waitForStart();
+        RobotHardware.SkystoneDeterminationPipeline.MarkerPosition path = robot.pipeline.position;
 
-        headingdrive.gyroDrive(1,10,0);
+        while (!isStarted())
+        {
+            path = robot.pipeline.position;
+            //telemetry.addData("AverageMiddle", robot.pipeline.SkystoneAverageMiddle);
+            //telemetry.addData("AverageLeft", robot.pipeline.SkystoneAverageLeft);
+            //telemetry.addData("AverageRight", robot.pipeline.SkystoneAverageRight);
+            //telemetry.addData("Max avg", Math.max(Math.max(robot.pipeline.SkystoneAverageMiddle, robot.pipeline.SkystoneAverageLeft), robot.pipeline.SkystoneAverageRight));
+            telemetry.addData("Position", path);
+            telemetry.update();
+        }
+
+        headingdrive.gyroDrive(0.5,30,0);
         //sleep(1000);
-        headingdrive.gyroTurn(0.4,-30);
-        //sleep(500);
-        headingdrive.gyroDrive(1,15,-30);
-/*
-        sleep(500);
-       // liftto.LiftToDistance(0.2, 9);
-        sleep(500);
-        //liftto.LiftToDistance(0.3, -9);
-        sleep(500);
- */
-        headingdrive.gyroTurn(0.2,-50);
+        headingdrive.gyroDrive(0.3,-10,0);
 
-        headingdrive.gyroDrive(1,-29.5,-60);
+        headingdrive.gyroTurn(0.5,-55);
+        //sleep(500);
+        headingdrive.gyroDrive(0.2,13.6,-55);
+
+
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
+            dist = 5;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+        else if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Middle) {
+            dist = 11;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+        else {
+            dist = 17;
+            liftto.LiftToDistance(0.9, dist);
+        }
+
+
+        robot.superintake.setPower(-1);
+        sleep(500);
+        robot.superintake.setPower(0);
+        sleep(500);
+        headingdrive.gyroDrive(0.5,-9, -30);
+        sleep(500);
+        liftto.LiftToDistance(0.3, -dist);
+        sleep(500);
+
+
+        headingdrive.gyroTurn(0.2,-80);
+
+        headingdrive.gyroDrive(1,-50,-80);
+
+        robot.StraifLeft(0.4);
+        sleep(1000);
+        //headingdrive.gyroDrive(0.4,-10,-80);
+
+        robot.duckySpins(-0.3);
+        //headingdrive.gyroDrive(0.2,-4, 0);
+        robot.allpower(-0.01);
+        sleep(8500);
+
+        headingdrive.gyroTurn(0.5, 0);
 
         robot.StraifRight(0.4);
-        sleep(2000);
-        headingdrive.gyroDrive(0.4,-10,0);
+        sleep(1000);
 
-        robot.duckySpins(-1);
-        robot.allpower(-0.01);
-        sleep(2500);
-        
-
-        robot.StraifLeft(1);
-        sleep(100);
-        headingdrive.gyroDrive(1,5,0);
-
-        /*
-        headingdrive.gyroTurn(0.5,-15);
-        headingdrive.gyroDrive(1,15,-15);
+        headingdrive.gyroDrive(1,17.4 ,0);
 
 
-         */
+
 
 
 

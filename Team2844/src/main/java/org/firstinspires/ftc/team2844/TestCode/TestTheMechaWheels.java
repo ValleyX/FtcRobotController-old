@@ -61,11 +61,11 @@ public class TestTheMechaWheels extends LinearOpMode {
 
 
             if (gamepad2.dpad_right){
-                duckySpinner.setPower(-1);
+                duckySpinner.setPower(-0.5);
             }
 
             else if (gamepad2.dpad_left){
-                duckySpinner.setPower(1);
+                duckySpinner.setPower(0.5);
             }
 
             else {

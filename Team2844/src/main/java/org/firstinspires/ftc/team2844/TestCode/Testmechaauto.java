@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team2844.TestCode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.team2844.Drivers.DistanceDriverTest;
 import org.firstinspires.ftc.team2844.Drivers.EncoderDriveMecha;
 import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
+@Disabled
 
 @Autonomous(name="Testmechaauto")
 public class Testmechaauto extends LinearOpMode{
