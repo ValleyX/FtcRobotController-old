@@ -42,6 +42,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetector;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -87,6 +89,7 @@ public class RobotHardware
     public WebcamName webcamRight; //
     public OpenCvSwitchableWebcam switchableWebcam;
     public SkystoneDeterminationPipeline pipeline;
+    public GoldAlignDetector goldPipeline;
 
     public enum cameraSelection
     {
@@ -129,11 +132,13 @@ public class RobotHardware
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"); // USB 3.0
         //webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new RobotHardware.SkystoneDeterminationPipeline(x, y);
+        goldPipeline = new GoldAlignDetector();
 
        // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
         switchableWebcam.openCameraDevice();
         switchableWebcam.setPipeline(pipeline);
+        //switchableWebcam.setPipeline(goldPipeline);
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
