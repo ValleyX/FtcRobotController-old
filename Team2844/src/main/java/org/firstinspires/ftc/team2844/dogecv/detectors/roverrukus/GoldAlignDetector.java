@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus;
 
-import android.util.Log;
-
 import org.firstinspires.ftc.team2844.dogecv.DogeCV;
 import org.firstinspires.ftc.team2844.dogecv.detectors.DogeCVDetector;
 import org.firstinspires.ftc.team2844.dogecv.filters.DogeCVColorFilter;
@@ -9,7 +7,6 @@ import org.firstinspires.ftc.team2844.dogecv.filters.LeviColorFilter;
 import org.firstinspires.ftc.team2844.dogecv.scoring.MaxAreaScorer;
 import org.firstinspires.ftc.team2844.dogecv.scoring.PerfectAreaScorer;
 import org.firstinspires.ftc.team2844.dogecv.scoring.RatioScorer;
-
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -37,21 +34,26 @@ public class GoldAlignDetector extends DogeCVDetector {
     private boolean found    = false; // Is the gold mineral found
     private boolean aligned  = false; // Is the gold mineral aligned
     private double  goldXPos = 0;     // X Position (in pixels) of the gold element
+    private Point   screenPosition = new Point(); // Screen position of the mineral
+    private Rect    foundRect = new Rect(); // Found rect
 
     // Detector settings
     public boolean debugAlignment = true; // Show debug lines to show alignment settings
     public double alignPosOffset  = 0;    // How far from center frame is aligned
-    public double alignSize       = 100;  // How wide is the margin of error for alignment
+    public double alignSize       = 400;  // How wide is the margin of error for alignment
+    public int ksize = 5;
+    public int yellowTheshold = 100;
 
+    //public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
 
 
     //Create the default filters and scorers
-    public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW); //Default Yellow filter
+    public LeviColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW,yellowTheshold ); //Default Yellow filter `100
 
-    public RatioScorer       ratioScorer       = new RatioScorer(1.0, 3);          // Used to find perfect squares
+    public RatioScorer       ratioScorer       = new RatioScorer(1, 3);          // Used to find perfect squares 1, 3
     public MaxAreaScorer     maxAreaScorer     = new MaxAreaScorer( 0.01);                    // Used to find largest objects
-    public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05); // Used to find objects near a tuned area value
+    public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer( 5000,0.01); // Used to find objects near a tuned area value
 
     /**
      * Simple constructor
@@ -71,7 +73,9 @@ public class GoldAlignDetector extends DogeCVDetector {
         //input.release();
 
         //Preprocess the working Mat (blur it then apply a yellow filter)
-        Imgproc.GaussianBlur(workingMat, workingMat, new Size(5, 5), 0);
+        //Imgproc.GaussianBlur(workingMat, workingMat, new Size(5, 5), 0);
+      //  Imgproc.GaussianBlur(workingMat, workingMat, new Size(5, 5), 0);
+        Imgproc.GaussianBlur(workingMat, workingMat, new Size(ksize, ksize), 0);
         yellowFilter.process(workingMat.clone(), maskYellow);
 
         //Find contours of the yellow mask and draw them to the display mat for viewing
@@ -92,6 +96,7 @@ public class GoldAlignDetector extends DogeCVDetector {
             // Get bounding rect of contour
             Rect rect = Imgproc.boundingRect(cont);
             Imgproc.rectangle(displayMat, rect.tl(), rect.br(), new Scalar(0, 0, 255), 2); // Draw rect
+            //Imgproc.rectangle(workingMat, rect.tl(), rect.br(), new Scalar(0, 0, 255), 2); // Draw rect
 
             // If the result is better then the previously tracked one, set this rect as the new best
             if (score < bestDiffrence && rect.y + rect.height/2 > ((isSideways ? getAdjustedSize().width : getAdjustedSize().height) *(1-verticalMax))&&rect.y+rect.height/2 < ((isSideways ? getAdjustedSize().width : getAdjustedSize().height)*(1-verticalMin))) {
@@ -112,7 +117,9 @@ public class GoldAlignDetector extends DogeCVDetector {
         if (bestRect != null) {
             // Show chosen result
             Imgproc.rectangle(displayMat, bestRect.tl(), bestRect.br(), new Scalar(255, 0, 0), 4);
-            Imgproc.putText(displayMat, "Chosen", bestRect.tl(), 0, 1, new Scalar(255, 255, 255));
+            //for test
+            //Imgproc.rectangle(workingMat, bestRect.tl(), bestRect.br(), new Scalar(255, 0, 0), 4);
+            Imgproc.putText(displayMat, "Terminate", bestRect.tl(), 0, 1, new Scalar(255, 255, 255));
 
             // Set align X pos
             xPos = bestRect.x + (bestRect.width / 2);
@@ -135,6 +142,8 @@ public class GoldAlignDetector extends DogeCVDetector {
                 Imgproc.putText(displayMat, "Current X: " + bestRect.x, new Point(10, getAdjustedSize().height - 10), 0, 0.5, new Scalar(255, 255, 255), 1);
             }
             found = true;
+            foundRect = bestRect;
+            screenPosition = new Point(bestRect.x, bestRect.y);
         } else {
             found = false;
             aligned = false;
@@ -167,6 +176,7 @@ public class GoldAlignDetector extends DogeCVDetector {
         }
 
         return displayMat;
+        //return workingMat;
 
     }
 
@@ -194,6 +204,23 @@ public class GoldAlignDetector extends DogeCVDetector {
         alignPosOffset = offset;
         alignSize = width;
     }
+
+    /**
+     * Returns the gold element's last position in screen pixels
+     * @return position in screen pixels
+     */
+    public Point getScreenPosition(){
+        return screenPosition;
+    }
+
+    /**
+     * Returns the gold element's found rectangle
+     * @return gold element rect
+     */
+    public Rect getFoundRect() {
+        return foundRect;
+    }
+
 
     /**
      * Returns if the gold element is aligned

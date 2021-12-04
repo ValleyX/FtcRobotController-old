@@ -38,8 +38,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
+import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 
 import java.util.Locale;
 
@@ -87,8 +90,51 @@ public class SensorREVColorDistance_CB extends LinearOpMode {
      * to the target object.
      *
      */
-    ColorSensor sensorColor;
+    public ColorSensor sensorColor;
     DistanceSensor sensorDistance;
+
+//test code
+
+    //variables
+    public final double red= sensorColor.red();
+    public final double blue= sensorColor.blue();
+    public final double green= sensorColor.green();
+
+
+    public final boolean Red= (red > 25 && red < 60.0) && (green < 30 && green > 22.0) && (blue > 20 && blue < 25);
+    public final boolean Blue= (red > 13 && red < 20.0) && (green < 32 && green > 24.0) && (blue < 35 && blue > 24);
+
+
+    private RobotHardware robot_;
+    private MechaImuDriver imudriver_;
+    private ElapsedTime runtime_;
+    private boolean waiting_;
+    //public DistanceSensor sensorRange;
+
+
+    /* Constructor setup all class variables here */
+    public SensorREVColorDistance_CB(RobotHardware robot, MechaImuDriver imuDriver)  {
+        robot_ = robot;
+        imudriver_ = imuDriver;
+        runtime_ = new ElapsedTime();
+        waiting_ = false;
+    }
+
+    public void drivetocolor(double speed, double direction, boolean color  ) {
+
+        if (robot_.OpMode_.opModeIsActive()) {
+
+            if ( (color != Red) || (color != Blue) ) {
+                robot_.allpower(direction);
+            }
+
+            else {
+                robot_.allpower(0);
+            }
+        }
+    }
+
+//test code
 
     @Override
     public void runOpMode() {
@@ -190,5 +236,8 @@ public class SensorREVColorDistance_CB extends LinearOpMode {
                 relativeLayout.setBackgroundColor(Color.WHITE);
             }
         });
+
+
+
     }
 }

@@ -34,7 +34,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -42,16 +41,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
@@ -68,7 +64,7 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
  *
  *
  */
-public class RobotHardware
+public class RobotHardwareTest
 {
 //    public static final double P_DRIVE_COEFF = 2;
     public LinearOpMode OpMode_;
@@ -89,10 +85,6 @@ public class RobotHardware
     public OpenCvSwitchableWebcam switchableWebcam;
     public SkystoneDeterminationPipeline pipeline;
     public GoldAlignDetectorTry goldPipeline;
-
-    public DigitalChannel liftdowntouch;
-    public DigitalChannel intaketouch;
-
 
     public enum cameraSelection
     {
@@ -115,7 +107,6 @@ public class RobotHardware
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
     static final double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.07;     // Larger is more responsive, but also less stable 0.1
-//    static final double P_TURN_COEFF = 0.6;     // Larger is more responsive, but also less stable 0.1
     static final double P_DRIVE_COEFF = 0.015;     // Larger is more responsive, but also less stable 0.15
 
     //lift
@@ -128,51 +119,27 @@ public class RobotHardware
 
 
     /* Constructor */
-    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
+    public RobotHardwareTest(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
 
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"); // USB 3.0
         //webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
-        pipeline = new RobotHardware.SkystoneDeterminationPipeline(x, y);
+        pipeline = new RobotHardwareTest.SkystoneDeterminationPipeline(x, y);
         goldPipeline = new GoldAlignDetectorTry();
 
        // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
-       // switchableWebcam.openCameraDevice();
-
-
-        switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                // Usually this is where you'll want to start streaming from the camera (see section 4)
-                //pick desired camera here
-                if (camera == RobotHardware.cameraSelection.LEFT) {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-                    switchableWebcam.setActiveCamera(webcamLeft);
-                } else {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                    //switchableWebcam.setActiveCamera(webcamRight);
-                    switchableWebcam.setActiveCamera(webcamLeft);
-                }
-            }
-            @Override
-            public void onError(int errorCode)
-            {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-        /*
+        switchableWebcam.openCameraDevice();
+        switchableWebcam.setPipeline(pipeline);
+        //switchableWebcam.setPipeline(goldPipeline);
+/*
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 //pick desired camera here
-                if (camera == RobotHardware.cameraSelection.LEFT) {
+                if (camera == RobotHardwareTest.cameraSelection.LEFT) {
                     switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
                     switchableWebcam.setActiveCamera(webcamLeft);
                 } else {
@@ -182,11 +149,7 @@ public class RobotHardware
                 }
             }
         });
-        */
-        switchableWebcam.setPipeline(pipeline);
-        //switchableWebcam.setPipeline(goldPipeline);
-        //switchableWebcam.openCameraDeviceAsync();
-
+*/
         // Define and Initialize Motors
          leftFront = ahwMap.get(DcMotor.class,"leftFront");
          rightFront = ahwMap.get(DcMotor.class,"rightFront");
@@ -196,11 +159,6 @@ public class RobotHardware
          liftmotor = ahwMap.get(DcMotor.class, "liftMotor");
          superintake = ahwMap.get(DcMotor.class, "superintake");
 
-       liftdowntouch = ahwMap.get(DigitalChannel.class, "liftdowntouch");
-        intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
-
-        //liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
-        intaketouch.setMode(DigitalChannel.Mode.INPUT);
 
          //test
         //sensorRange = ahwMap.get(DistanceSensor.class, "distance");
@@ -209,7 +167,7 @@ public class RobotHardware
 
             rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-       // liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -324,7 +282,7 @@ public class RobotHardware
         int avgRight;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.MarkerPosition position = SkystoneDeterminationPipeline.MarkerPosition.Middle;
+        public volatile MarkerPosition position = MarkerPosition.Middle;
         public volatile int SkystoneAverageMiddle;
         public volatile int SkystoneAverageLeft;
         public volatile int SkystoneAverageRight;
@@ -461,15 +419,15 @@ public class RobotHardware
             //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if((avgRight > avgLeft) && (avgRight > avgMiddle))
             {
-                position = SkystoneDeterminationPipeline.MarkerPosition.Right;
+                position = MarkerPosition.Right;
             }
             else if ((avgLeft > avgRight) && (avgLeft > avgMiddle))
             {
-                position = SkystoneDeterminationPipeline.MarkerPosition.Left;
+                position = MarkerPosition.Left;
             }
             else
             {
-                position = SkystoneDeterminationPipeline.MarkerPosition.Middle;
+                position = MarkerPosition.Middle;
             }
 
             Imgproc.rectangle(
@@ -528,20 +486,6 @@ public class RobotHardware
         rightBack.setPower(power);
         rightFront.setPower(power);
     }
-
-    public void intake(double power) {
-        if ((intaketouch.getState()) == false && (power > 0) ) // flase means pressed
-             {
-            superintake.setPower(0);
-        }
-
-        else {
-            superintake.setPower(power);
-        }
-
-    }
-
-
 
     public void duckySpins(double power) {
         duckySpinner.setPower(power);

@@ -1,15 +1,9 @@
-package org.firstinspires.ftc.team2844.TestCode;
+package org.firstinspires.ftc.team2844.Drivers;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
-import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
-
-public class LiftDriverTest {
+public class LiftPositionDriver {
 
     private RobotHardware robot_;
     private ElapsedTime runtime_;
@@ -17,14 +11,16 @@ public class LiftDriverTest {
 
 
     // Constructor setup all class variables here
-    public LiftDriverTest(RobotHardware robot)  {
+    public LiftPositionDriver(RobotHardware robot)  {
         robot_ = robot;
         runtime_ = new ElapsedTime();
         waiting_ = false;
+        robot_.liftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot_.liftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void LiftToDistance (double speed,
-                                double distance ) {
+    public void LiftToPosition (double speed,
+                                double position ) {
 
 
         int LiftTarget;
@@ -33,11 +29,9 @@ public class LiftDriverTest {
         // Ensure that the opmode is still active
         if (robot_.OpMode_.opModeIsActive()) {
 
-            robot_.liftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             // Determine new target position, and pass to motor controller
-            moveCounts = (int) (distance * robot_.LIFT_COUNTS_PER_INCH);
-            LiftTarget = robot_.liftmotor.getCurrentPosition() + moveCounts;
+            LiftTarget = (int) (position * robot_.LIFT_COUNTS_PER_INCH);
 
             // Set Target and Turn On RUN_TO_POSITION
             // used to determine direction of the front
@@ -48,11 +42,9 @@ public class LiftDriverTest {
 
             robot_.liftmotor.setPower(speed);
 
-            System.out.println("valleyx: im here2");
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (robot_.OpMode_.opModeIsActive() &&
-                    (robot_.liftmotor.isBusy())) {
+            while (robot_.OpMode_.opModeIsActive() && (robot_.liftmotor.isBusy()) && (robot_.liftdowntouch.getState() == true)) // true means not touched {
 
                 robot_.OpMode_.telemetry.addData("lift position : ", robot_.liftmotor.getCurrentPosition());
                 robot_.OpMode_.telemetry.addData("lift target position : ", robot_.liftmotor.getTargetPosition());
@@ -64,16 +56,20 @@ public class LiftDriverTest {
 
             }
 
-            // Stop all motion;
             robot_.liftmotor.setPower(0);
+
+            if (robot_.liftdowntouch.getState() == false) {
+                robot_.liftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
 
             // Turn off RUN_TO_POSITION
             robot_.liftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         }
 
     }
 
 
-}
 
 

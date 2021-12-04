@@ -12,7 +12,6 @@ import org.firstinspires.ftc.team2844.dogecv.scoring.RatioScorer;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -23,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Victo on 9/10/2018.
+ * Created by Victo on 9/17/2018.
  */
 
-public class GoldDetector extends DogeCVDetector {
+public class GoldAlignDetectorTry extends DogeCVDetector {
 
     // Defining Mats to be used.
     private Mat displayMat = new Mat(); // Display debug info to the screen (this is what is returned)
@@ -34,12 +33,23 @@ public class GoldDetector extends DogeCVDetector {
     private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
     private Mat hierarchy  = new Mat(); // hierarchy used by coutnours
 
-    // Results of the detectorscreenPosition
+    // Results of the detector
     private boolean found    = false; // Is the gold mineral found
+    private boolean aligned  = false; // Is the gold mineral aligned
+    private double  goldXPos = 0;     // X Position (in pixels) of the gold element
+
     private Point   screenPosition = new Point(); // Screen position of the mineral
     private Rect    foundRect = new Rect(); // Found rect
 
+
+    // Detector settings
+    public boolean debugAlignment = true; // Show debug lines to show alignment settings
+    public double alignPosOffset  = 0;    // How far from center frame is aligned
+    public double alignSize       = 100;  // How wide is the margin of error for alignment
+
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
+    //public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.PERFECT_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
+
 
     //Create the default filters and scorers
     public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW); //Default Yellow filter
@@ -51,9 +61,9 @@ public class GoldDetector extends DogeCVDetector {
     /**
      * Simple constructor
      */
-    public GoldDetector() {
+    public GoldAlignDetectorTry() {
         super();
-        detectorName = "Gold Detector"; // Set the detector name
+        detectorName = "Gold Align Detector"; // Set the detector name
     }
 
 
@@ -63,25 +73,26 @@ public class GoldDetector extends DogeCVDetector {
         // Copy the input mat to our working mats, then release it for memory
         input.copyTo(displayMat);
         input.copyTo(workingMat);
-        input.release();
-
+        //input.release();
 
         //Preprocess the working Mat (blur it then apply a yellow filter)
-        Imgproc.GaussianBlur(workingMat,workingMat,new Size(5,5),0);
-        yellowFilter.process(workingMat.clone(),maskYellow);
+        //Imgproc.GaussianBlur(workingMat, workingMat, new Size(5, 5), 0);
+        Imgproc.GaussianBlur(workingMat, workingMat, new Size(5, 5), 0);
+        yellowFilter.process(workingMat.clone(), maskYellow);
 
         //Find contours of the yellow mask and draw them to the display mat for viewing
 
         List<MatOfPoint> contoursYellow = new ArrayList<>();
         Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(displayMat,contoursYellow,-1,new Scalar(230,70,70),2);
+
+        Imgproc.drawContours(displayMat, contoursYellow, -1, new Scalar(230, 70, 70), 2);
 
         // Current result
         Rect bestRect = null;
         double bestDiffrence = Double.MAX_VALUE; // MAX_VALUE since less diffrence = better
-
+        //return input;
         // Loop through the contours and score them, searching for the best result
-        for(MatOfPoint cont : contoursYellow){
+        for (MatOfPoint cont : contoursYellow) {
             double score = calculateScore(cont); // Get the diffrence score using the scoring API
 
             // Get bounding rect of contour
@@ -95,6 +106,15 @@ public class GoldDetector extends DogeCVDetector {
             }
         }
 
+        // Vars to calculate the alignment logic.
+
+        double alignX = (getAdjustedSize().width / 2) + alignPosOffset; // Center point in X Pixels
+        if (isSideways)
+            alignX = (getAdjustedSize().height / 2) + alignPosOffset; //Center point in rotated X pixels
+        double alignXMin = alignX - (alignSize / 2); // Min X Pos in pixels
+        double alignXMax = alignX + (alignSize / 2); // Max X pos in pixels
+        double xPos; // Current Gold X Pos
+
         if(bestRect != null){
             // Show chosen result
             Imgproc.rectangle(displayMat, bestRect.tl(), bestRect.br(), new Scalar(255,0,0),4);
@@ -106,6 +126,7 @@ public class GoldDetector extends DogeCVDetector {
         }else{
             found = false;
         }
+
 
 
         //Print result
@@ -132,19 +153,29 @@ public class GoldDetector extends DogeCVDetector {
     }
 
     /**
-     * Returns the gold element's last position in screen pixels
-     * @return position in screen pixels
+     * Set the alignment settings for GoldAlign
+     * @param offset - How far from center frame (in pixels)
+     * @param width - How wide the margin is (in pixels, on each side of offset)
      */
-    public Point getScreenPosition(){
-        return screenPosition;
+    public void setAlignSettings(int offset, int width){
+        alignPosOffset = offset;
+        alignSize = width;
     }
 
     /**
-     * Returns the gold element's found rectangle
-     * @return gold element rect
+     * Returns if the gold element is aligned
+     * @return if the gold element is alined
      */
-    public Rect getFoundRect() {
-        return foundRect;
+    public boolean getAligned(){
+        return aligned;
+    }
+
+    /**
+     * Returns gold element last x-position
+     * @return last x-position in screen pixels of gold element
+     */
+    public double getXPosition(){
+        return goldXPos;
     }
 
     /**

@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.team2844.TestDrivers;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * Displays the first pattern upon init.
  */
 @TeleOp(name="BlinkinExample")
-@Disabled
+// @Disabled
 public class SampleRevBlinkinLedDriver extends OpMode {
 
     /*
@@ -72,7 +72,7 @@ public class SampleRevBlinkinLedDriver extends OpMode {
     Deadline ledCycleDeadline;
     Deadline gamepadRateLimit;
 
-    protected enum DisplayKind {
+    protected enum  DisplayKind {
         MANUAL,
         AUTO
     }
@@ -80,10 +80,10 @@ public class SampleRevBlinkinLedDriver extends OpMode {
     @Override
     public void init()
     {
-        displayKind = DisplayKind.AUTO;
+        displayKind = DisplayKind.MANUAL;
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
 
         blinkinLedDriver.setPattern(pattern);
 

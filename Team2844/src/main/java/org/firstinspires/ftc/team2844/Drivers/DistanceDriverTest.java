@@ -56,6 +56,7 @@ public class DistanceDriverTest {
             System.out.println("ValleyXDrived: "+ distancedrived);
 
             imudriver_.gyroDrive(speed, distancedrived, angle);
+            //the problem with the distance sensor might be becasue the angle wasnt correct
 
 
         }

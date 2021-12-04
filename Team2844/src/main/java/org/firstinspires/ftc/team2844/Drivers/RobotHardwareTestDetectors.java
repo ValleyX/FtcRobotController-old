@@ -30,17 +30,13 @@ package org.firstinspires.ftc.team2844.Drivers;
  */
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetector;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
 
 import org.opencv.core.Core;
@@ -52,6 +48,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+//import org.openftc.easyopencv.OpenCvPipeline;
+//import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
@@ -68,9 +66,9 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
  *
  *
  */
-public class RobotHardware
+public class RobotHardwareTestDetectors
 {
-//    public static final double P_DRIVE_COEFF = 2;
+    //    public static final double P_DRIVE_COEFF = 2;
     public LinearOpMode OpMode_;
 
     public DcMotor  leftFront;
@@ -88,11 +86,8 @@ public class RobotHardware
     public WebcamName webcamRight; //
     public OpenCvSwitchableWebcam switchableWebcam;
     public SkystoneDeterminationPipeline pipeline;
-    public GoldAlignDetectorTry goldPipeline;
-
-    public DigitalChannel liftdowntouch;
-    public DigitalChannel intaketouch;
-
+    public GoldAlignDetector goldAlignPipeline;
+    //public GoldDetector goldPipeline;
 
     public enum cameraSelection
     {
@@ -115,7 +110,6 @@ public class RobotHardware
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
     static final double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.07;     // Larger is more responsive, but also less stable 0.1
-//    static final double P_TURN_COEFF = 0.6;     // Larger is more responsive, but also less stable 0.1
     static final double P_DRIVE_COEFF = 0.015;     // Larger is more responsive, but also less stable 0.15
 
     //lift
@@ -128,20 +122,22 @@ public class RobotHardware
 
 
     /* Constructor */
-    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
+    public RobotHardwareTestDetectors(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
 
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
         webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"); // USB 3.0
         //webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
-        pipeline = new RobotHardware.SkystoneDeterminationPipeline(x, y);
-        goldPipeline = new GoldAlignDetectorTry();
 
-       // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
+        // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
-       // switchableWebcam.openCameraDevice();
 
+        goldAlignPipeline = new GoldAlignDetector();
+        //switchableWebcam.setPipeline(pipeline);
+        switchableWebcam.setPipeline(goldAlignPipeline);
+        //switchableWebcam.openCameraDeviceAsync();
+        switchableWebcam.openCameraDevice();
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -150,8 +146,12 @@ public class RobotHardware
             {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
                 //pick desired camera here
-                if (camera == RobotHardware.cameraSelection.LEFT) {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                if (camera == RobotHardwareTestDetectors.cameraSelection.LEFT) {
+                   // switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
+                     switchableWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                  //  switchableWebcam.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
+                  //  switchableWebcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPSIDE_DOWN);
+                  //  switchableWebcam.startStreaming(1280, 960, OpenCvCameraRotation.UPSIDE_DOWN);
                     switchableWebcam.setActiveCamera(webcamLeft);
                 } else {
                     switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
@@ -183,33 +183,26 @@ public class RobotHardware
             }
         });
         */
-        switchableWebcam.setPipeline(pipeline);
-        //switchableWebcam.setPipeline(goldPipeline);
-        //switchableWebcam.openCameraDeviceAsync();
 
+/*
         // Define and Initialize Motors
-         leftFront = ahwMap.get(DcMotor.class,"leftFront");
-         rightFront = ahwMap.get(DcMotor.class,"rightFront");
-         leftBack = ahwMap.get(DcMotor.class,"leftBack");
-         rightBack = ahwMap.get(DcMotor.class,"rightBack");
+        leftFront = ahwMap.get(DcMotor.class,"leftFront");
+        rightFront = ahwMap.get(DcMotor.class,"rightFront");
+        leftBack = ahwMap.get(DcMotor.class,"leftBack");
+        rightBack = ahwMap.get(DcMotor.class,"rightBack");
         duckySpinner = ahwMap.get(DcMotor.class, "duckSpinner");
-         liftmotor = ahwMap.get(DcMotor.class, "liftMotor");
-         superintake = ahwMap.get(DcMotor.class, "superintake");
+        liftmotor = ahwMap.get(DcMotor.class, "liftMotor");
+        superintake = ahwMap.get(DcMotor.class, "superintake");
 
-       liftdowntouch = ahwMap.get(DigitalChannel.class, "liftdowntouch");
-        intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
 
-        //liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
-        intaketouch.setMode(DigitalChannel.Mode.INPUT);
-
-         //test
+        //test
         //sensorRange = ahwMap.get(DistanceSensor.class, "distance");
         //test
 
 
-            rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-       // liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -260,7 +253,7 @@ public class RobotHardware
         ///TEST CODE
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
+*/
 
     }
 
@@ -337,6 +330,7 @@ public class RobotHardware
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
              */
+            /*
             REGION1_TOPLEFT_ANCHOR_POINTMIDDLE = new Point(x, y); // 200, 165
             region1Middle_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.x, REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.y);
             region1Middle_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTMIDDLE.y + REGION_HEIGHT);
@@ -348,7 +342,7 @@ public class RobotHardware
             REGION1_TOPLEFT_ANCHOR_POINTRIGHT = new Point(259, y); // 200, 165
             region1Right_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y);
             region1Right_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y + REGION_HEIGHT);
-
+*/
 
         }
 
@@ -420,7 +414,7 @@ public class RobotHardware
                     region1Left_pointA, // First point which defines the rectangle
                     region1Left_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
-                            2); // Thickness of the rectangle lines
+                    2); // Thickness of the rectangle lines
 /*
             SkystoneAverageLeft = avgLeft;
             //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
@@ -438,11 +432,11 @@ public class RobotHardware
             }
 */
             Imgproc.rectangle(
-                input, // Buffer to draw on
-                region1Left_pointA, // First point which defines the rectangl
-                region1Left_pointB, // Second point which defines the rectangle
-                GREEN, // The color the rectangle is drawn in
-                            -1); // Negative thickness means solid fill
+                    input, // Buffer to draw on
+                    region1Left_pointA, // First point which defines the rectangl
+                    region1Left_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    -1); // Negative thickness means solid fill
 
 
 
@@ -455,7 +449,7 @@ public class RobotHardware
                     region1Right_pointA, // First point which defines the rectangle
                     region1Right_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
-                            2); // Thickness of the rectangle lines
+                    2); // Thickness of the rectangle lines
 
             SkystoneAverageRight = avgRight;
             //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
@@ -477,11 +471,11 @@ public class RobotHardware
                     region1Right_pointA, // First point which defines the rectangle
                     region1Right_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                                -1); // Negative thickness means solid fill
+                    -1); // Negative thickness means solid fill
 
 
 
-                    return input;
+            return input;
         }
 
 
@@ -528,20 +522,6 @@ public class RobotHardware
         rightBack.setPower(power);
         rightFront.setPower(power);
     }
-
-    public void intake(double power) {
-        if ((intaketouch.getState()) == false && (power > 0) ) // flase means pressed
-             {
-            superintake.setPower(0);
-        }
-
-        else {
-            superintake.setPower(power);
-        }
-
-    }
-
-
 
     public void duckySpins(double power) {
         duckySpinner.setPower(power);

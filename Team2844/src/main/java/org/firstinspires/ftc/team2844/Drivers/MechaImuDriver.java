@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team2844.Drivers;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -177,7 +178,8 @@ public class MechaImuDriver {
     public void gyroTurn (  double speed, double angle) {
 
 // keep looping while we are still active, and not on heading.
-        while (robot_.OpMode_.opModeIsActive() && !onHeading(speed, angle, robot_.P_TURN_COEFF)) {
+        while (robot_.OpMode_.opModeIsActive() && !onHeading(speed, angle, robot_.P_TURN_COEFF) &&
+                (robot_.OpMode_.gamepad1.left_stick_y == 0) && (robot_.OpMode_.gamepad1.right_stick_y == 0)) {
             // Update telemetry & Allow time for other processes to run.
             robot_.OpMode_.telemetry.update();
         }
@@ -334,6 +336,12 @@ telemetry.addData("Speed.", "%5.2f:%5.2f:%5.2f:%5.2f", leftFrontSpeed, rightFron
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+    public double GetAngle() {
+        double gyroActual = -robot_.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return gyroActual;
+    }
+
 
 
 
