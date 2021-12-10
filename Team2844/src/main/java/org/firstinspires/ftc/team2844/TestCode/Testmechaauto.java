@@ -17,7 +17,7 @@ import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.team2844.TestDrivers.SensorREVColorDistance_CB;
 
-@Disabled
+//@Disabled
 
 @Autonomous(name="Testmechaauto")
 public class Testmechaauto extends LinearOpMode{
@@ -30,7 +30,7 @@ public class Testmechaauto extends LinearOpMode{
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest Driveto = new DistanceDriverTest(robot, headingdrive);
         LiftDriverTest liftto = new LiftDriverTest(robot);
-        SensorREVColorDistance_CB colorto  = new SensorREVColorDistance_CB(robot, headingdrive);
+        //SensorREVColorDistance_CB colorto  = new SensorREVColorDistance_CB(robot, headingdrive);
 
         System.out.println("valleyx: im here4");
 
@@ -39,19 +39,19 @@ public class Testmechaauto extends LinearOpMode{
         //robot.StraifLeft(1);
         //robot.allpower(1);
        // headingdrive.gyroDrive(0.2,10,0);
-       // headingdrive.gyroTurn(0.8,-90);
+       headingdrive.gyroTurn(0.8,-90);
         //sleep(1000);
         //headingdrive.gyroTurn(0.8,0);
 
-        telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
-        telemetry.update();
+        //telemetry.addData("range", String.format("%.01f in", robot.sensorRange.getDistance(DistanceUnit.INCH)));
+       // telemetry.update();
 
-        System.out.println("Valley: distance sensor range "+ robot.sensorRange.getDistance(DistanceUnit.INCH));
+        //System.out.println("Valley: distance sensor range "+ robot.sensorRange.getDistance(DistanceUnit.INCH));
 
 
         //encodermecha.StartAction(0.1,10,10,10,true);
-        headingdrive.gyroDrive(0.5,5,0);
-        Driveto.DriveToDistance(0.1,1,0);
+       // headingdrive.gyroDrive(0.5,5,0);
+        //Driveto.DriveToDistance(0.1,1,0);
 
 
 
@@ -60,9 +60,10 @@ public class Testmechaauto extends LinearOpMode{
         //sleep(5000);
         //liftto.LiftToDistance(0.2,-4);
 
-        colorto.drivetocolor(0.2,1, colorto.Red);
+        //colorto.drivetocolor(0.2,1, colorto.Red);
 
-
+        //robot.arm.setPosition(0.5);
+        //sleep(30000);
 
 
 

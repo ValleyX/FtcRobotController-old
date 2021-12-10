@@ -32,7 +32,7 @@ public class BlueWarehouseSide extends LinearOpMode {
             telemetry.addData("Position", path);
             telemetry.update();
         }
-
+/** IT DRIFTS
         headingdrive.gyroDrive(0.7, 8, 0);
 
         robot.StraifRight(0.4);
@@ -41,6 +41,15 @@ public class BlueWarehouseSide extends LinearOpMode {
         headingdrive.gyroTurn(0.75,15);
 
         headingdrive.gyroDrive(1,14.8,20);
+
+ */
+
+
+        headingdrive.gyroDrive(0.7, 30, 0);
+
+        headingdrive.gyroDrive(0.7, -15,0);
+
+        headingdrive.gyroTurn(0.5, 40);
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
             dist = 5;
@@ -57,18 +66,24 @@ public class BlueWarehouseSide extends LinearOpMode {
             liftto.LiftToDistance(0.9, dist);
         }
 
+
+        headingdrive.gyroDrive(0.7,11,40);
+
         robot.superintake.setPower(-1);
         sleep(500);
         robot.superintake.setPower(0);
 
         headingdrive.gyroDrive(0.5,-9, 20);
 
-        liftto.LiftToDistance(0.3, -dist + 6);
-
+        //liftto.LiftToDistance(0.3, -dist + 6);
 
         headingdrive.gyroTurn(0.75,-90);
 
         headingdrive.gyroDrive(1,60,-90);
+
+        headingdrive.gyroTurn(0.4,0);
+
+        liftto.LiftToDistance(0.4,-dist);
 
 
         /*

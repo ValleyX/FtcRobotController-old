@@ -72,7 +72,7 @@ public class SampleRevBlinkinLedDriver extends OpMode {
     Deadline ledCycleDeadline;
     Deadline gamepadRateLimit;
 
-    protected enum  DisplayKind {
+    public enum  DisplayKind {
         MANUAL,
         AUTO
     }
@@ -83,7 +83,8 @@ public class SampleRevBlinkinLedDriver extends OpMode {
         displayKind = DisplayKind.MANUAL;
 
         blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        pattern = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE;
+
 
         blinkinLedDriver.setPattern(pattern);
 

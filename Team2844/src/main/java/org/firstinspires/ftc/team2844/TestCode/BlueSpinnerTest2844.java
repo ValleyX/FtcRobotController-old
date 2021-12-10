@@ -38,10 +38,8 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
         //sleep(1000);
         headingdrive.gyroDrive(0.3,-10,0);
 
-        headingdrive.gyroTurn(0.5,-55);
-        //sleep(500);
-        headingdrive.gyroDrive(0.2,13.6,-55);
 
+        headingdrive.gyroTurn(0.5,-55);
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
             dist = 5;
@@ -59,6 +57,14 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
         }
 
 
+
+        //sleep(500);
+        headingdrive.gyroDrive(0.2,13.6,-55);
+
+
+
+
+
         robot.superintake.setPower(-1);
         sleep(500);
         robot.superintake.setPower(0);
@@ -69,25 +75,31 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
         sleep(500);
 
 
-        headingdrive.gyroTurn(0.2,-80);
+        headingdrive.gyroTurn(0.3,-80);
 
-        headingdrive.gyroDrive(1,-50,-80);
+        headingdrive.gyroDrive(0.5,-55,-80);
 
-        robot.StraifLeft(0.4);
+        robot.StraifLeft(0.2);
         sleep(1000);
         //headingdrive.gyroDrive(0.4,-10,-80);
 
-        robot.duckySpins(-0.3);
+        robot.duckySpins(-0.4);
         //headingdrive.gyroDrive(0.2,-4, 0);
-        robot.allpower(-0.01);
+        robot.StraifLeft(0.03);
         sleep(8500);
 
-        headingdrive.gyroTurn(0.5, 0);
+        robot.StraifRight(0.2);
+        sleep(500);
+
+        headingdrive.gyroTurn(0.6, 0);
+
+        headingdrive.gyroDrive(0.2,5,0);
+
 
         robot.StraifRight(0.4);
         sleep(1000);
 
-        headingdrive.gyroDrive(1,17.4 ,0);
+        headingdrive.gyroDrive(1,17 ,0);
 
 
 

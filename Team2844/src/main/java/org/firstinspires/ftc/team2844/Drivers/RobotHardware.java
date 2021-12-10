@@ -31,16 +31,22 @@ package org.firstinspires.ftc.team2844.Drivers;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import org.firstinspires.ftc.team2844.TestDrivers.SampleRevBlinkinLedDriver;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
 
 import org.opencv.core.Core;
@@ -54,6 +60,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is NOT an opmode.
@@ -93,8 +101,141 @@ public class RobotHardware
     public DigitalChannel liftdowntouch;
     public DigitalChannel intaketouch;
 
+    public Servo arm;
+    public Servo grab;
 
-    public enum cameraSelection
+
+    public RevBlinkinLedDriver blinkinLedDriver;
+    public RevBlinkinLedDriver blinkinLedDriver2;
+    public RevBlinkinLedDriver.BlinkinPattern desiredpattern;
+    public RevBlinkinLedDriver.BlinkinPattern desiredpatternlift;
+    public RevBlinkinLedDriver.BlinkinPattern actualpattern;
+    public RevBlinkinLedDriver.BlinkinPattern actualpatternlift;
+
+    Telemetry.Item patternName;
+    Telemetry.Item display;
+    SampleRevBlinkinLedDriver.DisplayKind displayKind;
+    Deadline ledCycleDeadline;
+    Deadline gamepadRateLimit;
+
+
+
+    protected enum  DisplayKind {
+        MANUAL,
+        AUTO
+    }
+
+    public void init()
+    {
+        displayKind = SampleRevBlinkinLedDriver.DisplayKind.MANUAL;
+
+
+
+       setblinkin(RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE, RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE);
+
+        ledCycleDeadline = new Deadline(LED_PERIOD, TimeUnit.SECONDS);
+        gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
+    }
+
+    public void setblinkin (RevBlinkinLedDriver.BlinkinPattern desiredpattern,
+                            RevBlinkinLedDriver.BlinkinPattern desiredpatternlift) {
+        if (desiredpattern != actualpattern) {
+            blinkinLedDriver.setPattern(desiredpattern);
+            actualpattern = desiredpattern;
+        }
+        if (desiredpatternlift != actualpatternlift) {
+            blinkinLedDriver2.setPattern(desiredpatternlift);
+            actualpatternlift = desiredpatternlift;
+        }
+
+
+    }
+/*
+    public void loop()
+    {
+        handleGamepad();
+
+        if (displayKind == SampleRevBlinkinLedDriver.DisplayKind.AUTO) {
+            doAutoDisplay();
+        } else {
+            /*
+             * MANUAL mode: Nothing to do, setting the pattern as a result of a gamepad event.
+
+        }
+    }
+    */
+
+    /*
+     * handleGamepad
+     *
+     * Responds to a gamepad button press.  Demonstrates rate limiting for
+     * button presses.  If loop() is called every 10ms and and you don't rate
+     * limit, then any given button press may register as multiple button presses,
+     * which in this application is problematic.
+     *
+     * A: Manual mode, Right bumper displays the next pattern, left bumper displays the previous pattern.
+     * B: Auto mode, pattern cycles, changing every LED_PERIOD seconds.
+     */
+    /*
+    protected void handleGamepad()
+    {
+        if (!gamepadRateLimit.hasExpired()) {
+            return;
+        }
+
+        if (OpMode_.gamepad1.a) {
+            setDisplayKind(SampleRevBlinkinLedDriver.DisplayKind.MANUAL);
+            gamepadRateLimit.reset();
+        } else if (OpMode_.gamepad1.b) {
+            setDisplayKind(SampleRevBlinkinLedDriver.DisplayKind.AUTO);
+            gamepadRateLimit.reset();
+        } else if ((displayKind == SampleRevBlinkinLedDriver.DisplayKind.MANUAL) && (OpMode_.gamepad1.left_bumper)) {
+            pattern = pattern.previous();
+            displayPattern();
+            gamepadRateLimit.reset();
+        } else if ((displayKind == SampleRevBlinkinLedDriver.DisplayKind.MANUAL) && (OpMode_.gamepad1.right_bumper)) {
+            pattern = pattern.next();
+            displayPattern();
+            gamepadRateLimit.reset();
+        }
+
+        else if ((displayKind == SampleRevBlinkinLedDriver.DisplayKind.MANUAL) && (OpMode_.gamepad2.left_bumper)) {
+            patternlift = patternlift.previous();
+            displayPattern();
+            gamepadRateLimit.reset();
+        } else if ((displayKind == SampleRevBlinkinLedDriver.DisplayKind.MANUAL) && (OpMode_.gamepad2.right_bumper)) {
+            patternlift = patternlift.next();
+            displayPattern();
+            gamepadRateLimit.reset();
+        }
+    }
+
+    protected void setDisplayKind(SampleRevBlinkinLedDriver.DisplayKind displayKind)
+    {
+        this.displayKind = displayKind;
+        display.setValue(displayKind.toString());
+    }
+
+    protected void doAutoDisplay()
+    {
+        if (ledCycleDeadline.hasExpired()) {
+            pattern = pattern.next();
+            displayPattern();
+            ledCycleDeadline.reset();
+        }
+    }
+
+    protected void displayPattern()
+    {
+        blinkinLedDriver.setPattern(pattern);
+        patternName.setValue(pattern.toString());
+    }
+
+
+     */
+
+
+public enum cameraSelection
     {
         LEFT,
         RIGHT
@@ -115,7 +256,7 @@ public class RobotHardware
     static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
     static final double HEADING_THRESHOLD = 2;      // As tight as we can make it with an integer gyro
     static final double P_TURN_COEFF = 0.07;     // Larger is more responsive, but also less stable 0.1
-//    static final double P_TURN_COEFF = 0.6;     // Larger is more responsive, but also less stable 0.1
+    //static final double P_TURN_COEFF = 0.6;     // Larger is more responsive, but also less stable 0.1
     static final double P_DRIVE_COEFF = 0.015;     // Larger is more responsive, but also less stable 0.15
 
     //lift
@@ -124,6 +265,12 @@ public class RobotHardware
     public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
     public final double     LIFT_DISTANCE_IN_ONE_REV     = 2.7* Math.PI; //actual bot is 9.5
     public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+
+    //lights
+    public final static int LED_PERIOD = 10;
+    public final static int GAMEPAD_LOCKOUT = 500;
+
+
 
 
 
@@ -196,8 +343,15 @@ public class RobotHardware
          liftmotor = ahwMap.get(DcMotor.class, "liftMotor");
          superintake = ahwMap.get(DcMotor.class, "superintake");
 
+         grab = ahwMap.get(Servo.class,"grab");
+         arm = ahwMap.get(Servo.class, "arm");
+
+
        liftdowntouch = ahwMap.get(DigitalChannel.class, "liftdowntouch");
         intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
+
+        blinkinLedDriver = ahwMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLedDriver2 = ahwMap.get(RevBlinkinLedDriver.class, "liftblinkin");
 
         //liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
         intaketouch.setMode(DigitalChannel.Mode.INPUT);
@@ -529,19 +683,21 @@ public class RobotHardware
         rightFront.setPower(power);
     }
 
-    public void intake(double power) {
-        if ((intaketouch.getState()) == false && (power > 0) ) // flase means pressed
-             {
-            superintake.setPower(0);
-        }
-
-        else {
-            superintake.setPower(power);
-        }
-
+    public void armdown(){
+        arm.setPosition(0.63);
     }
 
+    public void armup() {
+        arm.setPosition(0);
+    }
 
+    public void grabclose() {
+        grab.setPosition(0);
+    }
+
+    public void grabopen() {
+        grab.setPosition(0.5);
+    }
 
     public void duckySpins(double power) {
         duckySpinner.setPower(power);

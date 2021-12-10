@@ -36,14 +36,11 @@ public class RedWarehouseSide extends LinearOpMode {
 
         headingdrive.gyroDrive(0.7, 30, 0);
 
-        headingdrive.gyroDrive(0.4,-22,0);
+        headingdrive.gyroDrive(0.4,-15,0);
 
-        robot.StraifLeft(0.2);
-        sleep(200);
+        headingdrive.gyroTurn(0.7,-40); //-15
 
-        headingdrive.gyroTurn(0.7,-18); //-15
 
-        headingdrive.gyroDrive(0.3,17.5,-18);
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
             dist = 5;
@@ -60,32 +57,27 @@ public class RedWarehouseSide extends LinearOpMode {
             liftto.LiftToDistance(0.9, dist);
         }
 
+
+
+        headingdrive.gyroDrive(0.3,13,-40);
+
         robot.superintake.setPower(-1);
         sleep(500);
         robot.superintake.setPower(0);
 
-        headingdrive.gyroDrive(0.5,-20, -20);
+        headingdrive.gyroDrive(0.5,-9, -20);
 
-        liftto.LiftToDistance(0.3, -dist + 6);
+        //liftto.LiftToDistance(0.3, -dist + 6);
 
 
         headingdrive.gyroTurn(0.75,90);
 
         headingdrive.gyroDrive(1,60,90);
 
-        robot.StraifRight(0.4);
-        sleep(500);
 
-        robot.leftFront.setPower(1);
-        robot.leftBack.setPower(1);
-        robot.rightFront.setPower(0.8);
-        robot.rightBack.setPower(0.8);
+        headingdrive.gyroTurn(0.4,0);
 
-        sleep(1500);
-
-
-
-
+        liftto.LiftToDistance(0.4,-dist );
 
         /*
         sleep(1000);

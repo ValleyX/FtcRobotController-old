@@ -13,12 +13,7 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class TestDriver extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor leftFront = hardwareMap.get(DcMotor.class,"leftFront");
-        DcMotor rightFront = hardwareMap.get(DcMotor.class,"rightFront");
-        DcMotor leftBack = hardwareMap.get(DcMotor.class,"leftBack");
-        DcMotor rightBack = hardwareMap.get(DcMotor.class,"rightBack");
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.LEFT);
 
         waitForStart();
 
@@ -33,10 +28,31 @@ public class TestDriver extends LinearOpMode {
             rightBack.setPower(righty);
 */
             if (gamepad1.left_bumper){
-                rightFront.setPower(1);
-                rightBack.setPower(-1);
-                leftFront.setPower(-1);
-                leftBack.setPower(1);
+                robot.rightFront.setPower(1);
+                robot.rightBack.setPower(-1);
+                robot.leftFront.setPower(-1);
+                robot.leftBack.setPower(1);
+            }
+
+
+
+            if (gamepad1.right_bumper) {
+                robot.duckySpinner.setPower(1);
+            }
+
+            double power = 0 ;
+            if (gamepad1.dpad_up) {
+                double newpower= power += 0.1;
+                robot.duckySpinner.setPower(newpower);
+                power = newpower;
+
+            }
+
+            if (gamepad1.dpad_down) {
+                double newpower= power += 0.1;
+                robot.duckySpinner.setPower(power);
+                power = newpower;
+
             }
 
 
