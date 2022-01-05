@@ -65,7 +65,7 @@ public abstract class DogeCVDetector extends OpenCvPipeline {
     }
 
     public double calculateScore(Mat input){
-        double totalScore = 0;
+        double totalScore = 0.0;
 
         for(DogeCVScorer scorer : scorers){
             totalScore += scorer.calculateScore(input);

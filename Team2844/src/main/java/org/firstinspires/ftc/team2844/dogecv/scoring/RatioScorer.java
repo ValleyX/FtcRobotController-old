@@ -36,6 +36,8 @@ public class RatioScorer extends DogeCVScorer{
      */
     @Override
     public double calculateScore(Mat input) {
+
+
         if(!(input instanceof MatOfPoint)) return Double.MAX_VALUE;
         MatOfPoint contour = (MatOfPoint) input;
         double score = Double.MAX_VALUE;
@@ -50,5 +52,8 @@ public class RatioScorer extends DogeCVScorer{
         double cubeRatio = Math.max(Math.abs(h/w), Math.abs(w/h)); // Get the ratio. We use max in case h and w get swapped??? it happens when u account for rotation
         double ratioDiffrence = Math.abs(cubeRatio - perfectRatio);
         return ratioDiffrence * weight;
+        //return 1.0;
+
+
     }
 }

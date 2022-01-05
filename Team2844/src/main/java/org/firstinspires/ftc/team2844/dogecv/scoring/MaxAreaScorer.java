@@ -28,11 +28,16 @@ public class MaxAreaScorer extends DogeCVScorer{
      */
     @Override
     public double calculateScore(Mat input) {
+
+
         if(!(input instanceof MatOfPoint)) return Double.MAX_VALUE;
         MatOfPoint contour = (MatOfPoint) input;
         double area = Imgproc.contourArea(contour);
 
         return -area * weight;
+        //return 1.0;
+
+
     }
 
 }

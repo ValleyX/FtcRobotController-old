@@ -27,6 +27,7 @@ public class TestDetectors2 extends LinearOpMode{
         Boolean yPressedUp = false;
         Boolean aPressedDown = false;
 
+        robotHardwareTestDetectors.goldAlignPipeline.useDefaults();
         //waitForStart();
         while (!isStarted()) {
             telemetry.addData("Is Found", robotHardwareTestDetectors.goldAlignPipeline.isFound());
