@@ -20,9 +20,12 @@ public class LiftPositionDriver {
     }
 
     public void LiftToPosition (double speed,
-                                double position ) {
+                                double position,
+                                boolean waiting) {
 
 
+
+        waiting_ = waiting;
         int LiftTarget;
         int moveCounts;
 
@@ -44,7 +47,7 @@ public class LiftPositionDriver {
 
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (robot_.OpMode_.opModeIsActive() && (robot_.liftmotor.isBusy()) && (robot_.liftdowntouch.getState() == true)) // true means not touched {
+            while (robot_.OpMode_.opModeIsActive() && (robot_.liftmotor.isBusy()) && (robot_.liftdowntouch.getState() == true) && (waiting == true)) {// true means not touched {
 
                 robot_.OpMode_.telemetry.addData("lift position : ", robot_.liftmotor.getCurrentPosition());
                 robot_.OpMode_.telemetry.addData("lift target position : ", robot_.liftmotor.getTargetPosition());
@@ -52,23 +55,36 @@ public class LiftPositionDriver {
 
                 System.out.println("valleyX: " + robot_.liftmotor.getCurrentPosition());
                 System.out.println("valleyX");
-
-
             }
 
-            robot_.liftmotor.setPower(0);
+            if (waiting == true) {
+                stop();
 
-            if (robot_.liftdowntouch.getState() == false) {
-                robot_.liftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
-
-            // Turn off RUN_TO_POSITION
-            robot_.liftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         }
+    }
+
+    public boolean isliftbusy() {
+        return (robot_.liftmotor.isBusy() /*&& (robot_.liftdowntouch.getState() == true)*/);
+       // return ret;
 
     }
+
+    public void stop()
+    {
+        robot_.liftmotor.setPower(0);
+
+
+        if (robot_.liftdowntouch.getState() == false) {
+            robot_.liftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        // Turn off RUN_TO_POSITION
+        robot_.liftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        waiting_ = false;
+    }
+}
 
 
 

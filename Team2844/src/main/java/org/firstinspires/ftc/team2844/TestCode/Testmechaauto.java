@@ -39,7 +39,7 @@ public class Testmechaauto extends LinearOpMode{
         //robot.StraifLeft(1);
         //robot.allpower(1);
        // headingdrive.gyroDrive(0.2,10,0);
-       headingdrive.gyroTurn(0.8,-90);
+       //headingdrive.gyroTurn(0.8,-90);
         //sleep(1000);
         //headingdrive.gyroTurn(0.8,0);
 
@@ -65,6 +65,7 @@ public class Testmechaauto extends LinearOpMode{
         //robot.arm.setPosition(0.5);
         //sleep(30000);
 
+        liftto.LiftToDistance(0.5,5);
 
 
 

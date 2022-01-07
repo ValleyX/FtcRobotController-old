@@ -77,7 +77,7 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
 
         headingdrive.gyroTurn(0.3,-80);
 
-        headingdrive.gyroDrive(0.5,-55,-80);
+        headingdrive.gyroDrive(0.3,-55,-80);
 
         robot.StraifLeft(0.2);
         sleep(1000);
@@ -85,7 +85,7 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
 
         robot.duckySpins(-0.4);
         //headingdrive.gyroDrive(0.2,-4, 0);
-        robot.StraifLeft(0.03);
+        robot.StraifLeft(0.02);
         sleep(8500);
 
         robot.StraifRight(0.2);

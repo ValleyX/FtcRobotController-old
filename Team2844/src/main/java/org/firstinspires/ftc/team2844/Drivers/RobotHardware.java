@@ -89,6 +89,7 @@ public class RobotHardware
     public DcMotor liftmotor;
     public DcMotor superintake;
     public DistanceSensor sensorRange;
+    public DistanceSensor blocksensor;
 
 
 
@@ -99,7 +100,7 @@ public class RobotHardware
     public GoldAlignDetectorTry goldPipeline;
 
     public DigitalChannel liftdowntouch;
-    public DigitalChannel intaketouch;
+   // public DigitalChannel intaketouch;
 
     public Servo arm;
     public Servo grab;
@@ -348,13 +349,14 @@ public enum cameraSelection
 
 
        liftdowntouch = ahwMap.get(DigitalChannel.class, "liftdowntouch");
-        intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
+        //intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
+        blocksensor = ahwMap.get(DistanceSensor.class, "blocksensor");
 
         blinkinLedDriver = ahwMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkinLedDriver2 = ahwMap.get(RevBlinkinLedDriver.class, "liftblinkin");
 
         //liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
-        intaketouch.setMode(DigitalChannel.Mode.INPUT);
+        //intaketouch.setMode(DigitalChannel.Mode.INPUT);
 
          //test
         //sensorRange = ahwMap.get(DistanceSensor.class, "distance");

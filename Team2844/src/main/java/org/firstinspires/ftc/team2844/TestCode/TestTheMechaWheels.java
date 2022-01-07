@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team2844.Drivers.LiftPositionDriver;
 import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardwareTest;
 import org.firstinspires.ftc.team2844.TestDrivers.SampleRevBlinkinLedDriver;
+import org.firstinspires.ftc.team2844.TestDrivers.SensorOfDistance;
 
 @TeleOp(name="teleop driver")
 public class TestTheMechaWheels extends LinearOpMode {
@@ -41,10 +43,12 @@ public class TestTheMechaWheels extends LinearOpMode {
 
         //RobotHardwareTest robottest = new RobotHardwareTest(hardwareMap, this, 145, 120, RobotHardwareTest.cameraSelection.LEFT);
         RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.LEFT);
-
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         //LiftDriverTest liftto = new LiftDriverTest(robot);
         LiftPositionDriver liftto = new LiftPositionDriver(robot);
+
+        // test code
+        SensorOfDistance blocksense = new SensorOfDistance();
 
         double LiftTracker = 0;
         double toplayer = 17;
@@ -56,6 +60,8 @@ public class TestTheMechaWheels extends LinearOpMode {
 
         boolean enterendgame = false;
         boolean endgame = false;
+
+        boolean initatedlift = false;
 
         ElapsedTime timer;
         timer = new ElapsedTime();
@@ -70,13 +76,17 @@ public class TestTheMechaWheels extends LinearOpMode {
         while(opModeIsActive()) {
 
 
-            if  (timer.seconds() >= 90 && robot.intaketouch.getState() == true ) {
+            if  (timer.seconds() >= 90 && timer.seconds() <= 118 && robot.blocksensor.getDistance(DistanceUnit.CM) >= 6) {
                 robot.setblinkin(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED,
                         RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-
             }
 
-            else if (robot.intaketouch.getState() == false) {
+            else if (timer.seconds() >= 118 && robot.blocksensor.getDistance(DistanceUnit.CM) >= 6) {
+                robot.setblinkin(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE,
+                        RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+            }
+
+            else if (robot.blocksensor.getDistance(DistanceUnit.CM) < 6) {
                 robot.setblinkin(RevBlinkinLedDriver.BlinkinPattern.GOLD,
                         RevBlinkinLedDriver.BlinkinPattern.GOLD);
             }
@@ -149,21 +159,33 @@ public class TestTheMechaWheels extends LinearOpMode {
             /**
              * lift to
              */
-            if (gamepad2.y ) {
-                liftto.LiftToPosition(liftspeed,toplayer);
+            if ((gamepad2.y ) && (initatedlift == false)) {
+                liftto.LiftToPosition(liftspeed,toplayer, false);
+                initatedlift = true;
             }
 
-            if (gamepad2.b ) {
-                liftto.LiftToPosition(liftspeed,middlelayer);
-            }
-
-            if (gamepad2.a) {
-                liftto.LiftToPosition(liftspeed,lowlayer);
+            if ((gamepad2.b ) && (initatedlift == false)) {
+                liftto.LiftToPosition(liftspeed,middlelayer, false );
+                initatedlift = true;
 
             }
 
-            if (gamepad2.x) {
-                liftto.LiftToPosition(liftspeed,bottom);
+            if( (gamepad2.a) && (initatedlift == false)) {
+                liftto.LiftToPosition(liftspeed,lowlayer, false );
+                initatedlift = true;
+
+
+            }
+
+            if ((gamepad2.x) && (initatedlift == false)) {
+                liftto.LiftToPosition(liftspeed,bottom, false );
+                initatedlift = true;
+
+            }
+
+            if (initatedlift == true && (!liftto.isliftbusy() || (robot.liftdowntouch.getState() == false))) {
+                liftto.stop();
+                initatedlift = false;
             }
 
             /** arm and hand */
@@ -218,18 +240,16 @@ public class TestTheMechaWheels extends LinearOpMode {
             //robot.superintake.setPower(gamepad2.left_stick_y);
             //robot.intake(gamepad2.left_stick_y);
 
-            if ((robot.intaketouch.getState()) == false && (gamepad2.left_stick_y > 0) ) // flase means pressed
+            if ((robot.blocksensor.getDistance(DistanceUnit.CM) <= 5) && (gamepad2.left_stick_y > 0) ) // flase means pressed
             {
                 robot.superintake.setPower(0);
             }
-/*
-            else if ((robot.intaketouch.getState() == false) && (gamepad2.left_stick_y < 0)) // is pressed
+
+            else if ((robot.blocksensor.getDistance(DistanceUnit.CM) > 5) && (gamepad2.left_stick_y < 0)) // is pressed
             {
                 robot.superintake.setPower(gamepad2.left_stick_y);
             }
 
-
- */
             else {
                 robot.superintake.setPower(gamepad2.left_stick_y);
             }
@@ -268,6 +288,7 @@ public class TestTheMechaWheels extends LinearOpMode {
             telemetry.addData("intake : ", gamepad2.left_stick_y );
             telemetry.addData("arm", gamepad2.right_stick_x);
             telemetry.addData("arm position", robot.arm.getPosition());
+            telemetry.addData("block distance", robot.blocksensor.getDistance(DistanceUnit.CM));
 
             telemetry.update();
 

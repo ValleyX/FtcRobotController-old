@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetector;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
 
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.RedPostAlignDetector;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -87,6 +88,7 @@ public class RobotHardwareTestDetectors
     public OpenCvSwitchableWebcam switchableWebcam;
     public SkystoneDeterminationPipeline pipeline;
     public GoldAlignDetector goldAlignPipeline;
+    public RedPostAlignDetector redAlignPipeline;
     //public GoldDetector goldPipeline;
 
     public enum cameraSelection
@@ -134,8 +136,10 @@ public class RobotHardwareTestDetectors
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
 
         goldAlignPipeline = new GoldAlignDetector();
+        redAlignPipeline = new RedPostAlignDetector();
         //switchableWebcam.setPipeline(pipeline);
-        switchableWebcam.setPipeline(goldAlignPipeline);
+        //switchableWebcam.setPipeline(goldAlignPipeline);
+        switchableWebcam.setPipeline(redAlignPipeline);
         //switchableWebcam.openCameraDeviceAsync();
         switchableWebcam.openCameraDevice();
 

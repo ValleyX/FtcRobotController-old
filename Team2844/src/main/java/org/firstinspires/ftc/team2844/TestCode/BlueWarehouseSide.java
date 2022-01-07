@@ -45,7 +45,7 @@ public class BlueWarehouseSide extends LinearOpMode {
  */
 
 
-        headingdrive.gyroDrive(0.7, 30, 0);
+        headingdrive.gyroDrive(0.5, 30, 0);
 
         headingdrive.gyroDrive(0.7, -15,0);
 
@@ -67,7 +67,7 @@ public class BlueWarehouseSide extends LinearOpMode {
         }
 
 
-        headingdrive.gyroDrive(0.7,11,40);
+        headingdrive.gyroDrive(0.7,12.4,40);
 
         robot.superintake.setPower(-1);
         sleep(500);
