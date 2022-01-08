@@ -23,7 +23,7 @@ public class AutonomousBlueWall extends LinearOpMode
         RotatePrecise rotatePrecise =  new RotatePrecise(robot);
         RotateToHeading rotateToHeading = new RotateToHeading(robot, rotatePrecise);
 
-        RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+        RobotHardware.SkystoneDeterminationPipeline.MarkerPos path = robot.pipeline.position;
 
         while (!isStarted())
         {
@@ -44,14 +44,14 @@ public class AutonomousBlueWall extends LinearOpMode
         final double EXTRALENGTH = 9;
 
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.LEFT) // Square A, 0 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE-7.5, 0, 10, true);
             rotateToHeading.DoIt(-35);
             // drops wobble goal, already on line
         }
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.CENTER) // Square B, 1 ring
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH, 0, 10, true);
             rotateToHeading.DoIt(90);
@@ -62,7 +62,7 @@ public class AutonomousBlueWall extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+2, 0, 5, true);
         }
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.FOUR) // Square C, 4 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.RIGHT) // Square C, 4 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+BOXLENGTH+EXTRALENGTH, 0, 10, true);
             rotateToHeading.DoIt(-30);

@@ -29,7 +29,7 @@ public class AutonomousRedMiddle extends LinearOpMode
 
 
         //int location = robot.pipeline.getAnalysis();
-        RobotHardware.SkystoneDeterminationPipeline.RingPosition path = robot.pipeline.position;
+        RobotHardware.SkystoneDeterminationPipeline.MarkerPos path = robot.pipeline.position;
 
 
         while (!isStarted())
@@ -55,7 +55,7 @@ public class AutonomousRedMiddle extends LinearOpMode
         final double DISTANCETO_RINGS = 17;
         final double INITIAL_DISTANCE = 15;
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.NONE) // Square A, 0 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.LEFT) // Square A, 0 rings
         {
             encoderDriveHeading.StartAction(0.8, WHITELINE_DISTANCE+EXTRALENGTH, 0, 10, true);
             rotateToHeading.DoIt(90);
@@ -65,7 +65,7 @@ public class AutonomousRedMiddle extends LinearOpMode
             rotateToHeading.DoIt(0);
         }
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.ONE) // Square B, 1 ring
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.CENTER) // Square B, 1 ring
         {
             // getting rings
             encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);
@@ -89,7 +89,7 @@ public class AutonomousRedMiddle extends LinearOpMode
             encoderDriveHeading.StartAction(0.8, -BOXLENGTH+4, 0, 10, true);
         }
 
-        if (path == RobotHardware.SkystoneDeterminationPipeline.RingPosition.FOUR) // Square C, 4 rings
+        if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.RIGHT) // Square C, 4 rings
         {
             // getting rings
             encoderDriveHeading.StartAction(0.8, INITIAL_DISTANCE, 0, 10, true);

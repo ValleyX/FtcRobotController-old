@@ -7,6 +7,9 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -93,14 +96,14 @@ public class RobotHardware
         /* Public OpMode members */
         OpMode_ = opMode;
 
-        /*
+
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
-        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Left"); // USB 3.0
-        webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
+        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam"); // USB 3.0
+       // webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
         pipeline = new SkystoneDeterminationPipeline(x, y);
         //webcam.setPipeline(pipeline);
 
-        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
         switchableWebcam.openCameraDevice();
 
 
@@ -131,7 +134,7 @@ public class RobotHardware
                 }
             }
         });
-         */
+
 
         // Define and Initialize Motors
         leftDrive = OpMode_.hardwareMap.get(DcMotor.class, "lmotor"); // motor 0
@@ -154,11 +157,11 @@ public class RobotHardware
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         //An enum to define the skystone position
-        public enum RingPosition
+        public enum MarkerPos
         {
-            FOUR,
-            ONE,
-            NONE
+            LEFT,
+            CENTER,
+            RIGHT
         }
 
         //Some color constants
@@ -187,7 +190,7 @@ public class RobotHardware
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile SkystoneDeterminationPipeline.MarkerPos position = MarkerPos.LEFT;
 
         public SkystoneDeterminationPipeline(int x, int y)
         {
@@ -200,7 +203,7 @@ public class RobotHardware
         void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
+            Core.extractChannel(YCrCb, Cb, 2);
         }
 
         @Override
@@ -224,7 +227,7 @@ public class RobotHardware
                     region1_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
-
+/*
             //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD)
             {
@@ -238,7 +241,7 @@ public class RobotHardware
             {
                 position = SkystoneDeterminationPipeline.RingPosition.NONE;
             }
-
+*/
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
