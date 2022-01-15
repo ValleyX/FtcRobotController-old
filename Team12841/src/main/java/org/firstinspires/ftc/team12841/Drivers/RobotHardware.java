@@ -348,7 +348,16 @@ public class RobotHardware {
         public int getAnalysis() {
             return avg1;
         }
+
+
+
     }
 
+    public void allpower (double power) {
+        LbMotor.setPower(power);
+        RbMotor.setPower(power);
+        LfMotor.setPower(power);
+        RfMotor.setPower(power);
+    }
 }
 

@@ -35,7 +35,7 @@ public class BlueWheel extends LinearOpMode {
             encoderDrive.StartAction(0.5, -27, -27, 5, true);
             encoderDrive.StartAction(0.5, 15, -15, 5, true);
             encoderDrive.StartAction(0.5, -9, -9, 5, true);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 4, 4, 5, true);
@@ -57,7 +57,7 @@ public class BlueWheel extends LinearOpMode {
             encoderDrive.StartAction(0.5, -27, -27, 5, true);
             encoderDrive.StartAction(0.5, 15, -15, 5, true);
             encoderDrive.StartAction(0.5, -9, -9, 5, true);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 4, 4, 5, true);
@@ -81,7 +81,7 @@ public class BlueWheel extends LinearOpMode {
             encoderDrive.StartAction(0.5, -9, -9, 5, true);
             robotHardware.InServo.setPosition(.65);
             sleep(600);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             robotHardware.InServo.setPosition(.8);

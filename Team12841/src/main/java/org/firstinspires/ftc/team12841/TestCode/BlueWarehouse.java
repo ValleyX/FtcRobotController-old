@@ -34,7 +34,7 @@ public class BlueWarehouse extends LinearOpMode {
             encoderDrive.StartAction(0.5, -12, -12, 5, true);
             encoderDrive.StartAction(0.5, -9, 9, 5, true);
             encoderDrive.StartAction(0.5, -13, -13, 5, true);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 11, 11, 5, true);
@@ -46,7 +46,7 @@ public class BlueWarehouse extends LinearOpMode {
             encoderDrive.StartAction(0.5, -13, -12, 5, true);
             encoderDrive.StartAction(0.5, -9, 9, 5, true);
             encoderDrive.StartAction(0.5, -13, -13, 5, true);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 11, 11, 5, true);
@@ -60,7 +60,7 @@ public class BlueWarehouse extends LinearOpMode {
             encoderDrive.StartAction(0.5, -13, -13, 5, true);
             robotHardware.InServo.setPosition(.65);
             sleep(600);
-            robotHardware.InMotor.setPower(1);
+            robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             robotHardware.InServo.setPosition(.8);
