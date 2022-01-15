@@ -41,17 +41,18 @@ public class RedWheel extends LinearOpMode {
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 8, 8, 5, true);
             encoderDrive.StartAction(0.5, -11, 11, 5, true);
-            encoderDrive.StartAction(0.5, 29.5, 29.5, 5, true);
-            encoderDrive.StartAction(0.5, 18.5, -18.5, 5, true);
-            encoderDrive.StartAction(1, 11, 11, 5, true);
+            encoderDrive.StartAction(0.5, 29, 29, 5, true);
+            encoderDrive.StartAction(0.5, 17, -17, 5, true);
+            encoderDrive.StartAction(.1, 11, 11, 5, true);
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(-1);
-            robotHardware.allpower(0.03);
-            sleep(8500);
+            robotHardware.allpower(0.01);
+            sleep(6500);
             robotHardware.WheelMotor.setPower(0);
             robotHardware.allpower(0);
-            encoderDrive.StartAction(0.5, 5, -5, 5, true);
+            encoderDrive.StartAction(0.5, 4, -4, 5, true);
             encoderDrive.StartAction(0.5, -17, -17, 5, true);
+            encoderDrive.StartAction(0.5, -2.5, 2.5, 5, true);
 
 
 
@@ -60,47 +61,50 @@ public class RedWheel extends LinearOpMode {
             encoderDrive.StartAction(0.5, -5.5, -5.5, 5, true);
             encoderDrive.StartAction(0.5, -8.5, 8.5, 5, true);
             encoderDrive.StartAction(0.5, -18.5, -18.5, 5, true);
-            robotHardware.InMotor.setPower(.5);
+            robotHardware.InMotor.setPower(.65);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 8, 8, 5, true);
             encoderDrive.StartAction(0.5, -11, 11, 5, true);
-            encoderDrive.StartAction(0.5, 30, 30, 5, true);
-            encoderDrive.StartAction(0.5, 18.5, -18.5, 5, true);
-            encoderDrive.StartAction(0.5, 12.5, 12.5, 5, true);
+            encoderDrive.StartAction(0.5, 29, 29, 5, true);
+            encoderDrive.StartAction(0.5, 17,-17, 5, true);
+            encoderDrive.StartAction(0.1, 10.98, 10.98, 5, true);
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(-1);
             robotHardware.allpower(0.01);
-            sleep(4000);
+            sleep(4500);
             robotHardware.WheelMotor.setPower(0);
             robotHardware.allpower(0);
-            encoderDrive.StartAction(0.5, -17, -17, 5, true);
+            encoderDrive.StartAction(0.5, 3, -3, 5, true);
+            encoderDrive.StartAction(0.5, -16, -16, 5, true);
 
 
         } else if (markerPosFound == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.RIGHT){
             liftDrive.StartAction(.5, 13, 5, true);
-            encoderDrive.StartAction(0.5, -5.5, -5.5, 5, true);
+            encoderDrive.StartAction(0.5, -35.5, -35.5, 5, true);
+            encoderDrive.StartAction(0.5, 30, 30, 5, true);
             encoderDrive.StartAction(0.5, -8.5, 8.5, 5, true);
-            encoderDrive.StartAction(0.4, -18.225, -18.225, 5, true);
+            encoderDrive.StartAction(0.4, -18.75, -18.75, 5, true);
             robotHardware.InServo.setPosition(.65);
             sleep(600);
-            robotHardware.InMotor.setPower(.7);
+            robotHardware.InMotor.setPower(.9);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             robotHardware.InServo.setPosition(.8);
-            encoderDrive.StartAction(0.5, 8, 8, 5, true);
+            encoderDrive.StartAction(0.5, 8.525, 8.525, 5, true);
             encoderDrive.StartAction(0.5, -11, 11, 5, true);
-            encoderDrive.StartAction(0.5, 30, 30, 5, true);
-            encoderDrive.StartAction(0.5, 18.5, -18.5, 5, true);
-            encoderDrive.StartAction(0.3, 11, 11, 5, true);
+            encoderDrive.StartAction(0.5, 29, 29, 5, true);
+            encoderDrive.StartAction(0.5, 17, -17, 5, true);
+            encoderDrive.StartAction(0.1, 9.3, 9.3, 5, true);
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(-1);
-            robotHardware.allpower(0.01);
-            sleep(6000);
+            robotHardware.allpower(0.015);
+            sleep(4500);
             robotHardware.WheelMotor.setPower(0);
             robotHardware.allpower(0);
-            encoderDrive.StartAction(0.5, -17, -17, 5, true);
-            encoderDrive.StartAction(0.5, -17, -17, 5, true);
+            encoderDrive.StartAction(0.5, 4.5,-4.5, 5, true);
+            encoderDrive.StartAction(0.5, -16, -16, 5, true);
+
 
 
 

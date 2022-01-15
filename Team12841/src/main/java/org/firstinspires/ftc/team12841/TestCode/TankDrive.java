@@ -12,6 +12,14 @@ import org.firstinspires.ftc.team12841.Drivers.LiftDrive;
 
 @TeleOp (name = "tank")
 public class TankDrive extends LinearOpMode {
+
+    private final double LiftCOUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
+    private final double LiftDRIVE_GEAR_REDUCTION = 40.0;     // This is < 1.0 if geared UP
+    private final double LiftONE_MOTOR_COUNT_IN_ONE_REV = LiftCOUNTS_PER_MOTOR_REV * LiftDRIVE_GEAR_REDUCTION;
+    private final double LiftWHEEL_CIRCUMFRANSE = 1.5;
+    private final double LiftINCHES_IN_ONE_REV = LiftWHEEL_CIRCUMFRANSE * Math.PI;
+    final double LiftCOUNTS_PER_INCH = LiftONE_MOTOR_COUNT_IN_ONE_REV / LiftINCHES_IN_ONE_REV; //TODO determine in class
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -78,12 +86,17 @@ public class TankDrive extends LinearOpMode {
                 InServo.setPosition(0.8);
             }
 
-            if (lyTwo > .5){
-                LiftMotor.setPower(.5);
-            } else if (lyTwo < -.5){
+            if ((lyTwo > .5) && (LiftMotor.getCurrentPosition() > (0 * LiftCOUNTS_PER_INCH)))
+            {
                 LiftMotor.setPower(-.5);
-            } else {
+            } else if ((lyTwo < -.5) && (LiftMotor.getCurrentPosition() < (13 * LiftCOUNTS_PER_INCH))){
+                LiftMotor.setPower(.5);
+            } else if ((lyTwo < 0) && (LiftMotor.getCurrentPosition() > (0 * LiftCOUNTS_PER_INCH))){
                 LiftMotor.setPower(lyTwo);
+            } else if ((lyTwo > 0) && (LiftMotor.getCurrentPosition() < (13 * LiftCOUNTS_PER_INCH))){
+                LiftMotor.setPower(lyTwo);
+            } else {
+                LiftMotor.setPower(0);
             }
 
             if (lbTwo) {
@@ -111,9 +124,11 @@ public class TankDrive extends LinearOpMode {
                 telemetry.addData("RightBumperDuck = ", rbOne);
                 telemetry.addData("LeftBumperDuck = ", lbOne);
                 telemetry.addData("LeftStickYLift = ", lyTwo);
+                telemetry.addData("lift encoder ", LiftMotor.getCurrentPosition());
                 telemetry.addData( "AButton = ", aButtonTwo);
                 telemetry.addData("RightBumperIn = ", rbTwo);
                 telemetry.addData("LeftBumperIn = ", lbTwo);
+
                 telemetry.update();
 
             }
