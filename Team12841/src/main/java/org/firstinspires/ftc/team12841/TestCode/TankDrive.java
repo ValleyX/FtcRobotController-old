@@ -35,6 +35,8 @@ public class TankDrive extends LinearOpMode {
         DcMotor LiftMotor;
         DcMotor InMotor;
         Servo InServo;
+        Servo ArmServo;
+        Servo ToeServo;
 
 
         //more DT motor stuff
@@ -52,6 +54,8 @@ public class TankDrive extends LinearOpMode {
        LiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
        InMotor = hardwareMap.get(DcMotor.class, "InMotor");
        InServo = hardwareMap.get(Servo.class, "InServo");
+        ToeServo = hardwareMap.get(Servo.class, "ToeServo");
+        ArmServo = hardwareMap.get(Servo.class, "ArmServo");
 
         //spinner motor stuff
         SpinnerMotor = hardwareMap.get(DcMotor.class, "SpinnerMotor");
@@ -68,40 +72,83 @@ public class TankDrive extends LinearOpMode {
             boolean rbOne = gamepad1.right_bumper;
             boolean lbOne = gamepad1.left_bumper;
             double lyTwo = gamepad2.left_stick_y;
+            double ryTwo = gamepad2.right_stick_y;
             boolean aButtonTwo = gamepad2.a;
             boolean lbTwo = gamepad2.left_bumper;
             boolean rbTwo = gamepad2.right_bumper;
+            boolean bButtonTwo = gamepad2.b;
+            boolean yButtonTwo = gamepad2.y;
+            boolean xButtonTwo = gamepad2.x;
+            boolean dPadDownTwo = gamepad2.dpad_down;
+            boolean dPadUpTwo = gamepad2.dpad_up;
 
 
             LfMotor.setPower(lyOne);
             LbMotor.setPower(lyOne);
             RfMotor.setPower(ryOne);
             RbMotor.setPower(ryOne);
-           //  LiftMotor.setPower(lyTwo);
+            //  LiftMotor.setPower(lyTwo);
 
 
-            if (aButtonTwo){
+            if (aButtonTwo) {
                 InServo.setPosition(0.65);
-            }else {
+            } else {
                 InServo.setPosition(0.8);
             }
 
-            if ((lyTwo > .5) && (LiftMotor.getCurrentPosition() > (0 * LiftCOUNTS_PER_INCH)))
-            {
-                LiftMotor.setPower(-.5);
-            } else if ((lyTwo < -.5) && (LiftMotor.getCurrentPosition() < (13 * LiftCOUNTS_PER_INCH))){
-                LiftMotor.setPower(.5);
-            } else if ((lyTwo < 0) && (LiftMotor.getCurrentPosition() > (0 * LiftCOUNTS_PER_INCH))){
-                LiftMotor.setPower(lyTwo);
-            } else if ((lyTwo > 0) && (LiftMotor.getCurrentPosition() < (13 * LiftCOUNTS_PER_INCH))){
-                LiftMotor.setPower(lyTwo);
-            } else {
-                LiftMotor.setPower(0);
-            }
+
+          if (!dPadDownTwo) { //lift going down no greater and 1/2 speed
+              if ((lyTwo > .5) && (LiftMotor.getCurrentPosition() < (0 * LiftCOUNTS_PER_INCH))) {
+                  LiftMotor.setPower(.5);
+              }
+              //lift going up no greater than half speed
+              else if ((lyTwo < -.5) && (LiftMotor.getCurrentPosition() > (-13 * LiftCOUNTS_PER_INCH))) {
+                  LiftMotor.setPower(-.5);
+              }
+              // lift going down less than half speed
+              else if ((lyTwo > 0) && (LiftMotor.getCurrentPosition() < (0 * LiftCOUNTS_PER_INCH))) {
+                  LiftMotor.setPower(lyTwo);
+              }
+              // lift going up less than half speed
+              else if ((lyTwo < 0) && (LiftMotor.getCurrentPosition() > (-13 * LiftCOUNTS_PER_INCH))) {
+                  LiftMotor.setPower(lyTwo);
+              } else {
+                  LiftMotor.setPower(0);
+              }
+          }
+
+          if (dPadDownTwo){
+              //lift going down no greater and 1/2 speed
+              if ((lyTwo > .5)){
+                  LiftMotor.setPower(.5);
+              }
+              //lift going up no greater than half speed
+              else if ((lyTwo < -.5)){
+                  LiftMotor.setPower(-.5);
+              }
+              // lift going down less than half speed
+              else if ((lyTwo > 0)){
+                  LiftMotor.setPower(lyTwo);
+              }
+              // lift going up less than half speed
+              else if ((lyTwo < 0)){
+                  LiftMotor.setPower(lyTwo);
+              } else {
+                  LiftMotor.setPower(0);
+              }
+
+
+
+          }
+          if (dPadUpTwo){
+              LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+              LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+          }
+
 
             if (lbTwo) {
                 InMotor.setPower(-.75);
-            } else if (rbTwo){
+            } else if (rbTwo) {
                 InMotor.setPower(.75);
             } else {
                 InMotor.setPower(0);
@@ -110,10 +157,26 @@ public class TankDrive extends LinearOpMode {
 
             if (rbOne) {
                 SpinnerMotor.setPower(-1);
-            } else if (lbOne){
+            } else if (lbOne) {
                 SpinnerMotor.setPower(1);
             } else {
                 SpinnerMotor.setPower(0);
+            }
+
+            if (bButtonTwo) {
+                ArmServo.setPosition(.345);
+            } else if (xButtonTwo){
+                ArmServo.setPosition(.745);
+            }else {
+                ArmServo.setPosition(.87);
+            }
+// reset to .87
+
+
+            if (yButtonTwo) {
+                ToeServo.setPosition(.49);
+            } else {
+                ToeServo.setPosition(.37);
             }
 
             telemetry.addData("Path0", "lift position at %7d ",
@@ -124,10 +187,16 @@ public class TankDrive extends LinearOpMode {
                 telemetry.addData("RightBumperDuck = ", rbOne);
                 telemetry.addData("LeftBumperDuck = ", lbOne);
                 telemetry.addData("LeftStickYLift = ", lyTwo);
+                telemetry.addData("RightStickYArm = ", ryTwo);
                 telemetry.addData("lift encoder ", LiftMotor.getCurrentPosition());
                 telemetry.addData( "AButton = ", aButtonTwo);
                 telemetry.addData("RightBumperIn = ", rbTwo);
                 telemetry.addData("LeftBumperIn = ", lbTwo);
+                telemetry.addData( "BButton = ", bButtonTwo);
+                telemetry.addData( "YButton = ", yButtonTwo);
+                telemetry.addData(" XButton =", xButtonTwo);
+                telemetry.addData(" DpadDown =", dPadDownTwo);
+                telemetry.addData(" DpadUp =", dPadUpTwo);
 
                 telemetry.update();
 

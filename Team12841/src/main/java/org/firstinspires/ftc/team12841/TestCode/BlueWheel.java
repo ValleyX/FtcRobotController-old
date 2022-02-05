@@ -32,73 +32,87 @@ public class BlueWheel extends LinearOpMode {
 
         if (markerPosFound == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.LEFT){
             liftDrive.StartAction(.5, 4, 5, true);
-            encoderDrive.StartAction(0.5, -27, -27, 5, true);
-            encoderDrive.StartAction(0.5, 15, -15, 5, true);
-            encoderDrive.StartAction(0.5, -9, -9, 5, true);
+            encoderDrive.StartAction(0.5, -22, -22, 5, true);
+            encoderDrive.StartAction(0.6, 12.5, -12.5, 5, true);
+            encoderDrive.StartAction(0.5, -6, -6, 5, true);
+            encoderDrive.StartAction(0.5, 3, -3, 5, true);
+            encoderDrive.StartAction(0.5, -4, -4, 5, true);
             robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 4, 4, 5, true);
-            encoderDrive.StartAction(0.5, -6, 6, 5, true);
-            encoderDrive.StartAction(0.5, 32, 32, 5, true);
-            encoderDrive.StartAction(0.5, 8, -8, 5, true);
-            encoderDrive.StartAction(0.5, 2, 2, 5, true);
+            encoderDrive.StartAction(0.5, -4.5, 4.5, 5, true);
+            encoderDrive.StartAction(0.5, 35, 35, 5, true);
+            encoderDrive.StartAction(0.5, 2, -2, 5, true);
+            encoderDrive.StartAction(0.5, 1, 1, 5, true);
+
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(1);
+            robotHardware.allpower(0.01);
             sleep(4000);
             robotHardware.WheelMotor.setPower(0);
-            encoderDrive.StartAction(0.5, -18.5, 18.5, 5, true);
+            robotHardware.allpower(0);
+            encoderDrive.StartAction(0.5, -14, 14, 5, true);
             encoderDrive.StartAction(0.5, -17, -17, 5, true);
+            liftDrive.StartAction(.5, -4, 5, true);
 
 
 
         } else if (markerPosFound == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.CENTER){
             liftDrive.StartAction(.5, 10, 5, true);
-            encoderDrive.StartAction(0.5, -27, -27, 5, true);
-            encoderDrive.StartAction(0.5, 15, -15, 5, true);
-            encoderDrive.StartAction(0.5, -9, -9, 5, true);
+            encoderDrive.StartAction(0.5, -22, -22, 5, true);
+            encoderDrive.StartAction(0.6, 12.5, -12.5, 5, true);
+            encoderDrive.StartAction(0.5, -6, -6, 5, true);
+            encoderDrive.StartAction(0.5, 3, -3, 5, true);
+            encoderDrive.StartAction(0.5, -4, -4, 5, true);
             robotHardware.InMotor.setPower(.5);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             encoderDrive.StartAction(0.5, 4, 4, 5, true);
-            encoderDrive.StartAction(0.5, -6, 6, 5, true);
-            encoderDrive.StartAction(0.5, 32, 32, 5, true);
-            encoderDrive.StartAction(0.5, 8, -8, 5, true);
-            encoderDrive.StartAction(0.5, 2, 2, 5, true);
+            encoderDrive.StartAction(0.5, -4.5, 4.5, 5, true);
+            encoderDrive.StartAction(0.5, 35, 35, 5, true);
+            encoderDrive.StartAction(0.5, 2, -2, 5, true);
+            encoderDrive.StartAction(0.5, 1, 1, 5, true);
+
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(1);
+            robotHardware.allpower(0.01);
             sleep(4000);
             robotHardware.WheelMotor.setPower(0);
-            encoderDrive.StartAction(0.5, -18.5, 18.5, 5, true);
+            robotHardware.allpower(0);
+            encoderDrive.StartAction(0.5, -14, 14, 5, true);
             encoderDrive.StartAction(0.5, -17, -17, 5, true);
-
+            liftDrive.StartAction(.5, -10, 5, true);
 
 
         } else if (markerPosFound == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.RIGHT){
             liftDrive.StartAction(.5, 13.45, 5, true);
-            encoderDrive.StartAction(0.5, -35, -35, 5, true);
-            encoderDrive.StartAction(0.5, 8, 8, 5, true);
-            encoderDrive.StartAction(0.5, 15, -15, 5, true);
-            encoderDrive.StartAction(0.5, -9.75, -9.75, 5, true);
-            robotHardware.InServo.setPosition(.625 );
+            encoderDrive.StartAction(0.5, -22, -22, 5, true);
+            encoderDrive.StartAction(0.6, 12.5, -12.5, 5, true);
+            encoderDrive.StartAction(0.5, -6, -6, 5, true);
+            encoderDrive.StartAction(0.5, 3, -3, 5, true);
+            encoderDrive.StartAction(0.5, -4, -4, 5, true);
+            robotHardware.InServo.setPosition(.60);
             sleep(600);
             robotHardware.InMotor.setPower(1);
             sleep(600);
             robotHardware.InMotor.setPower(0);
             robotHardware.InServo.setPosition(.8);
-            encoderDrive.StartAction(0.5, 3.5, 3.5, 5, true);
-            encoderDrive.StartAction(0.5, -6, 6, 5, true);
-            encoderDrive.StartAction(0.5, 32, 32, 5, true);
-            encoderDrive.StartAction(0.5, 8, -8, 5, true);
-            encoderDrive.StartAction(0.5, 2, 2, 5, true);
+            encoderDrive.StartAction(0.5, 4, 4, 5, true);
+            encoderDrive.StartAction(0.5, -4.5, 4.5, 5, true);
+            encoderDrive.StartAction(0.5, 35, 35, 5, true);
+            encoderDrive.StartAction(0.5, 2, -2, 5, true);
+            encoderDrive.StartAction(0.5, 1, 1, 5, true);
+
             //Below is the turntable spinning motor
             robotHardware.WheelMotor.setPower(1);
+            robotHardware.allpower(0.01);
             sleep(4000);
             robotHardware.WheelMotor.setPower(0);
-            encoderDrive.StartAction(0.5, -22, 22, 5, true);
+            robotHardware.allpower(0);
+            encoderDrive.StartAction(0.5, -14, 14, 5, true);
             encoderDrive.StartAction(0.5, -17, -17, 5, true);
-            encoderDrive.StartAction(0.5, 2, -2, 5, true);
-
+            liftDrive.StartAction(.5, -13.45, 5, true);
 
 
 
