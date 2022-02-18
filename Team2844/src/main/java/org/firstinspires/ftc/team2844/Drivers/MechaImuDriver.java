@@ -177,9 +177,12 @@ public class MechaImuDriver {
 
     public void gyroTurn (  double speed, double angle) {
 
+        ElapsedTime elapsedTime = new ElapsedTime();
+        elapsedTime.reset();
 // keep looping while we are still active, and not on heading.
         while (robot_.OpMode_.opModeIsActive() && !onHeading(speed, angle, robot_.P_TURN_COEFF) &&
-                (robot_.OpMode_.gamepad1.left_stick_y == 0) && (robot_.OpMode_.gamepad1.right_stick_y == 0)) {
+                (robot_.OpMode_.gamepad1.left_stick_y == 0) && (robot_.OpMode_.gamepad1.right_stick_y == 0)
+                && (elapsedTime.seconds() < 2)) {
             // Update telemetry & Allow time for other processes to run.
             robot_.OpMode_.telemetry.update();
         }

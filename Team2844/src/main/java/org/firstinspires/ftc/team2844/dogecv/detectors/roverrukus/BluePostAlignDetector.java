@@ -2,8 +2,6 @@ package org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus;
 
 import org.firstinspires.ftc.team2844.dogecv.DogeCV;
 import org.firstinspires.ftc.team2844.dogecv.detectors.DogeCVDetector;
-import org.firstinspires.ftc.team2844.dogecv.filters.DogeCVColorFilter;
-import org.firstinspires.ftc.team2844.dogecv.filters.GrayscaleFilter;
 import org.firstinspires.ftc.team2844.dogecv.filters.LeviColorFilter;
 import org.firstinspires.ftc.team2844.dogecv.scoring.MaxAreaScorer;
 import org.firstinspires.ftc.team2844.dogecv.scoring.PerfectAreaScorer;
@@ -23,7 +21,7 @@ import java.util.List;
  * Created by Victo on 9/17/2018.
  */
 
-public class RedPostAlignDetector extends DogeCVDetector {
+public class BluePostAlignDetector extends DogeCVDetector {
 
     // Defining Mats to be used.
     private Mat displayMat = new Mat(); // Display debug info to the screen (this is what is returned)
@@ -45,7 +43,7 @@ public class RedPostAlignDetector extends DogeCVDetector {
     public double alignSize       = 400;  // How wide is the margin of error for alignment
     public int ksize = 5;
     //public int yellowTheshold = 100;
-    public int redTheshold = 188;
+    public int blueTheshold = 145;
     public int blackThreshold = 255;
     public int minimumSize = 0;
 
@@ -55,7 +53,7 @@ public class RedPostAlignDetector extends DogeCVDetector {
 
     //Create the default filters and scorers
 
-   public LeviColorFilter redFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.RED,redTheshold ); //Default Yellow filter `100
+   public LeviColorFilter redFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.BLUE, blueTheshold); //Default Yellow filter `100
    //  public LeviColorFilter redFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.RED); //Default Yellow filter `100
     //public LeviColorFilter blackFilter        = new LeviColorFilter(LeviColorFilter.ColorPreset.BLACK ,blackThreshold ); //
     //public DogeCVColorFilter blackFilter = new GrayscaleFilter(0, 5);
@@ -68,9 +66,9 @@ public class RedPostAlignDetector extends DogeCVDetector {
     /**
      * Simple constructor
      */
-    public RedPostAlignDetector() {
+    public BluePostAlignDetector() {
         super();
-        detectorName = "Red Post Align Detector"; //  Set the detector name
+        detectorName = "Blue Post Align Detector"; // Set the detector name
     }
 
 

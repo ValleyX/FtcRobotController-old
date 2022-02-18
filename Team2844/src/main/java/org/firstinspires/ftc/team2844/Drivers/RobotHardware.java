@@ -33,6 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -47,8 +48,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.team2844.TestDrivers.SampleRevBlinkinLedDriver;
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.BluePostAlignDetector;
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetector;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
 
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.RedPostAlignDetector;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -91,13 +95,18 @@ public class RobotHardware
     public DistanceSensor sensorRange;
     public DistanceSensor blocksensor;
 
+    public ColorSensor light;
 
 
-    public WebcamName webcamLeft; //
-    public WebcamName webcamRight; //
+
+
+    public WebcamName WebcamDown; //
+    public WebcamName WebcamUp; //
     public OpenCvSwitchableWebcam switchableWebcam;
     public SkystoneDeterminationPipeline pipeline;
-    public GoldAlignDetectorTry goldPipeline;
+    public GoldAlignDetector goldPipeline;
+    public RedPostAlignDetector redPipeline;
+    public BluePostAlignDetector bluePipeline;
 
     public DigitalChannel liftdowntouch;
    // public DigitalChannel intaketouch;
@@ -238,11 +247,11 @@ public class RobotHardware
 
 public enum cameraSelection
     {
-        LEFT,
-        RIGHT
+        DOWN,
+        UP
     }
 
-    BNO055IMU imu = null;
+    public BNO055IMU imu = null;
 
 
     //encoder
@@ -262,7 +271,7 @@ public enum cameraSelection
 
     //lift
     public final double     LIFT_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 30.0;     // This is < 1.0 if geared UP  //original was 20
+    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP  //original was 20
     public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
     public final double     LIFT_DISTANCE_IN_ONE_REV     = 2.7* Math.PI; //actual bot is 9.5
     public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
@@ -276,18 +285,20 @@ public enum cameraSelection
 
 
     /* Constructor */
-    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, final cameraSelection camera) {
+    public RobotHardware(HardwareMap ahwMap, LinearOpMode opMode, int x, int y, cameraSelection camera) {
         /* Public OpMode members. */
         OpMode_ = opMode;
 
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
-        webcamLeft = OpMode_.hardwareMap.get(WebcamName.class, "Webcam 1"); // USB 3.0
-        //webcamRight = OpMode_.hardwareMap.get(WebcamName.class, "Webcam Right"); // USB 2.0
+        WebcamDown = OpMode_.hardwareMap.get(WebcamName.class, "Webcam down"); // USB 3.0
+        WebcamUp = OpMode_.hardwareMap.get(WebcamName.class, "Webcam up"); // USB 2.0
         pipeline = new RobotHardware.SkystoneDeterminationPipeline(x, y);
-        goldPipeline = new GoldAlignDetectorTry();
+        goldPipeline = new GoldAlignDetector();
+        redPipeline = new RedPostAlignDetector();
+        bluePipeline = new BluePostAlignDetector();
 
        // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
-        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
+        switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId,WebcamDown, WebcamUp);
        // switchableWebcam.openCameraDevice();
 
 
@@ -298,15 +309,22 @@ public enum cameraSelection
             {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
                 //pick desired camera here
-                if (camera == RobotHardware.cameraSelection.LEFT) {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
-                    switchableWebcam.setActiveCamera(webcamLeft);
+                if (camera == cameraSelection.DOWN) {
+
+                    switchableWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+                    switchableWebcam.setActiveCamera(WebcamDown);
                 } else {
-                    switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    switchableWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
                     //switchableWebcam.setActiveCamera(webcamRight);
-                    switchableWebcam.setActiveCamera(webcamLeft);
+                    switchableWebcam.setActiveCamera(WebcamUp);
                 }
+
+
             }
+
+
+
+
             @Override
             public void onError(int errorCode)
             {
@@ -331,8 +349,9 @@ public enum cameraSelection
             }
         });
         */
+
         switchableWebcam.setPipeline(pipeline);
-        //switchableWebcam.setPipeline(goldPipeline);
+       //switchableWebcam.setPipeline(goldPipeline);
         //switchableWebcam.openCameraDeviceAsync();
 
         // Define and Initialize Motors
@@ -349,23 +368,18 @@ public enum cameraSelection
 
 
        liftdowntouch = ahwMap.get(DigitalChannel.class, "liftdowntouch");
-        //intaketouch = ahwMap.get(DigitalChannel.class, "intaketouch");
         blocksensor = ahwMap.get(DistanceSensor.class, "blocksensor");
+        light = ahwMap.get(ColorSensor.class, "light");
 
         blinkinLedDriver = ahwMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkinLedDriver2 = ahwMap.get(RevBlinkinLedDriver.class, "liftblinkin");
 
-        //liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
-        //intaketouch.setMode(DigitalChannel.Mode.INPUT);
-
-         //test
-        //sensorRange = ahwMap.get(DistanceSensor.class, "distance");
-        //test
+        liftdowntouch.setMode(DigitalChannel.Mode.INPUT);
 
 
             rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-       // liftmotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -385,6 +399,8 @@ public enum cameraSelection
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         liftmotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        duckySpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -445,8 +461,8 @@ public enum cameraSelection
         Point REGION1_TOPLEFT_ANCHOR_POINTRIGHT;
 
 
-        static final int REGION_WIDTH = 60;
-        static final int REGION_HEIGHT = 60;
+        static final int REGION_WIDTH = 100;
+        static final int REGION_HEIGHT = 100;
 
         public final int  FOUR_RING_THRESHOLD = 150;
 
@@ -501,7 +517,7 @@ public enum cameraSelection
             region1Left_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTLEFT.x, REGION1_TOPLEFT_ANCHOR_POINTLEFT.y);
             region1Left_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTLEFT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTLEFT.y + REGION_HEIGHT);
 
-            REGION1_TOPLEFT_ANCHOR_POINTRIGHT = new Point(259, y); // 200, 165
+            REGION1_TOPLEFT_ANCHOR_POINTRIGHT = new Point(540, y); // 200, 165
             region1Right_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y);
             region1Right_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINTRIGHT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINTRIGHT.y + REGION_HEIGHT);
 
@@ -685,12 +701,22 @@ public enum cameraSelection
         rightFront.setPower(power);
     }
 
+    public void SetRedPipeline(){
+        switchableWebcam.setPipeline(redPipeline);
+        switchableWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+    }
+
+    public void SetGoldPipeline(){
+        switchableWebcam.setPipeline(goldPipeline);
+        switchableWebcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+    }
+
     public void armdown(){
         arm.setPosition(0.63);
     }
 
     public void armup() {
-        arm.setPosition(0);
+       arm.setPosition(0);
     }
 
     public void grabclose() {

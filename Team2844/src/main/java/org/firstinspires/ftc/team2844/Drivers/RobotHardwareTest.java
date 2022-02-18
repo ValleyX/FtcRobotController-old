@@ -131,7 +131,7 @@ public class RobotHardwareTest
 
        // switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamRight);
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcamLeft, webcamLeft);
-        switchableWebcam.openCameraDevice();
+       // switchableWebcam.openCameraDevice();
         switchableWebcam.setPipeline(pipeline);
         //switchableWebcam.setPipeline(goldPipeline);
 /*

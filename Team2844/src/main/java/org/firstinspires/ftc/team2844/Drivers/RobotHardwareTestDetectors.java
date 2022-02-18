@@ -36,8 +36,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.BluePostAlignDetector;
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetector;
-import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.GoldAlignDetectorTry;
 
 import org.firstinspires.ftc.team2844.dogecv.detectors.roverrukus.RedPostAlignDetector;
 import org.opencv.core.Core;
@@ -89,6 +89,7 @@ public class RobotHardwareTestDetectors
     public SkystoneDeterminationPipeline pipeline;
     public GoldAlignDetector goldAlignPipeline;
     public RedPostAlignDetector redAlignPipeline;
+    public BluePostAlignDetector blueAlignPipeline;
     //public GoldDetector goldPipeline;
 
     public enum cameraSelection
@@ -137,11 +138,14 @@ public class RobotHardwareTestDetectors
 
         goldAlignPipeline = new GoldAlignDetector();
         redAlignPipeline = new RedPostAlignDetector();
-        //switchableWebcam.setPipeline(pipeline);
-        //switchableWebcam.setPipeline(goldAlignPipeline);
-        switchableWebcam.setPipeline(redAlignPipeline);
+        blueAlignPipeline = new BluePostAlignDetector();
+        switchableWebcam.setPipeline(blueAlignPipeline);
+       // switchableWebcam.setPipeline(goldAlignPipeline);
+        //switchableWebcam.setPipeline(redAlignPipeline);
         //switchableWebcam.openCameraDeviceAsync();
-        switchableWebcam.openCameraDevice();
+        //switchableWebcam.openCameraDevice();
+
+
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -530,6 +534,8 @@ public class RobotHardwareTestDetectors
     public void duckySpins(double power) {
         duckySpinner.setPower(power);
     }
+
+
 
 
 

@@ -55,7 +55,6 @@ import java.util.Locale;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Disabled
 
 @TeleOp(name = "Sensor: REVColorDistance CB", group = "Sensor")
 //@Disabled                            // Comment this out to add to the opmode list
@@ -92,6 +91,8 @@ public class SensorREVColorDistance_CB extends LinearOpMode {
      */
     public ColorSensor sensorColor;
     DistanceSensor sensorDistance;
+
+    RobotHardware robot = new RobotHardware(hardwareMap, this, 320, 240 , RobotHardware.cameraSelection.DOWN);
 
 //test code
 
@@ -138,12 +139,14 @@ public class SensorREVColorDistance_CB extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+/*
         // get a reference to the color sensor.
         sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
 
         // get a reference to the distance sensor that shares the same name.
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+
+ */
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};

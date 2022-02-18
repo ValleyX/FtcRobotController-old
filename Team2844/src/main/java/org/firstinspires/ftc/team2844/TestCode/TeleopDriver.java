@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team2844.TestCode;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.team2844.TestDrivers.SampleRevBlinkinLedDriver;
 import org.firstinspires.ftc.team2844.TestDrivers.SensorOfDistance;
 
 @TeleOp(name="teleop driver")
-public class TestTheMechaWheels extends LinearOpMode {
+public class TeleopDriver extends LinearOpMode {
     @Override
 
     public void runOpMode() throws InterruptedException {
@@ -42,7 +43,7 @@ public class TestTheMechaWheels extends LinearOpMode {
          */
 
         //RobotHardwareTest robottest = new RobotHardwareTest(hardwareMap, this, 145, 120, RobotHardwareTest.cameraSelection.LEFT);
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.DOWN);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         //LiftDriverTest liftto = new LiftDriverTest(robot);
         LiftPositionDriver liftto = new LiftPositionDriver(robot);
@@ -54,7 +55,7 @@ public class TestTheMechaWheels extends LinearOpMode {
         double toplayer = 17;
         double middlelayer = 11;
         double lowlayer = 5;
-        double bottom = 0;
+        double cap = 21;
         double liftspeed = 0.9;
         double zeroAngle = 0;
 
@@ -62,6 +63,7 @@ public class TestTheMechaWheels extends LinearOpMode {
         boolean endgame = false;
 
         boolean initatedlift = false;
+        boolean inManualLiftMode = false;
 
         ElapsedTime timer;
         timer = new ElapsedTime();
@@ -108,7 +110,7 @@ public class TestTheMechaWheels extends LinearOpMode {
             double lift = -gamepad2.right_stick_y;
 
 
-            //moving
+            // gamepad 1
             if (gamepad1.right_trigger > 0){
                 robot.leftFront.setPower(-strafeR);
                 robot.leftBack.setPower(strafeR);
@@ -156,55 +158,59 @@ public class TestTheMechaWheels extends LinearOpMode {
             }
 
 
+
+            //gamepad 2
+
             /**
              * lift to
              */
-            if ((gamepad2.y ) && (initatedlift == false)) {
+            if ((gamepad2.y ) /*&& (initatedlift == false*/) {
+                inManualLiftMode = false;
                 liftto.LiftToPosition(liftspeed,toplayer, false);
-                initatedlift = true;
+                //initatedlift = true;
             }
 
-            if ((gamepad2.b ) && (initatedlift == false)) {
+            if ((gamepad2.b ) ) {
+                inManualLiftMode = false;
                 liftto.LiftToPosition(liftspeed,middlelayer, false );
-                initatedlift = true;
+                //initatedlift = true;
 
             }
 
-            if( (gamepad2.a) && (initatedlift == false)) {
+            if( (gamepad2.a) ) {
+                inManualLiftMode = false;
                 liftto.LiftToPosition(liftspeed,lowlayer, false );
-                initatedlift = true;
+                //initatedlift = true;
 
 
             }
 
-            if ((gamepad2.x) && (initatedlift == false)) {
-                liftto.LiftToPosition(liftspeed,bottom, false );
-                initatedlift = true;
+            if ((gamepad2.x) ) {
 
-            }
+                robot.arm.setPosition(0.3);
+                inManualLiftMode = false;
+                liftto.LiftToPosition(liftspeed,cap, false );
+                //initatedlift = true;
 
-            if (initatedlift == true && (!liftto.isliftbusy() || (robot.liftdowntouch.getState() == false))) {
-                liftto.stop();
-                initatedlift = false;
             }
 
             /** arm and hand */
 
-            if (gamepad2.left_trigger == 0) {
-                robot.arm.setPosition(0);
+            if (gamepad2.left_trigger == 0 && !gamepad2.x) {
+                robot.arm.setPosition(0.15);
             }
 
-            else {
-                robot.arm.setPosition(.63);
+            else if (gamepad2.left_trigger != 0 && !gamepad2.x) {
+                robot.arm.setPosition(0.89); // 1 is down
             }
 
 
             //robot.grab.setPosition(gamepad2.right_trigger);
             if (gamepad2.right_trigger == 0) {
-                robot.grab.setPosition(0);
+                robot.grab.setPosition(0.9);
             }
             else {
-                robot.grab.setPosition(0.50);
+                robot.grab.setPosition(0.0); // 1 is closed
             }
 
 
@@ -212,11 +218,11 @@ public class TestTheMechaWheels extends LinearOpMode {
              * ducky spinner
              */
             if (gamepad2.dpad_right){
-                robot.duckySpinner.setPower(-0.5);
+                robot.duckySpinner.setPower(-0.8 );
             }
 
             else if (gamepad2.dpad_left){
-                robot.duckySpinner.setPower(0.5);
+                robot.duckySpinner.setPower(0.8 );
             }
 
             else {
@@ -225,17 +231,14 @@ public class TestTheMechaWheels extends LinearOpMode {
 
 
 
-            robot.liftmotor.setPower(lift);
-/*
-             if (lift <= -0.7 ) {
-                liftMotor.setPower(-0.7);
+            if (Math.abs(lift) >= 0.1 && !inManualLiftMode) {
+                robot.liftmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                inManualLiftMode = true;
             }
 
-            else {
-                liftMotor.setPower(lift);
+            if (inManualLiftMode) {
+                robot.liftmotor.setPower(lift);
             }
-
- */
 
             //robot.superintake.setPower(gamepad2.left_stick_y);
             //robot.intake(gamepad2.left_stick_y);
@@ -255,29 +258,6 @@ public class TestTheMechaWheels extends LinearOpMode {
             }
 
 
-        /*
-            else if (robot.intaketouch.getState() == true && timer.seconds() >= 0 && timer.seconds() <= 90) {
-                robot.pattern =  RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE;
-                robot.patternlift = RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE;
-                robot.superintake.setPower(gamepad2.left_stick_y);
-                robot.blinkinLedDriver.setPattern(robot.patter n);
-                robot.blinkinLedDriver2.setPattern(robot.patternlift);
-
-            }
-
-            else if (robot.intaketouch.getState() == true && timer.seconds() >= 90 && timer.seconds() <= 120) {
-                robot.pattern =  RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
-                robot.patternlift = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
-                robot.superintake.setPower(gamepad2.left_stick_y);
-                robot.blinkinLedDriver.setPattern(robot.pattern);
-                robot.blinkinLedDriver2.setPattern(robot.patternlift);
-            }
-
-
-             */
-
-
-
             //telemetry for phone for driving
             telemetry.addData("leftstick y", lefty);
             telemetry.addData("rightstick y", righty);
@@ -288,6 +268,7 @@ public class TestTheMechaWheels extends LinearOpMode {
             telemetry.addData("intake : ", gamepad2.left_stick_y );
             telemetry.addData("arm", gamepad2.right_stick_x);
             telemetry.addData("arm position", robot.arm.getPosition());
+            telemetry.addData("grab position", robot.grab.getPosition());
             telemetry.addData("block distance", robot.blocksensor.getDistance(DistanceUnit.CM));
 
             telemetry.update();

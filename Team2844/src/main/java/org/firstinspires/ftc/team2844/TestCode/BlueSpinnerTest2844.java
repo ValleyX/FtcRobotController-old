@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team2844.Drivers.DistanceDriverTest;
 import org.firstinspires.ftc.team2844.Drivers.EncoderDriveMecha;
+import org.firstinspires.ftc.team2844.Drivers.LiftDriverTest;
 import org.firstinspires.ftc.team2844.Drivers.MechaImuDriver;
 import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class BlueSpinnerTest2844 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 145, 120, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 145, 120, RobotHardware.cameraSelection.DOWN);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest driveto = new DistanceDriverTest(robot, headingdrive);
@@ -43,17 +44,17 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
 
         if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Left){
             dist = 5;
-            liftto.LiftToDistance(0.9, dist);
+            liftto.LiftToDistance(0.9, dist, true);
         }
 
         else if (path == RobotHardware.SkystoneDeterminationPipeline.MarkerPosition.Middle) {
             dist = 11;
-            liftto.LiftToDistance(0.9, dist);
+            liftto.LiftToDistance(0.9, dist, true);
         }
 
         else {
             dist = 17;
-            liftto.LiftToDistance(0.9, dist);
+            liftto.LiftToDistance(0.9, dist, true);
         }
 
 
@@ -71,7 +72,7 @@ public class BlueSpinnerTest2844 extends LinearOpMode {
         sleep(500);
         headingdrive.gyroDrive(0.5,-9, -30);
         sleep(500);
-        liftto.LiftToDistance(0.3, -dist);
+        liftto.LiftToDistance(0.3, -dist, true);
         sleep(500);
 
 

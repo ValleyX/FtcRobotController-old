@@ -55,6 +55,7 @@ public class LiftPositionDriver {
 
                 System.out.println("valleyX: " + robot_.liftmotor.getCurrentPosition());
                 System.out.println("valleyX");
+
             }
 
             if (waiting == true) {

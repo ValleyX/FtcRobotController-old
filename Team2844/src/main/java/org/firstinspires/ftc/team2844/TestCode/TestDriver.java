@@ -12,7 +12,7 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class TestDriver extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 0,0, RobotHardware.cameraSelection.DOWN);
 
         double power = 0;
         boolean pressedup = false;

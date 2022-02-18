@@ -14,7 +14,7 @@ import org.firstinspires.ftc.team2844.Drivers.RobotHardware;
 public class RedWheelTest2844 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(hardwareMap, this, 0, 0, RobotHardware.cameraSelection.LEFT);
+        RobotHardware robot = new RobotHardware(hardwareMap, this, 0, 0, RobotHardware.cameraSelection.DOWN);
         EncoderDriveMecha encodermecha = new EncoderDriveMecha(robot);
         MechaImuDriver headingdrive = new MechaImuDriver(robot);
         DistanceDriverTest driveto = new DistanceDriverTest(robot, headingdrive);
