@@ -103,7 +103,15 @@ public class RobotHardware {
     //public final double     LIFT_TURNTABLE_COUNTS_PER_INCH         = LIFT_TURNTABLE_ONE_TURN_REV / LIFT_TURNTABLE_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
 
 
+    //odometry
+    public final double OD_COUNTS_PER_MOTOR_REV = 8192;    //  AndyMark Motor Encoder
+    public final double OD_DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
+    public final double OD_ONE_MOTOR_COUNT = OD_COUNTS_PER_MOTOR_REV * OD_DRIVE_GEAR_REDUCTION;
+    public final double OD_Distance_in_one_rev = 2.0 * Math.PI; //in
+    public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
 
+    //Odometry Wheels
+    public DcMotor verticalLeft, verticalRight, horizontal;
 
     RobotHardware(LinearOpMode opMode) {
         OpMode_ = opMode;
@@ -128,6 +136,14 @@ public class RobotHardware {
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+/*
+        //odometry hw map stuff
+        String rfName = "rightFront", rbName = "rightBack", lfName = "leftFront", lbName = "leftBack";
+        String verticalLeftEncoderName = "leftEncoder", verticalRightEncoderName = "rightEncoder", horizontalEncoderName = "horizontalEncoder";
+
+        initDriveHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
+*/
 
         //lift motor
         turnTable = OpMode_.hardwareMap.dcMotor.get("turnTable");  //expansion hub port 0
@@ -433,4 +449,52 @@ public class RobotHardware {
         rightBack.setPower(power);
         rightFront.setPower(power);
     }
+
+/* 
+//odometry
+    public void initDriveHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName) {
+        rightFront = OpMode_.hardwareMap.dcMotor.get(rfName);
+        rightBack = OpMode_.hardwareMap.dcMotor.get(rbName);
+        leftFront = OpMode_.hardwareMap.dcMotor.get(lfName);
+        leftBack = OpMode_.hardwareMap.dcMotor.get(lbName);
+
+        verticalLeft = OpMode_.hardwareMap.dcMotor.get(vlEncoderName);
+        verticalRight = OpMode_.hardwareMap.dcMotor.get(vrEncoderName);
+        horizontal = OpMode_.hardwareMap.dcMotor.get(hEncoderName);
+
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //left_front.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        verticalRight.setDirection(DcMotor.Direction.REVERSE);
+        horizontal.setDirection(DcMotor.Direction.REVERSE);
+
+        OpMode_.telemetry.addData("Status", "Hardware Map Init Complete");
+        OpMode_.telemetry.update();
+    }
+*/
 }

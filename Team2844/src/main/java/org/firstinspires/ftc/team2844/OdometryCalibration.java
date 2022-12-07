@@ -20,7 +20,9 @@ import java.io.File;
  */
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
 public class OdometryCalibration extends LinearOpMode {
-    //Drive motors
+
+
+        //Drive motors
     DcMotor right_front, right_back, left_front, left_back;
     //Odometry Wheels
     DcMotor verticalLeft, verticalRight, horizontal;
@@ -29,13 +31,23 @@ public class OdometryCalibration extends LinearOpMode {
     BNO055IMU imu;
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
-    String rfName = "rf", rbName = "rb", lfName = "lf", lbName = "lb";
-    String verticalLeftEncoderName = rbName, verticalRightEncoderName = lfName, horizontalEncoderName = rfName;
+    String rfName = "rightFront", rbName = "rightBack", lfName = "leftFront", lbName = "leftBack";
+    String verticalLeftEncoderName = "leftEncoder", verticalRightEncoderName = "rightEncoder", horizontalEncoderName = "horizontalEncoder";
 
-    final double PIVOT_SPEED = 0.5;
+    final double PIVOT_SPEED = 0.2;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 307.699557;
+    public final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
+    public final double DRIVE_GEAR_REDUCTION = 20;     // This is < 1.0 if geared UP
+    public final double ONE_MOTOR_COUNT = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    public final double Distance_in_one_rev = 4.0 * Math.PI; //in
+    public final double COUNTS_PER_INCH = ONE_MOTOR_COUNT / Distance_in_one_rev;
+
+    public final double OD_COUNTS_PER_MOTOR_REV = 8192;    //  AndyMark Motor Encoder
+    public final double OD_DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
+    public final double OD_ONE_MOTOR_COUNT = OD_COUNTS_PER_MOTOR_REV * OD_DRIVE_GEAR_REDUCTION;
+    public final double OD_Distance_in_one_rev = 2.0 * Math.PI; //in
+    public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -62,6 +74,14 @@ public class OdometryCalibration extends LinearOpMode {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
+        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+            sleep(50);
+            idle();
+        }
+
+        if (!imu.isGyroCalibrated()) {
+            System.out.println("ValleyX: Gyro not calibrated");
+        }
         telemetry.addData("Odometry System Calibration Status", "IMU Init Complete");
         telemetry.clear();
 
@@ -73,14 +93,14 @@ public class OdometryCalibration extends LinearOpMode {
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
         while(getZAngle() < 90 && opModeIsActive()){
-            right_front.setPower(-PIVOT_SPEED);
-            right_back.setPower(-PIVOT_SPEED);
-            left_front.setPower(PIVOT_SPEED);
-            left_back.setPower(PIVOT_SPEED);
+            right_front.setPower(PIVOT_SPEED);
+            right_back.setPower(PIVOT_SPEED);
+            left_front.setPower(-PIVOT_SPEED);
+            left_back.setPower(-PIVOT_SPEED);
             if(getZAngle() < 60) {
-                setPowerAll(-PIVOT_SPEED, -PIVOT_SPEED, PIVOT_SPEED, PIVOT_SPEED);
+                setPowerAll(PIVOT_SPEED, PIVOT_SPEED, -PIVOT_SPEED, -PIVOT_SPEED);
             }else{
-                setPowerAll(-PIVOT_SPEED/2, -PIVOT_SPEED/2, PIVOT_SPEED/2, PIVOT_SPEED/2);
+                setPowerAll(PIVOT_SPEED/2, PIVOT_SPEED/2, -PIVOT_SPEED/2, -PIVOT_SPEED/2);
             }
 
             telemetry.addData("IMU Angle", getZAngle());
@@ -107,7 +127,7 @@ public class OdometryCalibration extends LinearOpMode {
 
         double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
 
-        double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
+        double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*OD_COUNTS_PER_INCH);
 
         horizontalTickOffset = horizontal.getCurrentPosition()/Math.toRadians(getZAngle());
 
