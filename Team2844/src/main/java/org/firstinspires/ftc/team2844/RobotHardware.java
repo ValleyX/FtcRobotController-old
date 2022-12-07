@@ -5,6 +5,8 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -31,6 +33,16 @@ public class RobotHardware {
     public DcMotor rightFront;
     public DcMotor rightBack;
 
+    //lift motor
+    public DcMotor turnTable;
+    public DcMotor winch;
+    public DcMotor elbow;
+
+    // lift servo
+    public Servo claw;
+    public Servo wrist;
+
+
     //odometers
     public DcMotor encoderRight;
     public DcMotor encoderLeft;
@@ -39,39 +51,106 @@ public class RobotHardware {
     //IMU
     public BNO055IMU imu;
 
+    //Claw
+    public final double clawOpen = 0.1; //0.56
+    public final double clawClose = 0.7; //1
 
-    //encoder
+
+    //turnTable
     public final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
     public final double DRIVE_GEAR_REDUCTION = 20;     // This is < 1.0 if geared UP
     public final double ONE_MOTOR_COUNT = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
     public final double Distance_in_one_rev = 4.0 * Math.PI; //in
     public final double COUNTS_PER_INCH = ONE_MOTOR_COUNT / Distance_in_one_rev;  //TODO determine// in class
 
+    //lift extendor
+    public final double     LIFT_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
+    public final double     LIFT_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference
+    public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+
+    //lift elbow
+    public final double     LIFT_ELBOW_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    public final double     LIFT_ELBOW_DRIVE_GEAR_REDUCTION    = 255.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_ELBOW_ONE_MOTOR_COUNT         = LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION;
+    public final double     LIFT_ELBOW_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference (actual bot is 9.5)
+    public final double     LIFT_ELBOW_COUNTS_PER_INCH         = LIFT_ELBOW_ONE_MOTOR_COUNT / LIFT_ELBOW_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+    public final double ticsToPower = 1/(3*((LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4)); //equasion  to find how many tics are in 90 deg of the elbow motor
+    public final double ticksIn90 = (LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4;
+
+
+    /*
+    public final double     LIFT_ELBOW_COUNTS_PER_MOTOR_REV    = 8192 ;    //  AndyMark Motor Encoder
+    public final double     LIFT_ELBOW_DRIVE_GEAR_REDUCTION    = 1;     // This is < 1.0 if geared UP
+ //   public final double     LIFT_ELBOW_ONE_MOTOR_COUNT         = LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION;
+ //   public final double     LIFT_ELBOW_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference (actual bot is 9.5)
+ //   public final double     LIFT_ELBOW_COUNTS_PER_INCH         = LIFT_ELBOW_ONE_MOTOR_COUNT / LIFT_ELBOW_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+    public final double ticsToPower = 1/(3*((LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4)); //equasion  to find how many tics are in 90 deg of the elbow motor
+//    public final double ticksIn90 = (LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4;
+    public final double ticksIn90 = (2019) / 4;
+*/
+
+    //lift Turntable
+    public final double     LIFT_TURNTABLE_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
+    public final double     LIFT_TURNTABLE_DRIVE_GEAR_REDUCTION    = 50.0;
+    public final double     LIFT_TURNTABLE_DRIVE_GEARS_RATIO       = 4.3;
+    public final double     LIFT_TURNTABLE_ONE_TURN_REV            = LIFT_TURNTABLE_COUNTS_PER_MOTOR_REV * LIFT_TURNTABLE_DRIVE_GEAR_REDUCTION * LIFT_TURNTABLE_DRIVE_GEARS_RATIO; // one revolution of the turn table
+    public final double     LIFT_TURNTABLE_COUNTS_PER_DEGREE       = LIFT_TURNTABLE_ONE_TURN_REV / 360; //gives you the number of counts per 1 degree.
+
+
+    //public final double     LIFT_TURNTABLE_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference
+    //public final double     LIFT_TURNTABLE_COUNTS_PER_INCH         = LIFT_TURNTABLE_ONE_TURN_REV / LIFT_TURNTABLE_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
+
+
+
 
     RobotHardware(LinearOpMode opMode) {
         OpMode_ = opMode;
 
-        //remove motor encoders
-        leftFront = OpMode_.hardwareMap.dcMotor.get("leftFront");
+        //remove motor encoders ... but why?? - archer
+        leftFront = OpMode_.hardwareMap.dcMotor.get("leftFront"); //control hub port 0
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftBack = OpMode_.hardwareMap.dcMotor.get("leftBack");
+        leftBack = OpMode_.hardwareMap.dcMotor.get("leftBack"); //control hub port 1
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightFront = OpMode_.hardwareMap.dcMotor.get("rightFront");
+        rightFront = OpMode_.hardwareMap.dcMotor.get("rightFront"); //control hub port 3
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rightBack = OpMode_.hardwareMap.dcMotor.get("rightBack");
+        rightBack = OpMode_.hardwareMap.dcMotor.get("rightBack"); //control hub port 2
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //lift motor
+        turnTable = OpMode_.hardwareMap.dcMotor.get("turnTable");  //expansion hub port 0
+        turnTable.setDirection(DcMotor.Direction.REVERSE);
+        turnTable.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turnTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        winch = OpMode_.hardwareMap.dcMotor.get("winch"); //expansion hub port
+        winch.setDirection(DcMotor.Direction.REVERSE);
+        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        winch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        elbow = OpMode_.hardwareMap.dcMotor.get("elbow");//expansion hub port
+        elbow.setDirection(DcMotor.Direction.FORWARD);
+        //elbow.setDirection(DcMotor.Direction.REVERSE);
+        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        claw = OpMode_.hardwareMap.servo.get("claw"); //control hub servo port 0
+
+        wrist = OpMode_.hardwareMap.servo.get("wrist");//control hub servo port 1
+/*
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -79,6 +158,13 @@ public class RobotHardware {
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+*/
+
+        // define initialization values for IMU, and then initialize it.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+
+
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -98,6 +184,7 @@ public class RobotHardware {
         System.out.println("ValleyX: imu calib status" + imu.getCalibrationStatus().toString());
         OpMode_.telemetry.addData("Mode", "calibrated");
         OpMode_.telemetry.update();
+
         camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
         pipeline = new RobotHardware.PowerPlayPipeline(50, 50);
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
@@ -137,12 +224,13 @@ public class RobotHardware {
 
 
     public static class PowerPlayPipeline extends OpenCvPipeline {
-        //An enum to define the ring stack size
+
         public enum MarkerPosition {
             Red,
             Green,
             Blue
         }
+
 
         //Some color constants
         static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -158,8 +246,8 @@ public class RobotHardware {
         Point REGION1_TOPLEFT_ANCHOR_POINT;
 
 
-        static final int REGION_WIDTH = 100;
-        static final int REGION_HEIGHT = 100;
+        static final int REGION_WIDTH = 130;
+        static final int REGION_HEIGHT = 130;
 
         //public final int  FOUR_RING_THRESHOLD = 150;
 
@@ -210,7 +298,7 @@ public class RobotHardware {
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
              */
 
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(200, 165); // 200, 165
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(210, 0); // 200, 165
             region1Left_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1Left_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
@@ -222,19 +310,19 @@ public class RobotHardware {
             Core.extractChannel(input, R, 0);
             Core.extractChannel(input, G, 1);
             Core.extractChannel(input, B, 2);
-
+/*
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 2);
             Core.extractChannel(YCrCb, Cr, 1);
-
+*/
         }
 
         @Override
         public void init(Mat firstFrame) {
             inputToCb(firstFrame);
 
-            region1Left_Cb = Cb.submat(new Rect(region1Left_pointA, region1Left_pointB));
-            region1Left_Cr = Cr.submat(new Rect(region1Left_pointA, region1Left_pointB));
+           // region1Left_Cb = Cb.submat(new Rect(region1Left_pointA, region1Left_pointB));
+           // region1Left_Cr = Cr.submat(new Rect(region1Left_pointA, region1Left_pointB));
 
             region1Left_R = R.submat(new Rect(region1Left_pointA, region1Left_pointB));
             region1Left_G = G.submat(new Rect(region1Left_pointA, region1Left_pointB));
@@ -246,8 +334,8 @@ public class RobotHardware {
         public Mat processFrame(Mat input) {
             inputToCb(input);
 
-            avgLeftBlue = (int) Core.mean(region1Left_Cb).val[0];
-            avgLeftRed = (int) Core.mean(region1Left_Cr).val[0];
+           // avgLeftBlue = (int) Core.mean(region1Left_Cb).val[0];
+          //  avgLeftRed = (int) Core.mean(region1Left_Cr).val[0];
 
             avgLeftR = (int) Core.mean(region1Left_R).val[0];
             avgLeftG = (int) Core.mean(region1Left_G).val[0];
@@ -345,55 +433,4 @@ public class RobotHardware {
         rightBack.setPower(power);
         rightFront.setPower(power);
     }
-
-    //robot geometry constants (needs inputs)
-    /*final static double L = ;   //distance between encoder 1 and 2 in cm
-    final static double B = ;   //distance between the midpoint of encoder 1, 2, and 3
-    final static double R = ;   //radius of the wheel
-    final static double N = ;   //encoder ticks per revolution REV encoder
-    final static double cm_per_tick = 2.0 * Math.PI * R / N;
-
-    //keeping ytack of the od encoders between the tick updates?
-    public int currentRightPos = 0;
-    public int currentLeftPos = 0;
-    public int currentAuxPos = 0;
-
-    public int oldRightPos = 0;
-    public int oldLeftPos = 0;
-    public int oldAuxPos = 0;
-
-    //find heading of the robot, h is heading, XyhVector is a tuple (x,y,h)
-    public XyhVector  START_POS = new XyhVector(213,102, Math.toRadians(-174));
-    public XyhVector pos = new XyhVector(START_POS);
-
-
-    public void odometry() {
-
-        oldRightPos = currentRightPos;
-        oldLeftPos = currentLeftPos;
-        oldAuxPos = currentAuxPos;
-
-        currentRightPos = -encoderRight.getCurrentPosition();
-        currentLeftPos = -encoderLeft.getCurrentPosition();
-        currentAuxPos = encoderAux.getCurrentPosition();
-
-        int dn1 = currentLeftPos - oldLeftPos;
-        int dn2 = currentRightPos - oldRightPos;
-        int dn3 = currentAuxPos - oldAuxPos;
-
-        //the robot has changed position and heading a wee bit between 2 measurements
-        double dtheta = cm_per_tick * (dn2-dn1) / L;
-        double dx = cm_per_tick * (dn1+dn2) / 2.0;
-        double dy = cm_per_tick * (dn3 - (dn2-dn1) * B / L);
-
-        //small movement of the robot gets added to the field coord system
-        double theta = pos.h = (dtheta / 2.0);
-        pos.x += dx * Math.cos(theta) - dy * Math.sin(theta);
-        pos.y += dx * Math.sin(theta) + dy * Math.cos(theta);
-        pos.h += dtheta;
-
-        }*/
-
-
-
 }

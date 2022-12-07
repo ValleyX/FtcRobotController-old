@@ -173,7 +173,7 @@ public class RobotHardware {
         //switchableWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
         //switchableWebcam.setActiveCamera(webcamFront);
         //final boolean usefront = true;
-
+/* commenting out due to update of easy open in 2021 this was a good call
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -188,6 +188,8 @@ public class RobotHardware {
                 }
             }
         });
+
+ */
     }
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline {

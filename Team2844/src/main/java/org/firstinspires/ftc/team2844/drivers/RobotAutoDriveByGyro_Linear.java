@@ -102,7 +102,6 @@ public class RobotAutoDriveByGyro_Linear {
     /* Declare OpMode members. */
 
 
-
     private double          robotHeading  = 0;
     private double          headingOffset = 0;
     private double          headingError  = 0;
@@ -116,6 +115,9 @@ public class RobotAutoDriveByGyro_Linear {
     private double  rightSpeed    = 0;
     private int     leftTarget    = 0;
     private int     rightTarget   = 0;
+    private int     leftBackTarget = 0;
+    private int     rightBackTarget = 0;
+
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -123,36 +125,20 @@ public class RobotAutoDriveByGyro_Linear {
     // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    //static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
-    //static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    //static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    //static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-    //                                                  (WHEEL_DIAMETER_INCHES * 3.1415);
-
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
+    static final double     HEADING_THRESHOLD       = 0.4;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
-    static final double     P_TURN_GAIN            = 0.025;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    static final double     P_TURN_GAIN            = 0.45;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.05;    // Larger is more responsive, but also less stable
 
 
-
-
-    /*
-     * ====================================================================================================
-     * Driving "Helper" functions are below this line.
-     * These provide the high and low level methods that handle driving straight and turning.
-     * ====================================================================================================
-     */
-
-    // **********  HIGH Level driving functions.  ********************
 
     /**
     *  Method to drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
@@ -166,23 +152,33 @@ public class RobotAutoDriveByGyro_Linear {
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
+
+    // 1: method that drives straight
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
 
         // Ensure that the opmode is still active
+        if (robot_.OpMode_.opModeIsActive()) {
 
+            // reset encoders in the motors
+            robot_.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot_.rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             // Determine new target position, and pass to motor controller
-            int moveCounts = (int)(distance * robot_.COUNTS_PER_INCH);
+            int moveCounts = (int) (distance * robot_.COUNTS_PER_INCH);
             leftTarget = robot_.leftFront.getCurrentPosition() + moveCounts;
             rightTarget = robot_.rightFront.getCurrentPosition() + moveCounts;
+            leftBackTarget = robot_.leftBack.getCurrentPosition() + moveCounts;
+            rightBackTarget = robot_.rightBack.getCurrentPosition() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
             robot_.leftFront.setTargetPosition(leftTarget);
             robot_.leftBack.setTargetPosition(leftTarget);
-            robot_.rightFront.setTargetPosition(rightTarget);
-            robot_.rightBack.setTargetPosition(rightTarget);
+            robot_.rightFront.setTargetPosition(rightBackTarget);
+            robot_.rightBack.setTargetPosition(rightBackTarget);
 
             robot_.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot_.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -195,7 +191,8 @@ public class RobotAutoDriveByGyro_Linear {
             moveRobot(maxDriveSpeed, 0);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while(robot_.leftFront.isBusy() && robot_.rightFront.isBusy()) {
+           // while (robot_.OpMode_.opModeIsActive() && robot_.leftFront.isBusy() && robot_.rightFront.isBusy()) {
+            while (robot_.OpMode_.opModeIsActive() && robot_.leftFront.isBusy() && robot_.rightFront.isBusy() && robot_.leftBack.isBusy() && robot_.rightBack.isBusy()) {
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -208,9 +205,17 @@ public class RobotAutoDriveByGyro_Linear {
                 moveRobot(driveSpeed, turnSpeed);
 
 
+                robot_.OpMode_.telemetry.addData("Target", "%7d:%7d", leftTarget, rightTarget);
+                robot_.OpMode_.telemetry.addData("Actualfront", "%7d:%7d", robot_.leftFront.getCurrentPosition(), robot_.rightFront.getCurrentPosition());
+                robot_.OpMode_.telemetry.addData("Actualback", "%7d:%7d", robot_.leftBack.getCurrentPosition(), robot_.rightBack.getCurrentPosition());
+                robot_.OpMode_.telemetry.addData("turnSpeed", turnSpeed);
 
-            // Stop all motion & Turn off RUN_TO_POSITION
+                robot_.OpMode_.telemetry.update();
+
+            }
+            // Stop all motion & Turn off RUN_TO_POSITION\
             moveRobot(0, 0);
+            //moveRobot(0, 0);
             robot_.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -232,10 +237,11 @@ public class RobotAutoDriveByGyro_Linear {
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
+        //getSteeringCorrection(heading, P_DRIVE_GAIN);
+        getSteeringCorrection(heading, P_TURN_GAIN);
 
         // keep looping while we are still active, and not on heading.
-        while ((Math.abs(headingError) > HEADING_THRESHOLD)) {
+        while ((Math.abs(headingError) > HEADING_THRESHOLD) && robot_.OpMode_.opModeIsActive()) {
 
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
@@ -246,6 +252,9 @@ public class RobotAutoDriveByGyro_Linear {
             // Pivot in place by applying the turning correction
             moveRobot(0, turnSpeed);
 
+            robot_.OpMode_.telemetry.addData("turnSpeed", turnSpeed);
+
+            robot_.OpMode_.telemetry.update();
 
         }
 
@@ -304,10 +313,13 @@ public class RobotAutoDriveByGyro_Linear {
 
         // Determine the heading current error
         headingError = targetHeading - robotHeading;
+        //headingError = targetHeading + robotHeading;
 
         // Normalize the error to be within +/- 180 degrees
         while (headingError > 180)  headingError -= 360;
         while (headingError <= -180) headingError += 360;
+
+        robot_.OpMode_.telemetry.addData("heading error", headingError);
 
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(headingError * proportionalGain, -1, 1);
@@ -323,8 +335,10 @@ public class RobotAutoDriveByGyro_Linear {
         driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
         turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
 
-        leftSpeed  = drive - turn;
-        rightSpeed = drive + turn;
+        // leftSpeed  = drive - turn;
+        //rightSpeed = drive + turn;
+        leftSpeed  = drive + turn;
+        rightSpeed = drive - turn;
 
         // Scale speeds down if either one exceeds +/- 1.0;
         double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
@@ -353,7 +367,7 @@ public class RobotAutoDriveByGyro_Linear {
     public double getRawHeading() {
         Orientation angles   = robot_.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         robot_.OpMode_.telemetry.addData("thingy", angles.firstAngle);
-        robot_.OpMode_.telemetry.update();
+        //robot_.OpMode_.telemetry.update();
         return angles.firstAngle;
     }
 
