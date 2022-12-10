@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team2844.drivers.EncoderDriveMecha;
 import org.firstinspires.ftc.team2844.drivers.LiftMaths;
+import org.firstinspires.ftc.team2844.drivers.OdometryDrive;
 import org.firstinspires.ftc.team2844.drivers.RobotArmDriver_Position;
 import org.firstinspires.ftc.team2844.drivers.RobotAutoDriveByGyro_Linear;
 
@@ -19,6 +20,7 @@ public class AutoRed1Test extends LinearOpMode {
         RobotHardware robot = new RobotHardware(this);
         EncoderDriveMecha mechaDrive = new EncoderDriveMecha(robot);
         RobotAutoDriveByGyro_Linear gyroMove = new RobotAutoDriveByGyro_Linear(robot);
+        OdometryDrive odometryDrive = new OdometryDrive(robot); // recently added to test
         LiftMaths liftMaths = new LiftMaths(robot);
         // final double elbowSpeed = 0.6;
         final double elbowUpSpeed = 0.3;
@@ -39,7 +41,7 @@ public class AutoRed1Test extends LinearOpMode {
             telemetry.addData("b value", robot.pipeline.avgLeftB);
 
             telemetry.addData("alpha color", robot.pipeline.color);
-
+            telemetry.addData("Thread Active", odometryDrive.positionThread.isAlive());
             telemetry.update();
             alphaColor = robot.pipeline.color;
         }
@@ -113,26 +115,26 @@ public class AutoRed1Test extends LinearOpMode {
         armDriverPos.elbowToPosition(elbowDownSpeed, 21, false);
 
         //extend arm
-        armDriverPos.winchToPosition(1, 37, true);
+        armDriverPos.winchToPosition(1, 37, false);
 
         //grab the cone
         armDriverPos.setClawPos(robot.clawClose, true);
         sleep(100);
 
         //pull back arm slightly as to miss the rim of the arena
-        armDriverPos.winchToPosition(1, 32, true);
+        armDriverPos.winchToPosition(1, 32, false);
         //sleep(250);
 
         //move elbow up again to remove cone
-        armDriverPos.elbowToPosition(elbowUpSpeed, 72, true);
+        armDriverPos.elbowToPosition(elbowUpSpeed, 72, false);
         //sleep(100);
 
         //extend the arm to scoring height
-        armDriverPos.winchToPosition(1, 47, true);
+        armDriverPos.winchToPosition(1, 47, false);
         //sleep(100);
 
         //move turntable right to large tower
-        armDriverPos.turnTableToPosition(turnTableSpeed, -38, true);
+        armDriverPos.turnTableToPosition(turnTableSpeed, -38, false);
         sleep(800);
 
         //open claw to drop cone
@@ -141,9 +143,9 @@ public class AutoRed1Test extends LinearOpMode {
 
 
         //makes the robot not commit soduko when it finishes the running
-        armDriverPos.turnTableToPosition(turnTableSpeed, 0, true);
+        armDriverPos.turnTableToPosition(turnTableSpeed, 0, false);
 
-        armDriverPos.winchToPosition(1, 6, true);
+        armDriverPos.winchToPosition(1, 6, false);
         //(experimental)
         //robot.wrist.setPosition(45);
         armDriverPos.setClawPos(robot.clawClose, true);

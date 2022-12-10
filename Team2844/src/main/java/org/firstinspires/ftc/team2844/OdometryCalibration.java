@@ -32,9 +32,9 @@ public class OdometryCalibration extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "rightFront", rbName = "rightBack", lfName = "leftFront", lbName = "leftBack";
-    String verticalLeftEncoderName = "leftEncoder", verticalRightEncoderName = "rightEncoder", horizontalEncoderName = "horizontalEncoder";
+    String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = lbName;
 
-    final double PIVOT_SPEED = 0.2;
+    final double PIVOT_SPEED = 0.4;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
     public final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
@@ -93,10 +93,13 @@ public class OdometryCalibration extends LinearOpMode {
 
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
         while(getZAngle() < 90 && opModeIsActive()){
+            /*
             right_front.setPower(PIVOT_SPEED);
             right_back.setPower(PIVOT_SPEED);
             left_front.setPower(-PIVOT_SPEED);
             left_back.setPower(-PIVOT_SPEED);
+            */
+
             if(getZAngle() < 60) {
                 setPowerAll(PIVOT_SPEED, PIVOT_SPEED, -PIVOT_SPEED, -PIVOT_SPEED);
             }else{

@@ -24,7 +24,8 @@ public class OdometryDriveTest extends LinearOpMode {
         telemetry.update();
        // while (opModeIsActive());
 
-        odometryDrive.goToPositionForward(0,10,.5,0,1);
+        odometryDrive.goToPositionForward(0,10,.5,0,0.5);
+         while (opModeIsActive());
      //   globalPositionUpdate.stop();
     }
 }

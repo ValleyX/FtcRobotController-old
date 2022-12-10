@@ -116,7 +116,7 @@ public class RobotHardware {
     RobotHardware(LinearOpMode opMode) {
         OpMode_ = opMode;
 
-        //remove motor encoders ... but why?? - archer
+        /*//remove motor encoders ... but why?? - archer
         leftFront = OpMode_.hardwareMap.dcMotor.get("leftFront"); //control hub port 0
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -135,15 +135,15 @@ public class RobotHardware {
         rightBack = OpMode_.hardwareMap.dcMotor.get("rightBack"); //control hub port 2
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
 
-/*
+
         //odometry hw map stuff
         String rfName = "rightFront", rbName = "rightBack", lfName = "leftFront", lbName = "leftBack";
-        String verticalLeftEncoderName = "leftEncoder", verticalRightEncoderName = "rightEncoder", horizontalEncoderName = "horizontalEncoder";
+        String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = lbName;
 
         initDriveHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
-*/
+
 
         //lift motor
         turnTable = OpMode_.hardwareMap.dcMotor.get("turnTable");  //expansion hub port 0
@@ -166,7 +166,7 @@ public class RobotHardware {
         claw = OpMode_.hardwareMap.servo.get("claw"); //control hub servo port 0
 
         wrist = OpMode_.hardwareMap.servo.get("wrist");//control hub servo port 1
-/*
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -174,11 +174,11 @@ public class RobotHardware {
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-*/
+
 
         // define initialization values for IMU, and then initialize it.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+     //   parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
 
 
 
@@ -450,7 +450,7 @@ public class RobotHardware {
         rightFront.setPower(power);
     }
 
-/* 
+
 //odometry
     public void initDriveHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName) {
         rightFront = OpMode_.hardwareMap.dcMotor.get(rfName);
@@ -490,11 +490,11 @@ public class RobotHardware {
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        verticalRight.setDirection(DcMotor.Direction.REVERSE);
-        horizontal.setDirection(DcMotor.Direction.REVERSE);
+        //verticalRight.setDirection(DcMotor.Direction.REVERSE);
+        //horizontal.setDirection(DcMotor.Direction.REVERSE);
 
         OpMode_.telemetry.addData("Status", "Hardware Map Init Complete");
         OpMode_.telemetry.update();
     }
-*/
+
 }

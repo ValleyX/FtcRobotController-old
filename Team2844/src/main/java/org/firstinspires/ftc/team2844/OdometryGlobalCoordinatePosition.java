@@ -34,7 +34,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
     private int verticalLeftEncoderPositionMultiplier = 1;
-    private int verticalRightEncoderPositionMultiplier = 1;
+    private int verticalRightEncoderPositionMultiplier = -1;
     private int normalEncoderPositionMultiplier = 1;
 
     /**
@@ -86,6 +86,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
     }
+
+    //public double
 
     /**
      * Returns the robot's global x coordinate

@@ -75,11 +75,20 @@ public class OdometryDrive {
 
             robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
             robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
+            robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
+            robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
             robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
             robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
             robot_.OpMode_.telemetry.addData("distance:", distance);
+            robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
+            robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
+            robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
+            robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
+
             robot_.OpMode_.telemetry.update();
-            robot_.allpower(-robotMovementY);
+           // robot_.allpower(-robotMovementY);
 
         }
         robot_.allpower(0);
