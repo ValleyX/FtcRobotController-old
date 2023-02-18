@@ -61,6 +61,7 @@ public class StoobsUniversal extends LinearOpMode {
         //strafe control variables
         double leftLever;
         double rightLever;
+        double imuOffset = 0;
 
         //stoobs stick control variable
         double winchStick;
@@ -84,6 +85,7 @@ public class StoobsUniversal extends LinearOpMode {
         waitForStart();
 
 
+
         //new drive code
         while(opModeIsActive()) {
                 double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -91,7 +93,13 @@ public class StoobsUniversal extends LinearOpMode {
                 double rx = gamepad1.right_stick_x;
                 double lift = -gamepad2.right_stick_y;
                 // Read inverse IMU heading, as the IMU heading is CW positive
-                double botHeading = -robot.imu.getAngularOrientation().firstAngle;
+                double botHeading = -robot.imu.getAngularOrientation().firstAngle - imuOffset;
+
+                if (gamepad1.a && gamepad1.b)
+                {
+                    imuOffset = -robot.imu.getAngularOrientation().firstAngle;
+                }
+
 
                 double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
                 double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
