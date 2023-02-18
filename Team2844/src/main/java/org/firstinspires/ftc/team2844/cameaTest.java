@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.team2844;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+@Disabled
 @TeleOp (name="cameaTest")
 public class cameaTest extends LinearOpMode {
 

@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.team2844;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
-
+@Disabled
 @Autonomous(name="test cam")
 public class testcamera extends LinearOpMode {
     @Override

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team2844;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team2844.drivers.EncoderDriveMecha;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.team2844.drivers.LiftMaths;
 import org.firstinspires.ftc.team2844.drivers.RobotArmDriver_Position;
 import org.firstinspires.ftc.team2844.drivers.RobotAutoDriveByGyro_Linear;
 
-
+@Disabled
 @Autonomous(name="LeftAuto")
 public class AutoRed1 extends LinearOpMode {
 
@@ -69,18 +70,19 @@ public class AutoRed1 extends LinearOpMode {
         armDriverPos.setClawPos(robot.clawClose, true);
         sleep(500);
 
+                /* JM take out for test
         //extend a tad bit so it doesnt clip the polycartb
         armDriverPos.elbowToPosition(elbowUpSpeed,1,true);
+
+
         armDriverPos.winchToPosition(1,5,true);
         armDriverPos.winchToPosition(1, 2, true);
-
-
+*/
+        armDriverPos.winchToPosition(1,5,true);
+       // armDriverPos.elbowToPosition(elbowUpSpeed,5,true);
         //move to 1st position
-        //gyroMove.driveStraight(.4, -55, 0);
-        gyroMove.driveStraight(0.4, -51, 0);
-        //gyroMove.turnToHeading(0.2, 0);
-       // gyroMove.driveStraight(.5, 6, 0);
-        //gyroMove.turnToHeading(0.2, 0);
+
+        //gyroMove.driveStraight(0.4, -51, 0); change to odometry
 
         //Raise lift at beginning (was 78)
 
@@ -92,12 +94,16 @@ public class AutoRed1 extends LinearOpMode {
         // sleep(500);
 
         //extend arm to score height//boat
-        armDriverPos.winchToPosition(1, 47, true);
+      //  armDriverPos.winchToPosition(1, 47, true);
+        armDriverPos.winchToPosition(1, 51, true);
         // sleep(250);
 
         //turn turntable to face pole
         armDriverPos.turnTableToPosition(turnTableSpeed, -37, true);
         sleep(500);
+
+        //come down on post before dropping
+        armDriverPos.elbowToPosition(elbowUpSpeed, 70,true);
 
         //drop cone first time
         armDriverPos.setClawPos(robot.clawOpen, true);
@@ -124,15 +130,15 @@ public class AutoRed1 extends LinearOpMode {
         //sleep(250);
 
         //move elbow up again to remove cone
-        armDriverPos.elbowToPosition(elbowUpSpeed, 72, true);
+        armDriverPos.elbowToPosition(elbowUpSpeed, 74, true);
         //sleep(100);
 
         //extend the arm to scoring height
-        armDriverPos.winchToPosition(1, 47, true);
+        armDriverPos.winchToPosition(1, 51, true);
         //sleep(100);
 
         //move turntable right to large tower
-        armDriverPos.turnTableToPosition(turnTableSpeed, -38, true);
+        armDriverPos.turnTableToPosition(turnTableSpeed, -37, true);
         sleep(800);
 
         //open claw to drop cone
@@ -162,6 +168,7 @@ public class AutoRed1 extends LinearOpMode {
 
 
         //this is the movement code that does stuff off of camera detection, commmented out for test, you'll need this
+        /*
          if (alphaColor == RobotHardware.PowerPlayPipeline.MarkerPosition.Green) {
             gyroMove.driveStraight(1,5,0);
 
@@ -178,6 +185,8 @@ public class AutoRed1 extends LinearOpMode {
             gyroMove.turnToHeading(.25, 90);
             gyroMove.driveStraight(.25, 26, -270);
         }
+
+         */
 
 
 

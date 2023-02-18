@@ -1,22 +1,22 @@
 package org.firstinspires.ftc.team2844;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.firstinspires.ftc.team2844.drivers.LiftMaths;
 import org.firstinspires.ftc.team2844.drivers.LiftTicksToDegreesMath;
 import org.firstinspires.ftc.team2844.drivers.RobotArmDriver_Position;
 import org.firstinspires.ftc.team2844.drivers.RobotAutoDriveByGyro_Linear;
 
-@Disabled
-@TeleOp(name = "stoobsdriver")
 
-public class StoobsDrive extends LinearOpMode {
+@TeleOp(name = "StoobsUniversal")
+
+public class StoobsUniversal extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(this);
@@ -25,16 +25,11 @@ public class StoobsDrive extends LinearOpMode {
         LiftTicksToDegreesMath liftTicksToDegrees= new LiftTicksToDegreesMath(robot);
         RobotArmDriver_Position armToPosition = new RobotArmDriver_Position(robot);
 
-
-
-
-       // robot.elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       // robot.elbow.setTargetPosition(0);
+        robot.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-
 
 
 
@@ -43,7 +38,7 @@ public class StoobsDrive extends LinearOpMode {
         int elbowDegrees = 0;
         double winchPos = 0;
         int turnTableDegrees = 0;
-        double winchSpeed = 0.25;
+        double winchSpeed = 0.7;
         int turnTableSpeed = 1;
 
 
@@ -78,125 +73,57 @@ public class StoobsDrive extends LinearOpMode {
         fieldTimer.reset();
 
         final int incrementTimeMs = 10;
-       // robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Retrieve the IMU from the hardware map
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // Technically this is the default, however specifying it is clearer
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(parameters);
 
         waitForStart();
 
-        //remove this
-       // ElbowPID2 elbowPIDThread = new ElbowPID2(robot);
-        //Thread elbowThread = new Thread(elbowPIDThread);
-       // elbowThread.start();
-        //remove this
-
-        //armToPosition.winchToPosition(0.8,20, true);
-
-       // while (opModeIsActive());
-
-        //test code to see if the recallibration of the arm and the grabber works (this is for teleop)
-
-        //old drive code
-        /*while (opModeIsActive()) {
-            double lefty = gamepad1.left_stick_y; // try to change to - so that we can use
-            double righty = gamepad1.right_stick_y; // the actual robothardware
-            double strafeR = gamepad1.right_trigger;
-            double strafeL = gamepad1.left_trigger;
-
-
-            if (gamepad1.right_trigger > 0) {
-                robot.leftFront.setPower(-strafeR);
-                robot.leftBack.setPower(strafeR);
-                robot.rightBack.setPower(-strafeR);
-                robot.rightFront.setPower(strafeR);
-            } else if (gamepad1.left_trigger > 0.0) {  //is pressed
-
-                robot.leftFront.setPower(strafeL);
-                robot.leftBack.setPower(-strafeL);
-                robot.rightBack.setPower(strafeL);
-                robot.rightFront.setPower(-strafeL);
-            } else {
-
-                robot.leftFront.setPower(lefty);
-                robot.leftBack.setPower(lefty);
-                robot.rightFront.setPower(righty);
-                robot.rightBack.setPower(righty);
-            }
-            */
 
         //new drive code
         while(opModeIsActive()) {
-            //tank drive vars
-            //leftY = -gamepad1.left_stick_y;
-            //rightY = -gamepad1.right_stick_y;
+                double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+                double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+                double rx = gamepad1.right_stick_x;
+                double lift = -gamepad2.right_stick_y;
+                // Read inverse IMU heading, as the IMU heading is CW positive
+                double botHeading = -robot.imu.getAngularOrientation().firstAngle;
 
-            leftY2 = -gamepad1.left_stick_y;
-            rightX = -gamepad1.right_stick_x;
+                double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
+                double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
-            leftLever = gamepad1.left_trigger;
-            rightLever = gamepad1.right_trigger;
-            double lift = -gamepad2.right_stick_y;
-            winchStick = gamepad2.right_stick_y;
 
-            //left strafe controls
-            if(leftLever > 0.5) {
-                robot.leftFront.setPower(leftLever);
-                robot.leftBack.setPower(-leftLever);
-                robot.rightFront.setPower(-leftLever);
-                robot.rightBack.setPower(leftLever);
-            }
-            //right strafe controls
-            else if(rightLever > 0.5) {
-                robot.leftFront.setPower(-rightLever);
-                robot.leftBack.setPower(rightLever);
-                robot.rightFront.setPower(rightLever);
-                robot.rightBack.setPower(-rightLever);
-            }
 
-            //basic movements (Tank Drive)
-            /*else {
-                lFMotor.setPower(leftY);
-                lBMotor.setPower(leftY);
-                rFMotor.setPower(rightY);
-                rBMotor.setPower(rightY);
-            }*/
+                // Denominator is the largest motor power (absolute value) or 1
+                // This ensures all the powers maintain the same ratio, but only when
+                // at least one is out of the range [-1, 1]
+                double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+                double frontLeftPower = (rotY + rotX + rx) / denominator;
+                double backLeftPower = (rotY - rotX + rx) / denominator;
+                double frontRightPower = (rotY - rotX - rx) / denominator;
+                double backRightPower = (rotY + rotX - rx) / denominator;
 
-            //turn right???
-            else if (rightX >= 0.3 ) {
-                robot.leftFront.setPower(rightX);
-                robot.leftBack.setPower(rightX);
-                robot.rightFront.setPower(-rightX);
-                robot.rightBack.setPower(-rightX);
-            }
+                robot.leftFront.setPower(frontLeftPower);
+                robot.rightFront.setPower(frontRightPower);
+                robot.leftBack.setPower(backLeftPower);
+                robot.rightBack.setPower(backRightPower);
 
-            //turn left???
-            else if (rightX <= -0.3) {
-                robot.leftFront.setPower(rightX);
-                robot.leftBack.setPower(rightX);
-                robot.rightFront.setPower(-rightX);
-                robot.rightBack.setPower(-rightX);
-            }
+/*
+                telemetry.addData("rotX", rotX);
+                telemetry.addData("rotY", rotY);
+                telemetry.addData("front left power", frontLeftPower);
+                telemetry.addData("front right power", frontRightPower);
+                telemetry.addData("back left power", backLeftPower);
+                telemetry.addData("back right power", backRightPower);
+                telemetry.addData("denominator", denominator);
+                telemetry.update();
+*/
 
-            //forwards
-            else if (leftY2 >= 0.3) {
-                robot.leftFront.setPower(-leftY2);
-                robot.leftBack.setPower(-leftY2);
-                robot.rightFront.setPower(-leftY2);
-                robot.rightBack.setPower(-leftY2);
-            }
 
-            //backwards
-            else if (leftY2 <= -0.3) {
-                robot.leftFront.setPower(-leftY2);
-                robot.leftBack.setPower(-leftY2);
-                robot.rightFront.setPower(-leftY2);
-                robot.rightBack.setPower(-leftY2);
-            }
-
-            else {
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-            }
 
 
             //elbow stuff

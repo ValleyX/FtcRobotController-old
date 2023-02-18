@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.team2844;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.dataflow.qual.TerminatesExecution;
@@ -13,13 +15,19 @@ import org.firstinspires.ftc.team2844.drivers.LiftTicksToDegreesMath;
 import org.firstinspires.ftc.team2844.drivers.RobotArmDriver_Position;
 import org.firstinspires.ftc.team2844.drivers.RobotAutoDriveByGyro_Linear;
 
-@Disabled
-@TeleOp(name = "stoobsdriver")
 
-public class StoobsDrive extends LinearOpMode {
+@TeleOp(name = "OneControllerDrive")
+
+public class EttingerDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         RobotHardware robot = new RobotHardware(this);
+
+        robot.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
         RobotAutoDriveByGyro_Linear gyroMove = new RobotAutoDriveByGyro_Linear(robot);
         LiftMaths liftMaths = new LiftMaths(robot);
         LiftTicksToDegreesMath liftTicksToDegrees= new LiftTicksToDegreesMath(robot);
@@ -28,9 +36,9 @@ public class StoobsDrive extends LinearOpMode {
 
 
 
-       // robot.elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // robot.elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       // robot.elbow.setTargetPosition(0);
+        // robot.elbow.setTargetPosition(0);
         robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
@@ -43,7 +51,7 @@ public class StoobsDrive extends LinearOpMode {
         int elbowDegrees = 0;
         double winchPos = 0;
         int turnTableDegrees = 0;
-        double winchSpeed = 0.25;
+        double winchSpeed = .75;
         int turnTableSpeed = 1;
 
 
@@ -78,19 +86,42 @@ public class StoobsDrive extends LinearOpMode {
         fieldTimer.reset();
 
         final int incrementTimeMs = 10;
-       // robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+/*
+        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("leftFront");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftBack");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("rightFront");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
+
+
+        // Reverse the right side motors
+        // Reverse left motors if you are using NeveRests
+        // motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+*/
+        // Retrieve the IMU from the hardware map
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        // Technically this is the default, however specifying it is clearer
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(parameters);
+
+
 
         waitForStart();
 
         //remove this
-       // ElbowPID2 elbowPIDThread = new ElbowPID2(robot);
+        // ElbowPID2 elbowPIDThread = new ElbowPID2(robot);
         //Thread elbowThread = new Thread(elbowPIDThread);
-       // elbowThread.start();
+        // elbowThread.start();
         //remove this
 
         //armToPosition.winchToPosition(0.8,20, true);
 
-       // while (opModeIsActive());
+        // while (opModeIsActive());
 
         //test code to see if the recallibration of the arm and the grabber works (this is for teleop)
 
@@ -136,88 +167,57 @@ public class StoobsDrive extends LinearOpMode {
             double lift = -gamepad2.right_stick_y;
             winchStick = gamepad2.right_stick_y;
 
-            //left strafe controls
-            if(leftLever > 0.5) {
-                robot.leftFront.setPower(leftLever);
-                robot.leftBack.setPower(-leftLever);
-                robot.rightFront.setPower(-leftLever);
-                robot.rightBack.setPower(leftLever);
-            }
-            //right strafe controls
-            else if(rightLever > 0.5) {
-                robot.leftFront.setPower(-rightLever);
-                robot.leftBack.setPower(rightLever);
-                robot.rightFront.setPower(rightLever);
-                robot.rightBack.setPower(-rightLever);
-            }
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x * 0.5;// if does funky, remove the * 0.5, that was added to try and slow turning down
 
-            //basic movements (Tank Drive)
-            /*else {
-                lFMotor.setPower(leftY);
-                lBMotor.setPower(leftY);
-                rFMotor.setPower(rightY);
-                rBMotor.setPower(rightY);
-            }*/
+            // Read inverse IMU heading, as the IMU heading is CW positive
+            //double botHeading = -robot.imu.getAngularOrientation().firstAngle;
+            // Read inverse IMU heading, as the IMU heading is CW positive
+            double botHeading = -imu.getAngularOrientation().firstAngle;
 
-            //turn right???
-            else if (rightX >= 0.3 ) {
-                robot.leftFront.setPower(rightX);
-                robot.leftBack.setPower(rightX);
-                robot.rightFront.setPower(-rightX);
-                robot.rightBack.setPower(-rightX);
-            }
+            double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
+            double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
-            //turn left???
-            else if (rightX <= -0.3) {
-                robot.leftFront.setPower(rightX);
-                robot.leftBack.setPower(rightX);
-                robot.rightFront.setPower(-rightX);
-                robot.rightBack.setPower(-rightX);
-            }
 
-            //forwards
-            else if (leftY2 >= 0.3) {
-                robot.leftFront.setPower(-leftY2);
-                robot.leftBack.setPower(-leftY2);
-                robot.rightFront.setPower(-leftY2);
-                robot.rightBack.setPower(-leftY2);
-            }
 
-            //backwards
-            else if (leftY2 <= -0.3) {
-                robot.leftFront.setPower(-leftY2);
-                robot.leftBack.setPower(-leftY2);
-                robot.rightFront.setPower(-leftY2);
-                robot.rightBack.setPower(-leftY2);
-            }
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio, but only when
+            // at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
 
-            else {
-                robot.leftFront.setPower(0);
-                robot.leftBack.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightBack.setPower(0);
-            }
-
+            robot.leftFront.setPower(frontLeftPower);
+            robot.leftBack.setPower(backLeftPower);
+            robot.rightFront.setPower(frontRightPower);
+            robot.rightBack.setPower(backRightPower);
+            // motorFrontLeft.setPower(frontLeftPower);
+            // motorBackLeft.setPower(backLeftPower);
+            // motorFrontRight.setPower(frontRightPower);
+            // motorBackRight.setPower(backRightPower);
 
             //elbow stuff
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
 
                 if (elbowDegrees <= 80 && pressUp == false )  {
 
                     timer.reset();
 
-                    elbowDegrees += 1;
+                    elbowDegrees +=1;
                     armToPosition.elbowposinDeg_ = elbowDegrees;
                     // robot.elbow.setTargetPosition(liftTicksToDegrees.liftTicktoDegrees(elbowDegrees));
                     robot.elbow.setTargetPosition(liftTicksToDegrees.liftTicktoDegrees(elbowDegrees));
-                   // elbowPIDThread.runElbow(20,2);
+                    // elbowPIDThread.runElbow(20,2);
                     robot.elbow.setPower(0.8);
 
-                   // pressUp = true;
+                    // pressUp = true;
 
                 }
             }
-            else if (gamepad2.dpad_down) {
+            else if (gamepad1.dpad_down){
 
                 if (elbowDegrees >= 0 && pressDown == false) {
 
@@ -228,7 +228,7 @@ public class StoobsDrive extends LinearOpMode {
                     robot.elbow.setTargetPosition(liftTicksToDegrees.liftTicktoDegrees(elbowDegrees));
                     robot.elbow.setPower(0.5);
 
-                  //  pressDown = true;
+                    //  pressDown = true;
 
                 }
 
@@ -252,22 +252,42 @@ public class StoobsDrive extends LinearOpMode {
             }
 
             //winch Up
-            if (lift > 0 && winchUp == false)
+            /*if (gamepad2.right_stick_y <=0 && winchUp == false)
             {
                 winchPos+=winchSpeed;
                 armToPosition.winchToPosition(0.8,winchPos,false);
                 winchUp = true;
                 timer.reset();
 
+            }*/
+
+            //new winch controls (uses buttons)
+            //winch in
+            if (gamepad1.y && winchUp == false)
+            {
+                winchPos+=winchSpeed;
+                armToPosition.winchToPosition(0.8, winchPos, false);
+                winchUp = true;
+                timer.reset();
             }
+
+            //winch out
+            if (gamepad1.a && winchUp == false)
+            {
+                winchPos-=winchSpeed;
+                armToPosition.winchToPosition(0.8, winchPos, false);
+                winchDown = true;
+                timer.reset();
+            }
+
             //winch Down
-            if (lift < 0 && (winchPos-winchSpeed) >= 0 && winchDown == false)
+            /*if (gamepad2.right_stick_y>=0 && (winchPos-winchSpeed) >= 0 && winchDown == false)
             {
                 winchPos-=winchSpeed;
                 armToPosition.winchToPosition(0.8,winchPos,false);
                 winchDown = true;
                 timer.reset();
-            }
+            }*/
 
 
 
@@ -275,42 +295,42 @@ public class StoobsDrive extends LinearOpMode {
 
 
             //turntable
-            if (gamepad2.dpad_left)
+            if (gamepad1.dpad_left)
             {
                 turnTableDegrees += turnTableSpeed;
-                armToPosition.turnTableToPosition(0.8,turnTableDegrees,false);
+                armToPosition.turnTableToPosition(1,turnTableDegrees,false);
 
             }
 
-            if (gamepad2.dpad_right)
+            if (gamepad1.dpad_right)
             {
                 turnTableDegrees -= turnTableSpeed;
-                armToPosition.turnTableToPosition(0.8,turnTableDegrees,false);
+                armToPosition.turnTableToPosition(1,turnTableDegrees,false);
             }
 
             //turntable
 
             //claw
-            if (gamepad2.left_bumper)
+            if (gamepad1.left_bumper)
             {
                 robot.claw.setPosition(robot.clawOpen);
             }
 
-            if (gamepad2.right_bumper)
+            if (gamepad1.right_bumper)
             {
                 robot.claw.setPosition(robot.clawClose);
             }
             //claw
             //goes up and out and turns table at once
-            if (gamepad2.a)
+            /*if (gamepad2.a)
             {
-               // armToPosition.setMasterArmPos(0.8, 45, 1, 20, 0.5, 0);
+                // armToPosition.setMasterArmPos(0.8, 45, 1, 20, 0.5, 0);
             }
             //goes back into 0 position
             if (gamepad2.b)
             {
-             //   armToPosition.setMasterArmPos(0.5,0,1,5,0.5,0);
-            }
+                //   armToPosition.setMasterArmPos(0.5,0,1,5,0.5,0);
+            }*/
 
             /*
             if (gamepad1.a) {
@@ -340,7 +360,7 @@ public class StoobsDrive extends LinearOpMode {
             elbowPos = robot.elbow.getCurrentPosition();
             wristPos = liftMaths.armServoPower(elbowPos);
             robot.wrist.setPosition(wristPos);
-           // System.out.println("valleyX: wristpos " + wristPos);
+            // System.out.println("valleyX: wristpos " + wristPos);
 
 
 
@@ -351,7 +371,7 @@ public class StoobsDrive extends LinearOpMode {
             telemetry.addData("winge Pos",winchPos);
             telemetry.addData("claw is: ",robot.claw.getPosition());
 
-           // telemetry.addData("right stick ", gamepad2.right_stick_y );
+            // telemetry.addData("right stick ", gamepad2.right_stick_y );
 
             //public int elbowposinDeg_;
             //public double winchposinIN_;
@@ -360,6 +380,8 @@ public class StoobsDrive extends LinearOpMode {
             telemetry.addData("elbowposinDeg_",armToPosition.elbowposinDeg_);
             telemetry.addData("winchposinIn",armToPosition.winchposinIN_);
             telemetry.addData("turntableposinDeg_",armToPosition.turntableposinDeg_);
+
+            telemetry.addData("right joystick position",gamepad2.right_stick_y);
 
             telemetry.update();
 
@@ -380,3 +402,4 @@ public class StoobsDrive extends LinearOpMode {
         }
     }
 }
+

@@ -17,7 +17,7 @@ public class LiftMaths {
     //this function will convert motor tics to the power settings on the servo on the end of the arm to make it parallel to the ground
     public double armServoPower(double armMotorTics) {
 
-        return robot_.ticsToPower * armMotorTics;
+        return ((robot_).ticsToPower * armMotorTics);
 
     }
 

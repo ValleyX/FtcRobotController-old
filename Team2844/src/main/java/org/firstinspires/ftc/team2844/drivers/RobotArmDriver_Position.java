@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.team2844.RobotHardware;
 import org.firstinspires.ftc.team2844.TeleopDriver;
+import org.opencv.core.Mat;
 
 public class RobotArmDriver_Position {
 
@@ -41,7 +42,7 @@ public class RobotArmDriver_Position {
         robot.winch.setTargetPosition(0);
         robot.turnTable.setTargetPosition(0);
 
-        robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.winch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.turnTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -86,8 +87,8 @@ public class RobotArmDriver_Position {
                 robot_.OpMode_.telemetry.addData("lift target positionInInches : ", robot_.winch.getTargetPosition());
                 robot_.OpMode_.telemetry.update();
 
-                System.out.println("valleyX: " + robot_.winch.getCurrentPosition());
-                System.out.println("valleyX");
+                //System.out.println("valleyX: " + robot_.winch.getCurrentPosition());
+                //System.out.println("valleyX");
 
             }
 
@@ -128,21 +129,16 @@ public class RobotArmDriver_Position {
 
             robot_.elbow.setPower(Math.abs(speed));
 
-
-
-
             // keep looping while we are still active, and BOTH motors are running.
             while (robot_.OpMode_.opModeIsActive() && robot_.elbow.isBusy() && (waiting == true)) {// true means not touched {
-
-
 
                 robot_.OpMode_.telemetry.addData("lift positionInTicks : ", robot_.elbow.getCurrentPosition());
                 robot_.OpMode_.telemetry.addData("lift target positionInTicks : ", robot_.elbow.getTargetPosition());
 
                 robot_.OpMode_.telemetry.update();
 
-                System.out.println("valleyX: elbow ticks " + robot_.elbow.getCurrentPosition());
-                System.out.println("valleyX: elbow target ticks " + robot_.elbow.getTargetPosition());
+                //System.out.println("valleyX: elbow ticks " + robot_.elbow.getCurrentPosition());
+                //System.out.println("valleyX: elbow target ticks " + robot_.elbow.getTargetPosition());
                 //System.out.println("valleyX");
                 elbowpos = robot_.elbow.getCurrentPosition();
                 wristPos = liftMaths.armServoPower(elbowpos);
@@ -169,6 +165,13 @@ public class RobotArmDriver_Position {
         waiting_ = false;
     }
 
+    final int closeTicks = 5;//8
+
+    public boolean turnTableCloseEnough()
+    {
+        return (Math.abs(turntableposinDeg_ - robot_.turnTable.getCurrentPosition()) > closeTicks);
+    }
+
     public void turnTableToPosition (double speed, //elbowToPosition
                                  double positionInDeg,
                                  boolean waiting) {
@@ -188,7 +191,7 @@ public class RobotArmDriver_Position {
 
             robot_.turnTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot_.turnTable.setPower(speed);
+            robot_.turnTable.setPower(speed * 1.5);
 
 
             // keep looping while we are still active, and BOTH motors are running.
@@ -198,7 +201,7 @@ public class RobotArmDriver_Position {
                 robot_.OpMode_.telemetry.addData("lift target positionInDeg : ", robot_.turnTable.getTargetPosition());
                 robot_.OpMode_.telemetry.update();
 
-                System.out.println("valleyX turn table: " + robot_.turnTable.getCurrentPosition());
+                //System.out.println("valleyX turn table: " + robot_.turnTable.getCurrentPosition());
                 //System.out.println("valleyX");
 
             }

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.team2844;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team2844.drivers.EncoderDriveMecha;
 import org.firstinspires.ftc.team2844.drivers.LiftMaths;
 import org.firstinspires.ftc.team2844.drivers.RobotAutoDriveByGyro_Linear;
 
+@Disabled
 @Autonomous(name="AutoTest")
 public class AutonomousTestPilot extends LinearOpMode {
 

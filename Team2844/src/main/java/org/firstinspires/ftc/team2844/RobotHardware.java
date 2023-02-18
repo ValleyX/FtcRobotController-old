@@ -1,14 +1,24 @@
 package org.firstinspires.ftc.team2844;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import android.graphics.Path;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.BasicOpMode_Iterative;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team2844.drivers.LiftTicksToDegreesMath;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -33,10 +43,14 @@ public class RobotHardware {
     public DcMotor rightFront;
     public DcMotor rightBack;
 
+    //test motor
+    public DcMotorEx elbowMotor;
+
     //lift motor
     public DcMotor turnTable;
     public DcMotor winch;
     public DcMotor elbow;
+    public DcMotor elbow2;
 
     // lift servo
     public Servo claw;
@@ -56,7 +70,7 @@ public class RobotHardware {
     public final double clawClose = 0.7; //1
 
 
-    //turnTable
+    //driver moters
     public final double COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
     public final double DRIVE_GEAR_REDUCTION = 20;     // This is < 1.0 if geared UP
     public final double ONE_MOTOR_COUNT = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
@@ -65,18 +79,18 @@ public class RobotHardware {
 
     //lift extendor
     public final double     LIFT_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 40.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_DRIVE_GEAR_REDUCTION    = 10.0;     // This is < 1.0 if geared UP
     public final double     LIFT_ONE_MOTOR_COUNT         = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
     public final double     LIFT_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference
     public final double     LIFT_COUNTS_PER_INCH         = LIFT_ONE_MOTOR_COUNT / LIFT_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
 
     //lift elbow
     public final double     LIFT_ELBOW_COUNTS_PER_MOTOR_REV    = 28 ;    //  AndyMark Motor Encoder
-    public final double     LIFT_ELBOW_DRIVE_GEAR_REDUCTION    = 255.0;     // This is < 1.0 if geared UP
+    public final double     LIFT_ELBOW_DRIVE_GEAR_REDUCTION    = 270.0;     // This is < 1.0 if geared UP
     public final double     LIFT_ELBOW_ONE_MOTOR_COUNT         = LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION;
     public final double     LIFT_ELBOW_DISTANCE_IN_ONE_REV     = 2.6 * Math.PI; //measure of diameter times PI to find circumference (actual bot is 9.5)
     public final double     LIFT_ELBOW_COUNTS_PER_INCH         = LIFT_ELBOW_ONE_MOTOR_COUNT / LIFT_ELBOW_DISTANCE_IN_ONE_REV ;  //TODO determine// in class
-    public final double ticsToPower = 1/(3*((LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4)); //equasion  to find how many tics are in 90 deg of the elbow motor
+    public final double ticsToPower = 1/(3.5*((LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4)); //equation  to find how many tics are in 90 deg of the elbow motor
     public final double ticksIn90 = (LIFT_ELBOW_COUNTS_PER_MOTOR_REV * LIFT_ELBOW_DRIVE_GEAR_REDUCTION) / 4;
 
 
@@ -116,6 +130,13 @@ public class RobotHardware {
     RobotHardware(LinearOpMode opMode) {
         OpMode_ = opMode;
 
+
+        //test cod
+        //PID
+        //elbowMotor.getVelocity();
+
+
+        //--------end test coce
         /*//remove motor encoders ... but why?? - archer
         leftFront = OpMode_.hardwareMap.dcMotor.get("leftFront"); //control hub port 0
         leftFront.setDirection(DcMotor.Direction.FORWARD);
@@ -161,6 +182,14 @@ public class RobotHardware {
         //elbow.setDirection(DcMotor.Direction.REVERSE);
         elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        elbow2 = OpMode_.hardwareMap.dcMotor.get("elbow2");//expansion hub port
+        //elbow2.setDirection(DcMotor.Direction.FORWARD);
+        elbow2.setDirection(DcMotor.Direction.REVERSE);
+        elbow2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
 
         claw = OpMode_.hardwareMap.servo.get("claw"); //control hub servo port 0
@@ -450,8 +479,18 @@ public class RobotHardware {
         rightFront.setPower(power);
     }
 
+    public void leftPower(double power) {
+        leftFront.setPower(power);
+        leftBack.setPower(power);
+    }
 
-//odometry
+    public void rightPower(double power) {
+        rightBack.setPower(power);
+        rightFront.setPower(power);
+    }
+
+
+    //odometry
     public void initDriveHardwareMap(String rfName, String rbName, String lfName, String lbName, String vlEncoderName, String vrEncoderName, String hEncoderName) {
         rightFront = OpMode_.hardwareMap.dcMotor.get(rfName);
         rightBack = OpMode_.hardwareMap.dcMotor.get(rbName);
@@ -496,5 +535,86 @@ public class RobotHardware {
         OpMode_.telemetry.addData("Status", "Hardware Map Init Complete");
         OpMode_.telemetry.update();
     }
+/*
+    public void pidElbow(int degrees)//test code
+    {
+        LiftTicksToDegreesMath liftTicksToDegrees;
+        liftTicksToDegrees= new LiftTicksToDegreesMath(this);
+        int ticks = (liftTicksToDegrees.liftTicktoDegrees(degrees));
 
+        double Kp = 0.0025;
+        double Ki = 0.0002;
+        double Kd = 0;
+
+        double setPoint = ticks;
+
+        double integralSum = 0;
+
+        double lastError = 0;
+        int count = 0;
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        final double maxSpeed = 0.5;
+
+// Elapsed timer class from SDK, please use it, it's epic
+        ElapsedTime timer = new ElapsedTime();
+        ElapsedTime timer2 = new ElapsedTime();
+        timer2.reset();
+       // while (elbow.getCurrentPosition() >= setPoint+2 || elbow.getCurrentPosition() <= setPoint-2 ) {
+       while (timer2.milliseconds() < 5000) {
+
+            // obtain the encoder position
+             double encoderPosition = elbow.getCurrentPosition();
+            // calculate the error
+            double error = setPoint - encoderPosition;
+
+            // rate of change of the error
+            double derivative = (error - lastError) / timer.seconds();
+
+            System.out.println("valleyX: set point " + setPoint);
+            System.out.println("ValleyX: encoder position " + encoderPosition);
+            // sum of all error over time
+
+            integralSum = integralSum + (error * timer.seconds());
+            //limits Intergral to not get intergrater wind up
+            if(integralSum > maxSpeed)
+                integralSum = maxSpeed;
+            if(integralSum < -maxSpeed)
+                integralSum = -maxSpeed;
+            OpMode_.telemetry.addData("IntergralSum",integralSum);
+ //           System.out.println("valleyX: IntergralSum"+integralSum);
+           double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+           //limits output to the top motor speed which is one
+            if(out > maxSpeed)
+                out = maxSpeed;
+            if(out < -maxSpeed)
+                out = -maxSpeed;
+            OpMode_.telemetry.addData("out",out);
+  //          System.out.println("ValleyX: out"+out);
+            OpMode_.telemetry.addData("count",(count++));
+            elbow.setPower(out);
+            OpMode_.telemetry.addData("target pos", ticks);
+            OpMode_.telemetry.addData("currentPos", elbow.getCurrentPosition());
+            OpMode_.telemetry.addData("Power", out);
+
+            // reset the timer for next time
+            timer.reset();
+            OpMode_.telemetry.update();
+            OpMode_.sleep(100);
+        }
+        //makes sure elbow stays were it is at
+        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbow.setTargetPosition( ticks );
+        elbow.setPower(1);
+
+        ElapsedTime timer1 = new ElapsedTime();
+        timer1.reset();
+        while (timer1.milliseconds() < 1000)
+        {
+            System.out.println("ValleyX: Current " +  elbow.getCurrentPosition());
+            System.out.println("ValleyX: target "+ +  elbow.getTargetPosition());
+        }
+
+
+    }
+*/
 }
