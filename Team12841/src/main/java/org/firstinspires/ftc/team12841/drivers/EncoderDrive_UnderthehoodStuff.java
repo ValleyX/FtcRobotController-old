@@ -27,7 +27,7 @@ public class EncoderDrive_UnderthehoodStuff {
         robotHardware_.lFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotHardware_.rBMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotHardware_.rFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robotHardware_.lBMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotHardware_.lBMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);cd 
         robotHardware_.lFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardware_.rBMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardware_.rFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

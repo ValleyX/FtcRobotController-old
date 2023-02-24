@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team12841.drivers;
 
-//import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 public class RobotHardware {
 
     //constants
@@ -62,6 +62,9 @@ public class RobotHardware {
     public DcMotor rBMotor;
     public DcMotor liftMotor;
     public Servo pinch;
+
+    //Sensor
+    public DistanceSensor sensorRange;
 
     public LinearOpMode opMode_;
     public BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
@@ -130,7 +133,7 @@ public class RobotHardware {
         rBMotor = opMode_.hardwareMap.get(DcMotor.class, "rBMotor");
         liftMotor = opMode_.hardwareMap.get(DcMotor.class, "liftMotor");
         pinch = opMode_.hardwareMap.get(Servo.class, "pinch");
-
+        sensorRange = opMode_.hardwareMap.get(DistanceSensor.class, "laser_eyes");
 
         //invert motors
         lFMotor.setDirection(DcMotor.Direction.FORWARD);

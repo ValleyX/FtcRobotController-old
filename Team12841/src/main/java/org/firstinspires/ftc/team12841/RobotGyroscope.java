@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.team12841.drivers.RobotHardware;
 
@@ -146,7 +147,7 @@ public class RobotGyroscope {
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.03;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.04;     // Larger is more responsive, but also less stable
 
 
   /* @Override
@@ -236,10 +237,12 @@ public class RobotGyroscope {
     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
+     * @param senseStop this is the distance from the robot sensor to the object in front of it
     */
     public void driveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading) {
+                              double heading,
+                              double senseStop) {
 
         // Ensure that the opmode is still active
         if (Robot.opMode_.opModeIsActive()) {
@@ -275,7 +278,8 @@ public class RobotGyroscope {
 
             // keep looping while we are still active, and BOTH motors are running.
             while (Robot.opMode_.opModeIsActive() &&
-                   (Robot.lFMotor.isBusy() && Robot.rFMotor.isBusy() && Robot.lBMotor.isBusy() && Robot.rBMotor.isBusy())) {
+                   (Robot.lFMotor.isBusy() && Robot.rFMotor.isBusy() && Robot.lBMotor.isBusy() && Robot.rBMotor.isBusy())&&
+                    Robot.sensorRange.getDistance(DistanceUnit.INCH) > senseStop) {
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -289,6 +293,7 @@ public class RobotGyroscope {
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
+
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
