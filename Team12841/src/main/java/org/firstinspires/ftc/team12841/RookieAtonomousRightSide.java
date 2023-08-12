@@ -30,6 +30,7 @@ public class RookieAtonomousRightSide extends LinearOpMode {
 
         }
 
+
         if (robotHardware.pipeline.markerPos == RobotHardware.SkystoneDeterminationPipeline.MarkerPos.Blue)  //Red
         {
 
@@ -80,7 +81,7 @@ public class RookieAtonomousRightSide extends LinearOpMode {
 
             Gyro.driveStraight(0.3, -1, 90,sensorstop_backward);
             liftdriver.moveInches(22, 0.5); // raise cone to mid junction height
-            Gyro.driveStraight(0.3, -19, 90,sensorstop_backward); // back up to mid junction
+            Gyro.driveStraight(0.3, -18, 90,sensorstop_backward); // back up to mid junction
             Gyro.turnToHeading(0.3, 220, 4000); // turn to face mid junction
             //sleep(500);
             Gyro.driveStraight(0.3, 1.25, 220,sensorstop_backward); // get closer to pole
@@ -92,22 +93,22 @@ public class RookieAtonomousRightSide extends LinearOpMode {
             Gyro.turnToHeading(0.3,90,3000);
             liftdriver.moveInches(3.5, 0.7);
             //sleep(1000);
-            Gyro.driveStraight(0.3, 24, 90, sensorstop_backward);
+            Gyro.driveStraight(0.3, 23, 90, sensorstop_backward);
 
             robotHardware.pinch.setPosition(robotHardware.closedPinch);//grab for big pole
             sleep(1000);
             Gyro.driveStraight(0.3, -1, 90, sensorstop_backward);
             liftdriver.moveInches(22, 0.3); // raise cone to mid junction height
             Gyro.driveStraight(0.3, -20, 90, sensorstop_backward); // back up to center
-            Gyro.turnToHeading(0.3,138,1500);//turn to face the big one backwards
-            Gyro.driveStraight(0.3,-14,138,-1); // back towards the big one
-            liftdriver.moveInches(40.5,0.3); //move up the height
+            Gyro.turnToHeading(0.3,130,1500);//turn to face the big one backwards
+            Gyro.driveStraight(0.3,-14,130,-1); // back towards the big one
+            liftdriver.moveInches(41.5,0.3); //move up the height
             sleep(2000);
             robotHardware.pinch.setPosition(robotHardware.openPinch);
             sleep(1000);
             liftdriver.moveInches(0,0.4); //gets back to floor S P E E D
             //sleep(100);
-            Gyro.driveStraight(0.4,11,130, sensorstop_backward); //gets back to park
+            Gyro.driveStraight(0.4,10,130, sensorstop_backward); //gets back to park
             Gyro.turnToHeading(0.3,90,1000);//ditto
             Gyro.driveStraight(0.5, 24, 90, sensorstop_backward);//ditto
 
@@ -166,7 +167,7 @@ public class RookieAtonomousRightSide extends LinearOpMode {
 
             Gyro.driveStraight(0.3, -1, 90,sensorstop_backward);
             liftdriver.moveInches(22, 0.5); // raise cone to mid junction height
-            Gyro.driveStraight(0.3, -19, 90,sensorstop_backward); // back up to mid junction
+            Gyro.driveStraight(0.3, -18, 90,sensorstop_backward); // back up to mid junction
             Gyro.turnToHeading(0.3, 220, 4000); // turn to face mid junction
             //sleep(500);
             Gyro.driveStraight(0.3, 1.25, 220,sensorstop_backward); // get closer to pole
@@ -178,16 +179,16 @@ public class RookieAtonomousRightSide extends LinearOpMode {
             Gyro.turnToHeading(0.3,90,3000);
             liftdriver.moveInches(3.5, 0.7);
             //sleep(1000);
-            Gyro.driveStraight(0.3, 24, 90, sensorstop_backward);
+            Gyro.driveStraight(0.3, 23, 90, sensorstop_backward);
 
             robotHardware.pinch.setPosition(robotHardware.closedPinch);//grab for big pole
             sleep(1000);
             Gyro.driveStraight(0.3, -1, 90, sensorstop_backward);
             liftdriver.moveInches(22, 0.3); // raise cone to mid junction height
             Gyro.driveStraight(0.3, -20, 90, sensorstop_backward); // back up to center
-            Gyro.turnToHeading(0.3,138,1500);//turn to face the big one backwards
-            Gyro.driveStraight(0.3,-14,138,-1); // back towards the big one
-            liftdriver.moveInches(40.5,0.3); //move up the height
+            Gyro.turnToHeading(0.3,130,1500);//turn to face the big one backwards
+            Gyro.driveStraight(0.3,-14,130,-1); // back towards the big one
+            liftdriver.moveInches(41.5,0.3); //move up the height
             sleep(2000);
             robotHardware.pinch.setPosition(robotHardware.openPinch);
             sleep(1000);
@@ -197,7 +198,7 @@ public class RookieAtonomousRightSide extends LinearOpMode {
             Gyro.turnToHeading(0.3,90,1000);//ditto
 
         }
-        else //Blue
+        else //red
         {
 
             robotHardware.pinch.setPosition(robotHardware.closedPinch);  //Red
@@ -246,7 +247,7 @@ public class RookieAtonomousRightSide extends LinearOpMode {
 
             Gyro.driveStraight(0.3, -1, 90,sensorstop_backward);
             liftdriver.moveInches(22, 0.5); // raise cone to mid junction height
-            Gyro.driveStraight(0.3, -19, 90,sensorstop_backward); // back up to mid junction
+            Gyro.driveStraight(0.3, -18, 90,sensorstop_backward); // back up to mid junction
             Gyro.turnToHeading(0.3, 220, 4000); // turn to face mid junction
             //sleep(500);
             Gyro.driveStraight(0.3, 1.25, 220,sensorstop_backward); // get closer to pole
@@ -258,22 +259,22 @@ public class RookieAtonomousRightSide extends LinearOpMode {
             Gyro.turnToHeading(0.3,90,3000);
             liftdriver.moveInches(3.5, 0.7);
             //sleep(1000);
-            Gyro.driveStraight(0.3, 24, 90, sensorstop_backward);
+            Gyro.driveStraight(0.3, 23, 90, sensorstop_backward);
 
             robotHardware.pinch.setPosition(robotHardware.closedPinch);//grab for big pole
             sleep(1000);
             Gyro.driveStraight(0.3, -1, 90, sensorstop_backward);
             liftdriver.moveInches(22, 0.3); // raise cone to mid junction height
             Gyro.driveStraight(0.3, -20, 90, sensorstop_backward); // back up to center
-            Gyro.turnToHeading(0.3,138,1500);//turn to face the big one backwards
-            Gyro.driveStraight(0.3,-14,138,-1); // back towards the big one
-            liftdriver.moveInches(40.5,0.3); //move up the height
+            Gyro.turnToHeading(0.3,130,1500);//turn to face the big one backwards
+            Gyro.driveStraight(0.3,-14,130,-1); // back towards the big one
+            liftdriver.moveInches(41.5,0.3); //move up the height
             sleep(2000);
             robotHardware.pinch.setPosition(robotHardware.openPinch);
             sleep(1000);
             liftdriver.moveInches(0,0.4); //gets back to floor S P E E D
             //sleep(100);
-            Gyro.driveStraight(0.4,11,130, sensorstop_backward); //gets back to park
+            Gyro.driveStraight(0.4,10,130, sensorstop_backward); //gets back to park
             Gyro.turnToHeading(0.3,90,1000);//ditto
             Gyro.driveStraight(0.4,-25,90, sensorstop_backward);
         }
