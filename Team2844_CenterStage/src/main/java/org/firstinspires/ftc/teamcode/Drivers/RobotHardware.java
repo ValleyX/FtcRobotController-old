@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Drivers;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
@@ -78,7 +78,7 @@ public class RobotHardware {
     public BNO055IMU imu;
 
 
-    RobotHardware(LinearOpMode opMode) {
+    public RobotHardware(LinearOpMode opMode) {
         OpMode_ = opMode;
 
         // Declare our motors
