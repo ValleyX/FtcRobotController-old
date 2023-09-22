@@ -10,7 +10,7 @@ import java.io.File;
 
 public class OdometryDrive {
     //call the robot (to be readded when ready
-    //private RobotHardware robot_;
+    private RobotHardware robot_;
 
     //variables needed to help run program
     private ElapsedTime runtime_;
@@ -48,15 +48,15 @@ public class OdometryDrive {
     //globalPositionUpdate =  new OdometryGlobalCoordinatePosition(robot_.leftVerticalEncoder, robot_.rightVerticalEncoder, robot_.horizontalEncoder, robot_.OD_COUNTS_PER_INCH, 75);
 
     //instatiate the method
-    public OdometryDrive(/*RobotHardware robot /* to be readded*/) {
+    public OdometryDrive(RobotHardware robot ) {
         //set variables
-        //robot_ = robot;
+        robot_ = robot;
         runtime_ = new ElapsedTime();
         waiting_ = false;
 
         //to be readded w/ robot hardware
         //fill variables for the global position and the thread
-        //globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot_.verticalLeft, robot_.verticalRight, robot_.horizontal, robot_.OD_COUNTS_PER_INCH, 75);
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot_.verticalLeft, robot_.verticalRight, robot_.horizontal, robot_.OD_COUNTS_PER_INCH, 75);
         positionThread = new Thread(globalPositionUpdate);
 
         //start the thread
@@ -66,15 +66,15 @@ public class OdometryDrive {
     //moves robot forward based of target and current position
     public void goToPositionForward(double xTarget, double yTarget, double robotPower, double desiredRobotOrientation, double allowableDistanceError){
         //multiply distances by a constant
-        //xTarget *= robot_.OD_COUNTS_PER_INCH;
-        //yTarget *= robot_.OD_COUNTS_PER_INCH;
-        //allowableDistanceError *= robot_.OD_COUNTS_PER_INCH;
+        xTarget *= robot_.OD_COUNTS_PER_INCH;
+        yTarget *= robot_.OD_COUNTS_PER_INCH;
+        allowableDistanceError *= robot_.OD_COUNTS_PER_INCH;
 
         //calculate how close we are
         double distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
         double distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
         double distance = Math.hypot(distanceToX, distanceToY);
-        while (/*robot_.OpMode_.opModeIsActive() &&*/ Math.abs(distanceToY) > allowableDistanceError) {
+        while (robot_.OpMode_.opModeIsActive() && Math.abs(distanceToY) > allowableDistanceError) {
 
             distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
             distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
@@ -87,19 +87,19 @@ public class OdometryDrive {
             distance = Math.hypot(distanceToX, distanceToY);
 
 
-            //robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
-            //robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
-            //robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
-            //robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
-            //robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
-            //robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
-            //robot_.OpMode_.telemetry.addData("distance:", distance);
-            //robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
-            //robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
-            //robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
-            //robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
-            //robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
-            //robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
+            robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
+            robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
+            robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
+            robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
+            robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
+            robot_.OpMode_.telemetry.addData("distance:", distance);
+            robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
+            robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
+            robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
+            robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
 
             System.out.println("ValleyX: distanceToX " + distanceToX);
             System.out.println("ValleyX: distanceToY " + distanceToY);
@@ -112,28 +112,28 @@ public class OdometryDrive {
             // (don't add back) robot_.allpower(-robotMovementY);
             if (turnCorrection > 0)
             {
-                //robot_.leftPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
-                //robot_.rightPower(-robotMovementY);
+                robot_.leftPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
+                robot_.rightPower(-robotMovementY);
             }
             else
             {
-                //robot_.rightPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
-                //robot_.leftPower(-robotMovementY);
+                robot_.rightPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
+                robot_.leftPower(-robotMovementY);
             }
-            //robot_.OpMode_.idle();
+            robot_.OpMode_.idle();
         }
-        //robot_.allpower(0);
+        robot_.allpower(0);
 
     }
 
     public void goToPositionSide(double xTarget, double yTarget, double robotPower, double desiredRobotOrientation, double allowableDistanceError){
-        //xTarget *= robot_.OD_COUNTS_PER_INCH;
-        //yTarget *= robot_.OD_COUNTS_PER_INCH;
-        //allowableDistanceError *= robot_.OD_COUNTS_PER_INCH;
+        xTarget *= robot_.OD_COUNTS_PER_INCH;
+        yTarget *= robot_.OD_COUNTS_PER_INCH;
+        allowableDistanceError *= robot_.OD_COUNTS_PER_INCH;
         double distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
         double distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
         double distance = Math.hypot(distanceToX, distanceToY);
-        while (/*robot_.OpMode_.opModeIsActive() &&*/ Math.abs(distanceToX) > allowableDistanceError) {
+        while (robot_.OpMode_.opModeIsActive() && Math.abs(distanceToX) > allowableDistanceError) {
 
             distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
             distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
@@ -146,19 +146,19 @@ public class OdometryDrive {
             distance = Math.hypot(distanceToX, distanceToY);
 
 
-            //robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
-            //robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
-            //robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
-            //robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
-            //robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
-            //robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
-            //robot_.OpMode_.telemetry.addData("distance:", distance);
-            //robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
-            //robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
-            //robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
-            //robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
-            //robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
-            //robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
+            robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
+            robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
+            robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
+            robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
+            robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
+            robot_.OpMode_.telemetry.addData("distance:", distance);
+            robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
+            robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
+            robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
+            robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
 
             System.out.println("ValleyX: distanceToX " + distanceToX);
             System.out.println("ValleyX: distanceToY " + distanceToY);
@@ -167,16 +167,16 @@ public class OdometryDrive {
             System.out.println("ValleyX: robotMovementY " + robotMovementY);
             double c_nPi = .08;
 
-            //robot_.OpMode_.telemetry.update();
+            robot_.OpMode_.telemetry.update();
             // dont add robot_.allpower(-robotMovementY);
             // dont add   if (turnCorrection > 0)
             // dont add   {
             // dont add robot_.leftPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
             //dont add robot_.rightPower(-robotMovementY);
-            //robot_.leftBack.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
-            //robot_.leftFront.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
-            //robot_.rightBack.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
-            //robot_.rightFront.setPower((robotMovementX - c_nPi * Math.abs(turnCorrection)));
+            robot_.motorBackLeft.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
+            robot_.motorFrontLeft.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
+            robot_.motorBackRight.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
+            robot_.motorFrontRight.setPower((robotMovementX - c_nPi * Math.abs(turnCorrection)));
 
             // dont add }
 
@@ -194,9 +194,9 @@ public class OdometryDrive {
 
 
 
-            //robot_.OpMode_.idle();
+            robot_.OpMode_.idle();
         }
-        //robot_.allpower(0);
+        robot_.allpower(0);
 
     }
 

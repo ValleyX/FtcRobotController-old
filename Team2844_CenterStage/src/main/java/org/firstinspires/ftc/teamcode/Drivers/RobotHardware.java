@@ -62,6 +62,12 @@ public class RobotHardware {
     public final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     public final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
+    public final double OD_COUNTS_PER_MOTOR_REV = 8192;    //  AndyMark Motor Encoder
+    public final double OD_DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
+    public final double OD_ONE_MOTOR_COUNT = OD_COUNTS_PER_MOTOR_REV * OD_DRIVE_GEAR_REDUCTION;
+    public final double OD_Distance_in_one_rev = 2.0 * Math.PI; //in
+    public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
+
 
     public static boolean findTag = false; //if this finds the tag, then we use it to turn on/off driving with sticks
 
@@ -75,6 +81,11 @@ public class RobotHardware {
     public DcMotor motorFrontRight;
     public DcMotor motorBackRight;
 
+    //odometry encoders
+    public DcMotor verticalLeft;
+    public DcMotor verticalRight;
+    public DcMotor horizontal;
+
     public BNO055IMU imu;
 
 
@@ -87,6 +98,12 @@ public class RobotHardware {
         motorBackLeft = OpMode_.hardwareMap.dcMotor.get("leftBack");
         motorFrontRight = OpMode_.hardwareMap.dcMotor.get("rightFront");
         motorBackRight = OpMode_.hardwareMap.dcMotor.get("rightBack");
+
+        //Declare Odometry encoders
+        //make sure they match the names of the motors they are linked to
+        verticalLeft = OpMode_.hardwareMap.dcMotor.get("leftFront");
+        verticalRight = OpMode_.hardwareMap.dcMotor.get("rightFront");
+        horizontal = OpMode_.hardwareMap.dcMotor.get("leftBack");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -104,5 +121,23 @@ public class RobotHardware {
         imu.initialize(parameters);
 
 
+    }
+
+    //set power to the entire robot
+    public void allpower(double power) {
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorBackRight.setPower(power);
+        motorFrontRight.setPower(power);
+    }
+
+    public void leftPower(double power) {
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+    }
+
+    public void rightPower(double power) {
+        motorBackRight.setPower(power);
+        motorFrontRight.setPower(power);
     }
 }
