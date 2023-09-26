@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.testcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,7 +23,7 @@ public class OdTest extends LinearOpMode {
 
         telemetry.addData("Thread Active", odometryDrive.positionThread.isAlive());
         telemetry.update();
-        // while (opModeIsActive());
+
 
         odometryDrive.goToPositionForward(0,-10,.5,0,1);
         sleep(1000);

@@ -1,9 +1,4 @@
-package org.firstinspires.ftc.team2844;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import android.graphics.Path;
+package org.firstinspires.ftc.teamcode.testcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -12,13 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.BasicOpMode_Iterative;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.team2844.drivers.LiftTicksToDegreesMath;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -31,10 +21,16 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
-public class RobotHardware {
+//Code from last year to test (and steal from) stuff for this year before implementing into this years robot hardware
+public class RobotHardwareTestVersion {
     public LinearOpMode OpMode_;
     public WebcamName camCam;
-    public PowerPlayPipeline pipeline;
+    public CenterStagePipeline pipeline;
+
+    public boolean checkBlue;
+    //public static final int cameraThreshold = 120;
+
+    public CenterStagePipeline pipelineTwo; //added for test
     public OpenCvSwitchableWebcam switchableWebcam;
 
     //motors
@@ -127,8 +123,9 @@ public class RobotHardware {
     //Odometry Wheels
     public DcMotor verticalLeft, verticalRight, horizontal;
 
-    RobotHardware(LinearOpMode opMode) {
+    RobotHardwareTestVersion(LinearOpMode opMode, boolean isBlue) {
         OpMode_ = opMode;
+        checkBlue = isBlue;
 
 
         //test cod
@@ -231,7 +228,8 @@ public class RobotHardware {
         OpMode_.telemetry.update();
 
         camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
-        pipeline = new RobotHardware.PowerPlayPipeline(50, 50);
+        pipeline = new CenterStagePipeline(50,50, isBlue);
+        //pipelineTwo = new RobotHardwareTestVersion.PowerPlayPipeline(10,200,190,190); //added for test of Center stage
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, camCam, camCam);
@@ -268,98 +266,113 @@ public class RobotHardware {
     }
 
 
-    public static class PowerPlayPipeline extends OpenCvPipeline {
+    public static class CenterStagePipeline extends OpenCvPipeline {
 
-        public enum MarkerPosition {
-            Red,
-            Green,
-            Blue
+
+        public enum DetectionPosition {
+            Left,
+            Middle,
+            Right
         }
 
 
-        //Some color constants
+
+        //Some color constants, sets deintion for colors
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar RED = new Scalar(255, 0, 0);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-        //Team Color Blue = 109 Average
 
-        //The core values which define the location and size of the sample regions
-        //box location and dimensions
-
-        //Point REGION1_TOPLEFT_ANCHOR_POINT;
 
         Point REGION1_TOPLEFT_ANCHOR_POINT;
+        Point REGION2_TOPLEFT_ANCHOR_POINT;
+        Point REGION3_TOPLEFT_ANCHOR_POINT;
 
 
         static final int REGION_WIDTH = 130;
         static final int REGION_HEIGHT = 130;
 
-        //public final int  FOUR_RING_THRESHOLD = 150;
-
-        //public final int  ONE_RING_THRESHOLD = 135;
-
 
         Point region1Left_pointA;
         Point region1Left_pointB;
 
+        Point region2Left_pointA;
+
+        Point region2Left_pointB;
+
+        Point region3Left_pointA;
+
+        Point region3Left_pointB;
+
+
 
         //Working variables
-        Mat region1Middle_Cb;
-        Mat region1Left_Cb;
-        Mat region1Left_Cr;
-        Mat region1Right_Cb;
 
-        Mat region1Left_R;
-        Mat region1Left_G;
-        Mat region1Left_B;
+        //makes filters for the colors
+        //box 1
+        Mat region1Left_R = new Mat();
+        Mat region1Left_B = new Mat();
 
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
-        Mat Cr = new Mat();
+        //box 2
+        Mat region2Left_R = new Mat();
+        Mat region2Left_B = new Mat();
+
+        //box 3
+        Mat region3Left_R = new Mat();
+        Mat region3Left_B = new Mat();
 
         Mat R = new Mat();
-        Mat G = new Mat();
         Mat B = new Mat();
 
+        Mat YCrCb = new Mat();
 
-        int avgLeftBlue;
-        int avgLeftRed;
 
         int avgLeftR;
-        int avgLeftG;
         int avgLeftB;
 
+        int avgLeft2R;
+        int avgLeft2B;
+
+        int avgLeft3R;
+        int avgLeft3B;
+
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile PowerPlayPipeline.MarkerPosition color = PowerPlayPipeline.MarkerPosition.Green;
-        public volatile int SkystoneAverageMiddle;
-        public volatile int SkystoneAverageLeft;
-        public volatile int SkystoneAverageRight;
+        public volatile DetectionPosition position = DetectionPosition.Left;
 
+        boolean checkBlue;
 
-        public PowerPlayPipeline(int x, int y) {
+        //added anchorX and anchorY for test 2023
+        public CenterStagePipeline(int x, int y, boolean isBlue) {
+
+            checkBlue = isBlue;
             /*
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(x, y); // 200, 165
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
              */
+            //anchors to change boxes cordinates if neccary
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 200); // 200, 0
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(250, 200); // 200, 0
+            REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200); // 200, 0
 
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(210, 0); // 200, 165
+
             region1Left_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1Left_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+            region2Left_pointA = new Point(REGION2_TOPLEFT_ANCHOR_POINT.x, REGION2_TOPLEFT_ANCHOR_POINT.y);
+            region2Left_pointB = new Point(REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+            region3Left_pointA = new Point(REGION3_TOPLEFT_ANCHOR_POINT.x, REGION3_TOPLEFT_ANCHOR_POINT.y);
+            region3Left_pointB = new Point(REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         }
 
         //This function takes the RGB frame, converts to YCrCb, and extracts the Cb channel to the 'Cb' variable
 
         void inputToCb(Mat input) {
-            Core.extractChannel(input, R, 0);
-            Core.extractChannel(input, G, 1);
-            Core.extractChannel(input, B, 2);
-/*
+ //           Core.extractChannel(input, R, 0); //0 = red 1 = green 2 = blue
+ //           Core.extractChannel(input, B, 2); //0 = red 1 = green 2 = blue
+
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 2);
-            Core.extractChannel(YCrCb, Cr, 1);
-*/
+            Core.extractChannel(YCrCb, B, 2);
+            Core.extractChannel(YCrCb, R, 0);
+
         }
 
         @Override
@@ -370,8 +383,15 @@ public class RobotHardware {
            // region1Left_Cr = Cr.submat(new Rect(region1Left_pointA, region1Left_pointB));
 
             region1Left_R = R.submat(new Rect(region1Left_pointA, region1Left_pointB));
-            region1Left_G = G.submat(new Rect(region1Left_pointA, region1Left_pointB));
             region1Left_B = B.submat(new Rect(region1Left_pointA, region1Left_pointB));
+
+            region2Left_R = R.submat(new Rect(region2Left_pointA, region2Left_pointB));
+            region2Left_B = B.submat(new Rect(region2Left_pointA, region2Left_pointB));
+
+            region3Left_R = R.submat(new Rect(region3Left_pointA, region3Left_pointB));
+            region3Left_B = B.submat(new Rect(region3Left_pointA, region3Left_pointB));
+
+
 
         }
 
@@ -379,32 +399,14 @@ public class RobotHardware {
         public Mat processFrame(Mat input) {
             inputToCb(input);
 
-           // avgLeftBlue = (int) Core.mean(region1Left_Cb).val[0];
-          //  avgLeftRed = (int) Core.mean(region1Left_Cr).val[0];
-
             avgLeftR = (int) Core.mean(region1Left_R).val[0];
-            avgLeftG = (int) Core.mean(region1Left_G).val[0];
             avgLeftB = (int) Core.mean(region1Left_B).val[0];
 
-            //middle
-            // Thickness of the rectangle lines
-/*
-            SkystoneAverageMiddle = avgMiddle;
-            //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
-            if(avgMiddle > FOUR_RING_THRESHOLD)
-            {
-                position = SkystoneDeterminationPipeline.RingPosition.FOUR;
-            }
-            else if (avgMiddle > ONE_RING_THRESHOLD)
-            {
-                position = SkystoneDeterminationPipeline.RingPosition.ONE;
-            }
-            else
-            {
-                position = SkystoneDeterminationPipeline.RingPosition.NONE;
-            }
-*/
-            // Negative thickness means solid fill
+            avgLeft2R = (int) Core.mean(region2Left_R).val[0];
+            avgLeft2B = (int) Core.mean(region2Left_B).val[0];
+
+            avgLeft3R = (int) Core.mean(region3Left_R).val[0];
+            avgLeft3B = (int) Core.mean(region3Left_B).val[0];
 
 
             //Left
@@ -414,47 +416,60 @@ public class RobotHardware {
                     region1Left_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
-
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region1Left_pointA, // First point which defines the rectangl
-                    region1Left_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    region2Left_pointA, // First point which defines the rectangle
+                    region2Left_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region3Left_pointA, // First point which defines the rectangle
+                    region3Left_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
 
 
-            //Right
-
-            SkystoneAverageRight = avgLeftBlue;
-            //position = SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
-
-            if ((avgLeftR > avgLeftB && avgLeftR > avgLeftG)) {
-                color = PowerPlayPipeline.MarkerPosition.Red;
-            } else if ((avgLeftG > avgLeftR && avgLeftG > avgLeftB)) {
-                color = PowerPlayPipeline.MarkerPosition.Green;
-            } else if ((avgLeftB > avgLeftR && avgLeftB > avgLeftG)) {
-                color = PowerPlayPipeline.MarkerPosition.Blue;
+            //compares color of boxes to find greatest value of red, then blue
+            //red
+            if (checkBlue == false) {
+                if (avgLeftR > avgLeft2R && avgLeftR > avgLeft3R) {
+                    position = DetectionPosition.Left;
+                }
+                else if (avgLeft2R > avgLeftR && avgLeft2R > avgLeft3R) {
+                    position = DetectionPosition.Middle;
+                }
+                else if (avgLeft3R > avgLeftR && avgLeft3R > avgLeft2R) {
+                    position = DetectionPosition.Right;
+                }
             }
 
+            //blue
+            else {
+                if (avgLeftB > avgLeft2B && avgLeftB > avgLeft3B) {
+                    position = DetectionPosition.Left;
+                }
+                else if (avgLeft2B > avgLeftB && avgLeft2B > avgLeft3B) {
+                    position = DetectionPosition.Middle;
+                }
+                else /*if (avgLeft3B > avgLeftB && avgLeft3B > avgLeft2B)*/ {
+                    position = DetectionPosition.Right;
+                }
+            }
 
-            //else
-            //{
-            //    position = SkystoneDeterminationPipeline.MarkerPosition.Green;
-            //}
-
-            // Negative thickness means solid fill
 
 
             return input;
         }
 
 
+
         public int getAnalysisLeft() {
-            return avgLeftBlue;
+            return avgLeftB;
         }
 
         public int getAnalysisRight() {
-            return avgLeftRed;
+            return avgLeftR;
         }
     }
     public void allpower(double power) {
@@ -523,7 +538,7 @@ public class RobotHardware {
 /*
     public void pidElbow(int degrees)//test code
     {
-        LiftTicksToDegreesMath liftTicksToDegrees;
+        LiftTicksToDegreeesMath liftTicksToDegrees;
         liftTicksToDegrees= new LiftTicksToDegreesMath(this);
         int ticks = (liftTicksToDegrees.liftTicktoDegrees(degrees));
 

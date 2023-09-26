@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleop;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 //@Disabled
 @TeleOp(name = "fieldcentric+AprilTracktm")
-public class FieldCentric extends LinearOpMode {
+public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
 
     RobotHardware robot;
@@ -58,30 +58,6 @@ public class FieldCentric extends LinearOpMode {
         robot = new RobotHardware(this);
 
 
-
-//        // Declare our motors
-//        // Make sure your ID's match your configuration
-//        motorFrontLeft = hardwareMap.dcMotor.get("leftFront");
-//        motorBackLeft = hardwareMap.dcMotor.get("leftBack");
-//        motorFrontRight = hardwareMap.dcMotor.get("rightFront");
-//        motorBackRight = hardwareMap.dcMotor.get("rightBack");
-//
-//
-//        // Reverse the right side motors
-//        // Reverse left motors if you are using NeveRests
-//        // motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//        //motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-//        // Retrieve the IMU from the hardware map
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        // Technically this is the default, however specifying it is clearer
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        // Without this, data retrieving from the IMU throws an exception
-//        imu.initialize(parameters);
-
         waitForStart();
 
         if (isStopRequested()) return;
@@ -89,7 +65,7 @@ public class FieldCentric extends LinearOpMode {
         //
         while (opModeIsActive()) {
 
-
+            //if bumper is pressed, then go to the april tag
             if (gamepad1.left_bumper) {
 
                 aprilTagDrive();
@@ -217,10 +193,10 @@ public class FieldCentric extends LinearOpMode {
          */
         public void moveRobot(double x, double y, double yaw) {
             // Calculate wheel powers.
-            double leftFrontPower    =  x -y -yaw;
-            double rightFrontPower   =  x +y +yaw;
-            double leftBackPower     =  x +y -yaw;
-            double rightBackPower    =  x -y +yaw;
+            double leftFrontPower    =  x - y - yaw;
+            double rightFrontPower   =  x + y + yaw;
+            double leftBackPower     =  x + y - yaw;
+            double rightBackPower    =  x - y + yaw;
 
             // Normalize wheel powers to be less than 1.0
             double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
