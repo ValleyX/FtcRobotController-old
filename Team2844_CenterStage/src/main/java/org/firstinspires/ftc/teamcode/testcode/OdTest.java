@@ -12,8 +12,8 @@ public class OdTest extends LinearOpMode {
     // OdometryGlobalCoordinatePosition globalPositionUpdate;
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotHardware robot = new RobotHardware(this);
-        OdometryDrive odometryDrive = new OdometryDrive(robot);
+        RobotHardwareTestVersion robot = new RobotHardwareTestVersion(this,true);
+        OdometryTestDrive odometryDrive = new OdometryTestDrive(robot);
 
         waitForStart();
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions
@@ -25,9 +25,9 @@ public class OdTest extends LinearOpMode {
         telemetry.update();
 
 
-        odometryDrive.goToPositionForward(0,-10,.5,0,1);
+        //odometryDrive.goToPositionForward(0,10,.5,0,1);
         sleep(1000);
-        odometryDrive.goToPositionSide(10,-10,.5,0,1);
+        odometryDrive.goToPositionSide(-10,0,.5,0,1);
         //  while (opModeIsActive());
         //   globalPositionUpdate.stop();
 

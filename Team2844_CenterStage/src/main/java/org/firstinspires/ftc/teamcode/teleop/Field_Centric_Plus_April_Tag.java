@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -24,7 +25,6 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
     RobotHardware robot;
 
-
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
@@ -32,16 +32,6 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
 
-
-
-
-//
-//    DcMotor motorFrontLeft;
-//    DcMotor motorBackLeft;
-//    DcMotor motorFrontRight;
-//    DcMotor motorBackRight;
-//
-//    BNO055IMU imu;
 
 
     boolean targetFound     = false;    // Set to true when an AprilTag target is detected
@@ -82,9 +72,9 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     //make the function for field centric driving
     public void fieldCentricControl () {
 
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
+        double y = gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double rx = -gamepad1.right_stick_x;
 
         // Read inverse IMU heading, as the IMU heading is CW positive
         double botHeading = -robot.imu.getAngularOrientation().firstAngle;
@@ -130,6 +120,12 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
     public void aprilTagDrive () {
 
+        //reverses motors so that the FIRST provided code works correctly
+        robot.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
         targetFound = false;
         desiredTag  = null;
 
@@ -161,24 +157,39 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         if (gamepad1.left_bumper && targetFound) {
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (desiredTag.ftcPose.range - robot.DESIRED_DISTANCE);
-            double headingError = desiredTag.ftcPose.bearing;
-            double yawError = desiredTag.ftcPose.yaw;
+            double  rangeError      = (desiredTag.ftcPose.range - robot.DESIRED_DISTANCE);
+            double  headingError    = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
-            drive = Range.clip(rangeError * robot.SPEED_GAIN, -robot.MAX_AUTO_SPEED, robot.MAX_AUTO_SPEED);
-            turn = Range.clip(headingError * robot.TURN_GAIN, -robot.MAX_AUTO_TURN, robot.MAX_AUTO_TURN);
+            drive  = Range.clip(rangeError * robot.SPEED_GAIN, -robot.MAX_AUTO_SPEED, robot.MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * robot.TURN_GAIN, -robot.MAX_AUTO_TURN, robot.MAX_AUTO_TURN) ;
             strafe = Range.clip(-yawError * robot.STRAFE_GAIN, -robot.MAX_AUTO_STRAFE, robot.MAX_AUTO_STRAFE);
 
-            telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        } else {
 
-
-
-            // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
-            sleep(10);
+            // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
+            drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+            strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
+            turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+            telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
         }
+        telemetry.update();
+
+        // Apply desired axes motions to the drivetrain.
+        moveRobot(drive, strafe, turn);
+        sleep(10);
+
+        //reset the motors to original inversions so drive isn't messed up
+        robot.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
     }
+
+
 
 
 
@@ -193,10 +204,10 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
          */
         public void moveRobot(double x, double y, double yaw) {
             // Calculate wheel powers.
-            double leftFrontPower    =  x - y - yaw;
-            double rightFrontPower   =  x + y + yaw;
-            double leftBackPower     =  x + y - yaw;
-            double rightBackPower    =  x - y + yaw;
+            double leftFrontPower    =  x -y -yaw;
+            double rightFrontPower   =  x +y +yaw;
+            double leftBackPower     =  x +y -yaw;
+            double rightBackPower    =  x -y +yaw;
 
             // Normalize wheel powers to be less than 1.0
             double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -215,7 +226,6 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
             robot.motorFrontRight.setPower(rightFrontPower);
             robot.motorBackLeft.setPower(leftBackPower);
             robot.motorBackRight.setPower(rightBackPower);
-
         }
 
         /**
