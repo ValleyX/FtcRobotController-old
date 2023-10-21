@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.testcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
-import org.firstinspires.ftc.teamcode.Drivers.OdometryDrive;
+        import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
+        import org.firstinspires.ftc.teamcode.Drivers.OdometryDrive;
 
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
 @Autonomous(name="AutoBlueNearBoard")
-public class BlueNearBoard extends LinearOpMode{
+public class AprilAutoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -57,6 +57,11 @@ public class BlueNearBoard extends LinearOpMode{
 
             //moves forward     to board
             odometryDrive.goToPositionForward(0, 24, 0.5, -90, 0.5);
+
+
+            //APRIL TAG CODEEEEE
+
+
 
 
         }

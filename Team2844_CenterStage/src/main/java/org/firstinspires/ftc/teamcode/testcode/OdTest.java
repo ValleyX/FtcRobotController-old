@@ -27,7 +27,7 @@ public class OdTest extends LinearOpMode {
 
         //odometryDrive.goToPositionForward(0,10,.5,0,1);
         sleep(1000);
-        odometryDrive.goToPositionSide(-10,0,.5,0,1);
+        odometryDrive.changeRobotOrientation(.5,-90,3.25);
         //  while (opModeIsActive());
         //   globalPositionUpdate.stop();
 

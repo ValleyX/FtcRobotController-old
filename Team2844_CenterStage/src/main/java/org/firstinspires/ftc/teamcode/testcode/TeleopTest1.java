@@ -139,7 +139,7 @@ public class TeleopTest1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new RobotHardware(this);
+        robot = new RobotHardware(this,false);
 
         //variables boolean things from April_Tag_Test**********************************************
 

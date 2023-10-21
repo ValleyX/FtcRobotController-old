@@ -253,51 +253,29 @@ public class OdometryTestDrive {
 
     }
 
-    //test code for turning the robot DO NOT USE
-    public void changeRobotOrientation (double xTarget, double yTarget, double robotPower, double desiredRobotOrientation, double allowableDistanceError){
-        xTarget *= robot_.OD_COUNTS_PER_INCH;
-        yTarget *= robot_.OD_COUNTS_PER_INCH;
-        allowableDistanceError *= robot_.OD_COUNTS_PER_INCH;
+    //test code for turning the robot
+    /*robot power is speed; desired robot orientation is what dirextion, error is tolerance.
+    IF POWER IS .5 MINIMUMN TOLERANCE IS 3.25.
+     */
+    public void changeRobotOrientation ( double robotPower, double desiredRobotOrientation, double allowableDistanceError){
 
-        //calculate how close we are to our target
-        double distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
-        double distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
 
-        //calculate distance to final pos
-        double distance = Math.hypot(distanceToX, distanceToY);
-
-        double turnCorrection = desiredRobotOrientation - globalPositionUpdate.returnOrientation();
+        double turnCorrection = desiredRobotOrientation -globalPositionUpdate.returnOrientation();
 
         //while not within tolerance of our target
         while (robot_.OpMode_.opModeIsActive() && Math.abs(turnCorrection) > allowableDistanceError) {
 
-            //update error values
-            distanceToX = xTarget - globalPositionUpdate.returnXCoordinate();
-            distanceToY = yTarget - globalPositionUpdate.returnYCoordinate();
 
-
-            //calculate the angle we need to go
-            double movementAngle = Math.toDegrees(Math.atan2(distanceToX, distanceToY));
-
-            //get distance vectors for x and y
-            double robotMovementX = calculateX(movementAngle, robotPower);
-            double robotMovementY = calculateY(movementAngle, robotPower);
 
             //how much we need to corect our turn
-             turnCorrection = desiredRobotOrientation - globalPositionUpdate.returnOrientation();
+             turnCorrection=  desiredRobotOrientation-globalPositionUpdate.returnOrientation();
 
-            //update distance in loop
-            distance = Math.hypot(distanceToX, distanceToY);
 
 
             //telemetry data
-            robot_.OpMode_.telemetry.addData("robot movement x:", robotMovementX);
-            robot_.OpMode_.telemetry.addData("robot movement y:", robotMovementY);
-            robot_.OpMode_.telemetry.addData("X distance:", distanceToX);
-            robot_.OpMode_.telemetry.addData("y distance:", distanceToY);
-            robot_.OpMode_.telemetry.addData("movement angle", movementAngle);
+
             robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
-            robot_.OpMode_.telemetry.addData("distance:", distance);
+
             robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
             robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
             robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
@@ -305,11 +283,9 @@ public class OdometryTestDrive {
             robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
             robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
 
-            System.out.println("ValleyX: distanceToX " + distanceToX);
-            System.out.println("ValleyX: distanceToY " + distanceToY);
-            System.out.println("ValleyX: distance " + distance);
-            System.out.println("ValleyX: turnCorrection " + turnCorrection);
-            System.out.println("ValleyX: robotMovementY " + robotMovementY);
+
+            //System.out.println("ValleyX: turnCorrection " + turnCorrection);
+
 
             //constant to help with correcting angle
             double c_nPi = .08;
@@ -318,19 +294,19 @@ public class OdometryTestDrive {
             // (don't add back) robot_.allpower(-robotMovementY);
 
             //checks which way we need to correct the direction
-            if (turnCorrection > 0)
+            if (desiredRobotOrientation > 0)
             {
-                //move forward and correct slightly to the right
-                robot_.leftPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
-                robot_.rightPower(-robotMovementY);
+                robot_.leftPower(-robotPower);
+                robot_.rightPower(robotPower);
             }
             else
             {
                 //move forward and correct slightly to the left
-                robot_.rightPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
-                robot_.leftPower(-robotMovementY);
+                robot_.rightPower(-robotPower);
+                robot_.leftPower(robotPower);
             }
             robot_.OpMode_.idle();
+            //robot_.OpMode_.sleep(100);
         }
         //stop robot
         robot_.allpower(0);

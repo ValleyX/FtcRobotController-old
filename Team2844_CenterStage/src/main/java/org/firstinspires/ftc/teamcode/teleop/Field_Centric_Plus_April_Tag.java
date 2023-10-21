@@ -45,7 +45,7 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
         // Initialize the Apriltag Detection process
         initAprilTag();
-        robot = new RobotHardware(this);
+        robot = new RobotHardware(this,true);
 
 
         waitForStart();

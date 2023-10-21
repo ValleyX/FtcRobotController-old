@@ -247,6 +247,68 @@ public class OdometryDrive {
 
     }
 
+    /*robot power is speed; desired robot orientation is what dirextion, error is tolerance.
+    IF POWER IS .5 MINIMUMN TOLERANCE IS 3.25.
+     */
+    public void changeRobotOrientation ( double robotPower, double desiredRobotOrientation, double allowableDistanceError){
+
+
+        double turnCorrection = desiredRobotOrientation -globalPositionUpdate.returnOrientation();
+
+        //while not within tolerance of our target
+        while (robot_.OpMode_.opModeIsActive() && Math.abs(turnCorrection) > allowableDistanceError) {
+
+
+
+            //how much we need to corect our turn
+            turnCorrection=  desiredRobotOrientation-globalPositionUpdate.returnOrientation();
+
+
+
+            //telemetry data
+
+            robot_.OpMode_.telemetry.addData("turn Correction:", turnCorrection);
+
+            robot_.OpMode_.telemetry.addData("glob x: ",globalPositionUpdate.returnXCoordinate());
+            robot_.OpMode_.telemetry.addData("glob y: ",globalPositionUpdate.returnYCoordinate());
+            robot_.OpMode_.telemetry.addData("glob orient: ",globalPositionUpdate.returnOrientation());
+            robot_.OpMode_.telemetry.addData("encoder left: ", robot_.verticalLeft.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
+
+
+            //System.out.println("ValleyX: turnCorrection " + turnCorrection);
+
+
+            //constant to help with correcting angle
+            double c_nPi = .08;
+
+            robot_.OpMode_.telemetry.update();
+            // (don't add back) robot_.allpower(-robotMovementY);
+
+            //checks which way we need to correct the direction
+            if (desiredRobotOrientation > 0)
+            {
+                robot_.leftPower(-robotPower);
+                robot_.rightPower(robotPower);
+            }
+            else
+            {
+                //move forward and correct slightly to the left
+                robot_.leftPower(robotPower);
+                robot_.rightPower(-robotPower);
+            }
+            robot_.OpMode_.idle();
+            //robot_.OpMode_.sleep(100);
+            System.out.println("ValleyX: ycoordinate" + globalPositionUpdate.returnYCoordinate());
+        }
+        //stop robot
+        robot_.allpower(0);
+        System.out.println("valleyX: ycoordinate" + globalPositionUpdate.returnYCoordinate());
+
+
+    }
+
     public double calculateX(double desiredAngle, double speed) {
         return Math.sin(Math.toRadians(desiredAngle)) * speed;
     }
