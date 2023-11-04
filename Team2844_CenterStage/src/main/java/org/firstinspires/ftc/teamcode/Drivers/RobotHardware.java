@@ -187,7 +187,7 @@ public class RobotHardware {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 */
 
-
+/* uncomment on real robot
 
         //declare liftMotor Stuff
         liftMotorLeft = OpMode_.hardwareMap.dcMotor.get("liftMotorLeft");
@@ -212,7 +212,7 @@ public class RobotHardware {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+*/
 
 
         // Reverse the right side motors
