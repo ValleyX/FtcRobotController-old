@@ -62,7 +62,7 @@ public class OdometryDrive {
         positionThread.start();
     }
 
-    //moves robot forward based of target and current position
+    //moves robot forward based on target and current position
     /* xTarget is the goal x position Assuming that the start position is (0,0) of  a graph. ytarget is the goal y position in a similar manner to the xtarget.
     iF YOU ARE GOING FORWARD OR BACKWARDS ONLY CHANGE THE YTARGET. if your x position has changed from the start the make sure that you use that new position if you
     change y target again. robotPower is how much power you are putting into the robot(WILL NOT EXCEED 0). desired robot orientation is what direction you want the robot facing
@@ -219,10 +219,10 @@ public class OdometryDrive {
             //dont add robot_.rightPower(-robotMovementY);
 
             //move the robot while strafing while correcting the pos slightly
-            robot_.motorBackLeft.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
-            robot_.motorFrontLeft.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
-            robot_.motorBackRight.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
-            robot_.motorFrontRight.setPower((robotMovementX - c_nPi * Math.abs(turnCorrection)));
+            robot_.leftBackDrive.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
+            robot_.leftFrontDrive.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
+            robot_.rightBackDrive.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
+            robot_.rightFrontDrive.setPower((robotMovementX - c_nPi * Math.abs(turnCorrection)));
 
 
 
@@ -250,7 +250,7 @@ public class OdometryDrive {
     /*robot power is speed; desired robot orientation is what dirextion, error is tolerance.
     IF POWER IS .5 MINIMUMN TOLERANCE IS 3.25.
      */
-    public void changeRobotOrientation ( double robotPower, double desiredRobotOrientation, double allowableDistanceError){
+    public void changeRobotOrientation (double robotPower, double desiredRobotOrientation, double allowableDistanceError){
 
 
         double turnCorrection = desiredRobotOrientation -globalPositionUpdate.returnOrientation();
@@ -261,7 +261,7 @@ public class OdometryDrive {
 
 
             //how much we need to corect our turn
-            turnCorrection=  desiredRobotOrientation-globalPositionUpdate.returnOrientation();
+            turnCorrection = desiredRobotOrientation-globalPositionUpdate.returnOrientation();
 
 
 
@@ -305,6 +305,9 @@ public class OdometryDrive {
         //stop robot
         robot_.allpower(0);
         System.out.println("valleyX: ycoordinate" + globalPositionUpdate.returnYCoordinate());
+
+
+        //RESETS THE IMU
 
 
     }

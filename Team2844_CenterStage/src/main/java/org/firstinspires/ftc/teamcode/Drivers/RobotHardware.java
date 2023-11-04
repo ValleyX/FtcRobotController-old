@@ -1,12 +1,23 @@
 package org.firstinspires.ftc.teamcode.Drivers;
 
+//import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.Range;
+//import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -19,13 +30,16 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 public class RobotHardware {
 
     public LinearOpMode OpMode_; // pointer to the run time operation mode
 
 
     // Adjust these numbers to suit your robot.
-    public final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    public final double DESIRED_DISTANCE = 18.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -45,19 +59,67 @@ public class RobotHardware {
     public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
     public static boolean findTag = false; //if this finds the tag, then we use it to turn on/off driving with sticks
 
+    //Added to test Gyroscope -------------------
+    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * Math.PI);
+
+    public double  targetHeading = 0; //
+
+    public double  headingError  = 0; //
+    public double  driveSpeed    = 0;
+    public double  turnSpeed     = 0;
+    public double  leftFrontSpeed     = 0;
+    public double leftBackSpeed = 0;
+
+    public double rightFrontSpeed = 0;
+
+    public double rightBackSpeed = 0;
+
+    public int leftFrontTarget = 0;
+
+    public int leftBackTarget = 0;
+
+    public int rightFrontTarget = 0;
+
+    public int rightBackTarget = 0;
+
+    // These constants define the desired driving/control characteristics
+    // They can/should be tweaked to suit the specific robot drive train.
+    public static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy. was 0.4
+    public static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    public static final double     HEADING_THRESHOLD       = .5 ;    // How close must the heading get to the target before moving to next step.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    // Define the Proportional control coefficient (or GAIN) for "heading control".
+    // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
+    // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
+    // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
+    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.03; //was 0.03    // Larger is more responsive, but also less stable
+    // -----------------
+
     public static double delayTimer = 2000; //delay timer for detection
 
+
+
     //make motors
-    public DcMotor motorFrontLeft;
-    public DcMotor motorBackLeft;
-    public DcMotor motorFrontRight;
-    public DcMotor motorBackRight;
+    public DcMotor leftFrontDrive;
+    public DcMotor leftBackDrive;
+    public DcMotor rightFrontDrive;
+    public DcMotor rightBackDrive;
 
     //odometry encoders
     public DcMotor verticalLeft;
     public DcMotor verticalRight;
     public DcMotor horizontal;
-    public BNO055IMU imu;
+
+     public IMU imu;
+
+     public BNO055IMU imuFieldCentric;
+
     public WebcamName camCam;
     public CenterStagePipeline pipeline;
     public OpenCvSwitchableWebcam switchableWebcam;
@@ -67,40 +129,66 @@ public class RobotHardware {
 
         // Declare our motors
         // Make sure your ID's match your configuration
-        motorFrontLeft = OpMode_.hardwareMap.dcMotor.get("leftFront");
-        motorBackLeft = OpMode_.hardwareMap.dcMotor.get("leftBack");
-        motorFrontRight = OpMode_.hardwareMap.dcMotor.get("rightFront");
-        motorBackRight = OpMode_.hardwareMap.dcMotor.get("rightBack");
-
+        leftFrontDrive = OpMode_.hardwareMap.dcMotor.get("leftFront");
+        leftBackDrive = OpMode_.hardwareMap.dcMotor.get("leftBack");
+        rightFrontDrive = OpMode_.hardwareMap.dcMotor.get("rightFront");
+        rightBackDrive = OpMode_.hardwareMap.dcMotor.get("rightBack");
+/*
         //Declare Odometry encoders
         //make sure they match the names of the motors they are linked to
         verticalLeft = OpMode_.hardwareMap.dcMotor.get("leftFront");
         verticalRight = OpMode_.hardwareMap.dcMotor.get("rightFront");
         horizontal = OpMode_.hardwareMap.dcMotor.get("leftBack");
-
+*/
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        // motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+/*
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+*/
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets the encoder
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+/*
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+*/
 
 
+        /* The next two lines define Hub orientation.
+         * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
+         *
+         * To Do:  EDIT these two lines to match YOUR mounting configuration.
+         */
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;  //TODO changed when get final robot
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
+        // Now initialize the IMU with this mounting orientation
+        // This sample expects the IMU to be in a REV Hub and named "imu".
+       imu = OpMode_.hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+/*
         // Retrieve the IMU from the hardware map
-        imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
+        imuFieldCentric = OpMode_.hardwareMap.get(BNO055IMU.class, "imuFieldCentric");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+          parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+          imuFieldCentric.initialize(parameters);
         // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
+*/
 
-        camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
+     //   camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
+        /*
         pipeline = new RobotHardware.CenterStagePipeline( checkBlueColorAuto);
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
 
@@ -135,8 +223,16 @@ public class RobotHardware {
         });
 
         switchableWebcam.setPipeline(pipeline);
+*/
+
+        // Wait for the game to start (Display Gyro value while waiting)
 
 
+        // Set the encoders for closed loop speed control, and reset the heading.
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -187,7 +283,7 @@ public class RobotHardware {
         Mat YCrCb = new Mat();
 
         //Average Red and blue in a region
-        public int avgR, avgB, avg2R, avg2B, avg3R, avg3B; //Todo rename these variables
+        public int avgR, avgB, avg2R, avg2B, avg3R, avg3B;
 
 
 
@@ -318,36 +414,60 @@ public class RobotHardware {
 
 
 
+    /**
+     * Move robot according to desired axes motions
+     * <p>
+     * Positive X is forward
+     * <p>
+     * Positive Y is strafe left
+     * <p>
+     * Positive Yaw is counter-clockwise
+     */
+//Only used in reference to AprilTag movement but could be used for other motion, so debatable where it should be put
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
 
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
 
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
 
-    //APRIL TAG CRAP _______________________________________
-
-
-
-
-
-
-
+        // Send powers to the wheels.
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+    }
 
 
 
 
     //set power to the entire robot
     public void allpower(double power) {
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorBackRight.setPower(power);
-        motorFrontRight.setPower(power);
+        leftFrontDrive.setPower(power);
+        leftBackDrive.setPower(power);
+        rightBackDrive.setPower(power);
+        rightFrontDrive.setPower(power);
     }
 
-    public void leftPower(double power) {
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
+    public void leftPower(double power) { //Set power to only the left side of robot
+        leftFrontDrive.setPower(power);
+        leftBackDrive.setPower(power);
     }
 
-    public void rightPower(double power) {
-        motorBackRight.setPower(power);
-        motorFrontRight.setPower(power);
+    public void rightPower(double power) { //set power to only the right side of the robot
+        rightBackDrive.setPower(power);
+        rightFrontDrive.setPower(power);
     }
 }

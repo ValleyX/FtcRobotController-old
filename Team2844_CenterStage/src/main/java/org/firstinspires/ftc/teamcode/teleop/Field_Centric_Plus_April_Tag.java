@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +11,11 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Drivers.GyroDrive;
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -72,12 +78,23 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     //make the function for field centric driving
     public void fieldCentricControl () {
 
-        double y = gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = -gamepad1.right_stick_x;
+
+
+
+        robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double rx = gamepad1.right_stick_x;
 
         // Read inverse IMU heading, as the IMU heading is CW positive
-        double botHeading = -robot.imu.getAngularOrientation().firstAngle;
+
+        //Gets the bot heading by use Geting angles from imu and geting the yaw in degress from that
+        double botHeading =// -robot.imuFieldCentric.getAngularOrientation().firstAngle;
+        -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
@@ -97,10 +114,10 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
         //if robot found tag, then skip this and go to tag
 
-        robot.motorFrontLeft.setPower(frontLeftPower);
-        robot.motorBackLeft.setPower(backLeftPower);
-        robot.motorFrontRight.setPower(frontRightPower);
-        robot.motorBackRight.setPower(backRightPower);
+        robot.leftFrontDrive.setPower(frontLeftPower);
+        robot.leftBackDrive.setPower(backLeftPower);
+        robot.rightFrontDrive.setPower(frontRightPower);
+        robot.rightBackDrive.setPower(backRightPower);
 
 
 
@@ -118,13 +135,15 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     }
 
 
+    //
+//_________________________________________________________________________________________________________________-
     public void aprilTagDrive () {
 
         //reverses motors so that the FIRST provided code works correctly
-        robot.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         targetFound = false;
         desiredTag  = null;
@@ -182,10 +201,10 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         sleep(10);
 
         //reset the motors to original inversions so drive isn't messed up
-        robot.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        robot.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+       /* robot.rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);*/
 
     }
 
@@ -222,10 +241,10 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
             }
 
             // Send powers to the wheels.
-            robot.motorFrontLeft.setPower(leftFrontPower);
-            robot.motorFrontRight.setPower(rightFrontPower);
-            robot.motorBackLeft.setPower(leftBackPower);
-            robot.motorBackRight.setPower(rightBackPower);
+            robot.leftFrontDrive.setPower(leftFrontPower);
+            robot.rightFrontDrive.setPower(rightFrontPower);
+            robot.leftBackDrive.setPower(leftBackPower);
+            robot.rightBackDrive.setPower(rightBackPower);
         }
 
         /**
