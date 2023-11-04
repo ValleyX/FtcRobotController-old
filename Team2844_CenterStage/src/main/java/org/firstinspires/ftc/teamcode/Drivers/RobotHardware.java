@@ -44,6 +44,16 @@ public class RobotHardware {
     public final double OD_Distance_in_one_rev = 2.0 * Math.PI; //in
     public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
     public static boolean findTag = false; //if this finds the tag, then we use it to turn on/off driving with sticks
+    public static double LIFT_COUNTS_PER_INCH = 0; //NEEDS CHANGING NUMBER OF TICKS PER INCH ON LIFT MOTOR
+    public static double CLIMBER_COUNTS_PER_INCH = 0; //NEEDS CHANGING NUMBER OF TICKS PER INCH ON CLIMBER MOTOR
+
+    public static double LIFT_STEP = 3; //amount of inches per step on the lift in inches
+    public static double LIFT_SPEED = 0.75; //how fast the lift goes when certain commands in LiftDrive are called
+    public static double MAX_LIFT_HEIGHT = 30; //max height of lift in inches
+    public static double MIN_LIFT_HEIGHT = 0; //min lift height of lift in inches
+    public static double CLIMB_MOTOR_MAX = 30; //max height for the climbers
+    public static double CLIMB_MOTOR_MIN = 0; //min height for the climbers
+    public static double MAX_CLIMB_SPEED = 0.75; //max speed for the climber
 
     public static double delayTimer = 2000; //delay timer for detection
 
@@ -52,8 +62,15 @@ public class RobotHardware {
     public DcMotor motorBackLeft;
     public DcMotor motorFrontRight;
     public DcMotor motorBackRight;
+    public DcMotor liftMotorLeft; //motor that runs the lift located on the left
+    public DcMotor liftMotorRight; //motor that runs the lift located on the right
+    public DcMotor intakeMotor; //motor for intake
+    public DcMotor climbMotor; //motor for climber
 
     //odometry encoders
+
+
+    //auxillary stuff
     public DcMotor verticalLeft;
     public DcMotor verticalRight;
     public DcMotor horizontal;
@@ -78,10 +95,37 @@ public class RobotHardware {
         verticalRight = OpMode_.hardwareMap.dcMotor.get("rightFront");
         horizontal = OpMode_.hardwareMap.dcMotor.get("leftBack");
 
+
+        //declare liftMotor Stuff
+        liftMotorLeft = OpMode_.hardwareMap.dcMotor.get("liftMotorLeft");
+        liftMotorRight = OpMode_.hardwareMap.dcMotor.get("liftMotorRight");
+
+        liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        //declare intakeMotor Stuff
+        intakeMotor = OpMode_.hardwareMap.dcMotor.get("intakeMotor");
+
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //RIGHT SIDE REVERSED
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE); //RIGHT SIDE REVERSED
         // motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         //motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -202,9 +246,9 @@ public class RobotHardware {
             checkBlue = isBlue;
 
             //anchors to change boxes cordinates if neccary
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 200); // originally 200, 0
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(250, 200); // originally 200, 0
-            REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200); // originally 200, 0
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 200);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(250, 200);
+            REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200);
 
             //Creating points points for later boxes
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
@@ -260,12 +304,16 @@ public class RobotHardware {
                     region1_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+            //Center?? could be right
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region2_pointA, // First point which defines the rectangle
                     region2_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+            //Right?? could be center
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region3_pointA, // First point which defines the rectangle
@@ -341,11 +389,13 @@ public class RobotHardware {
         motorFrontRight.setPower(power);
     }
 
+    //sets power to the left side
     public void leftPower(double power) {
         motorFrontLeft.setPower(power);
         motorBackLeft.setPower(power);
     }
 
+    //sets power to the right side
     public void rightPower(double power) {
         motorBackRight.setPower(power);
         motorFrontRight.setPower(power);
