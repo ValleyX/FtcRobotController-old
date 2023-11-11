@@ -104,6 +104,7 @@ public class LiftDrive {
 
             //sets lift target
             int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            robot_.OpMode_.telemetry.addData("newLiftTarget", newLiftTarget );
 
             //sets the target position to the distance we want the lift to go to
             robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
@@ -116,6 +117,17 @@ public class LiftDrive {
             //start motion
             robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
             robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
+
+            //wait until it gets to position
+            while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy()) {
+                robot_.OpMode_.sleep(1);
+            }
+
+            //resets the motors to run with the encoder
+            robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         } //else logic statement end bracket
 
@@ -150,6 +162,15 @@ public class LiftDrive {
             robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
             robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
+            //wait until it gets to position
+            while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy()) {
+                robot_.OpMode_.sleep(1);
+            }
+
+            //resets the motors to run with the encoder
+            robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         } //else logic statement end bracket
 
     }   //liftStepDown method bottom bracket
@@ -172,20 +193,33 @@ public class LiftDrive {
         robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
         robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
+        //wait until it gets to position
+        while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy()) {
+            robot_.OpMode_.sleep(1);
+        }
+
+        //resets the motors to run with the encoder
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     } //liftReset method end bracket
 
 
     //moves lift without steps
     public void moveLift(double input) {
 
-//        if (robot_.liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || robot_.liftMotorLeft.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT){
-//            robot_.liftMotorLeft.setPower(0);
-//            robot_.liftMotorRight.setPower(0);
-//        }
-//        else {
+        robot_.OpMode_.telemetry.addData("Move Lift Get pos", robot_.liftMotorLeft.getCurrentPosition());
+        if (robot_.liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || robot_.liftMotorLeft.getCurrentPosition() < robot_.MIN_LIFT_HEIGHT){
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
+            robot_.OpMode_.telemetry.addData("Move Lift in 0 Get pos", robot_.liftMotorLeft.getCurrentPosition());
+        }
+        else {
+
+
             robot_.liftMotorLeft.setPower(input);
             robot_.liftMotorRight.setPower(input);
-//        }
+        }
 
 
     } //moveLift method end bracket

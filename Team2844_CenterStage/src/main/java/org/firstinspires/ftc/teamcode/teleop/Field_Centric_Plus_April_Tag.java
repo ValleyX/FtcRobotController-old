@@ -50,6 +50,7 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         // Initialize the April tag Detection process
         initAprilTag();
         robot = new RobotHardware(this, true);
+        robot.imu.resetYaw();
 
 
         waitForStart();
@@ -76,15 +77,13 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     //make the function for field centric driving
     public void fieldCentricControl() {
 
-
-
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double x = gamepad1.left_stick_x * 1.2; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
         // Read inverse IMU heading, as the IMU heading is CW positive
 
-        //Gets the bot heading by use Geting angles from imu and geting the yaw in degress from that
+        //Gets the bot heading by use Getting angles from imu and getting the yaw in degrees from that
         double botHeading = -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
 

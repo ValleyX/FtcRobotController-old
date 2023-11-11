@@ -66,13 +66,19 @@ public class RobotHardware {
     public final double OD_Distance_in_one_rev = 2.0 * Math.PI; //in
     public final double OD_COUNTS_PER_INCH = OD_ONE_MOTOR_COUNT / OD_Distance_in_one_rev;
     public static boolean findTag = false; //if this finds the tag, then we use it to turn on/off driving with sticks
-    public static double LIFT_COUNTS_PER_INCH = 0; //NEEDS CHANGING NUMBER OF TICKS PER INCH ON LIFT MOTOR
+
+    public final double LIFT_COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
+    public final double LIFT_DRIVE_GEAR_REDUCTION = 10;     // This is < 1.0 if geared UP
+    public final double LIFT_ONE_MOTOR_COUNT = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
+    public final double LIFT_Distance_in_one_rev = 1.5 * Math.PI; //in
+    public final double LIFT_COUNTS_PER_INCH = LIFT_ONE_MOTOR_COUNT / LIFT_Distance_in_one_rev;
+
     public static double CLIMBER_COUNTS_PER_INCH = 0; //NEEDS CHANGING NUMBER OF TICKS PER INCH ON CLIMBER MOTOR
 
     public static double LIFT_STEP = 3; //amount of inches per step on the lift in inches
     public static double LIFT_SPEED = 0.75; //how fast the lift goes when certain commands in LiftDrive are called
-    public static double MAX_LIFT_HEIGHT = 30; //max height of lift in inches
-    public static double MIN_LIFT_HEIGHT = 0; //min lift height of lift in inches
+    public static double MAX_LIFT_HEIGHT = 2112; //max height of lift in inches
+    public static double MIN_LIFT_HEIGHT = -1; //min lift height of lift in inches
     public static double CLIMB_MOTOR_MAX = 30; //max height for the climbers
     public static double CLIMB_MOTOR_MIN = 0; //min height for the climbers
     public static double MAX_CLIMB_SPEED = 0.75; //max speed for the climber
@@ -190,12 +196,12 @@ public class RobotHardware {
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-/*
+
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-*/
+
 
 
 

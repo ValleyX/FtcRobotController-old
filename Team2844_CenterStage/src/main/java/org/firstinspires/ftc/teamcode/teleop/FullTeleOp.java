@@ -138,17 +138,17 @@ public class FullTeleOp extends LinearOpMode {
         //AUXILIARY CONTROLS
 
         //Y = step lift up
-        if (gamepad1.y == true) {
+        if (gamepad2.y == true) {
             liftDrive.liftStepUp();
         }
 
         //A = step lift down
-        if (gamepad1.a == true) {
+        if (gamepad2.a == true) {
             liftDrive.liftStepDown();
         }
 
         //B = reset lift
-        if (gamepad1.b == true) {
+        if (gamepad2.b == true) {
             liftDrive.liftReset();
         }
 
@@ -178,12 +178,17 @@ public class FullTeleOp extends LinearOpMode {
         }
 
         telemetry.addData("right sticky", gamepad2.right_stick_y );
+        telemetry.addData("Left Motor Pos", robot.liftMotorLeft.getCurrentPosition());
+        telemetry.addData("Right Motor Pos", robot.liftMotorRight.getCurrentPosition());
 
 
         //Manipulator stick to move lift
         if(gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
             liftDrive.moveLift(-gamepad2.right_stick_y);
             telemetry.addData("in right sticky", gamepad2.right_stick_y );
+        }
+        else {
+            liftDrive.moveLift(0);
         }
 
 
