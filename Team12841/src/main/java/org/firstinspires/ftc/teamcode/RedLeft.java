@@ -9,43 +9,40 @@ public class RedLeft extends LinearOpMode {
     RobotHardware robotHardware;
     @Override
     public void runOpMode() throws InterruptedException {
-        robotHardware = new RobotHardware(this);
-        Camera.SkystoneDeterminationPipeline.MarkerPos markerPosSeen;
+        robotHardware = new RobotHardware(this, Camera.SkystoneDeterminationPipeline.RobotPos.RedL);
+//        Camera.SkystoneDeterminationPipeline.MarkerPos markerPosSeen;
 
         while (!opModeIsActive())
         {
             telemetry.addData("Position", robotHardware.camera.pipeline.markerPos);
+            telemetry.addData("Blue Pos 1 Color RGB ", robotHardware.camera.pipeline.avgBlue1);
+            telemetry.addData("Blue Pos 2 Color RGB ", robotHardware.camera.pipeline.avgBlue2);
+            telemetry.addData("Red Pos 1 Color RGB ", robotHardware.camera.pipeline.avgRed1);
+            telemetry.addData("Red Pos 2 Color RGB ", robotHardware.camera.pipeline.avgRed2);//no i will keep putting weird comments in your code no
             telemetry.update();
-            markerPosSeen = robotHardware.camera.pipeline.markerPos;
+//            markerPosSeen = robotHardware.camera.pipeline.markerPos;
         }
 
-       // robotHardware.camera.closeCamera();
-       // robotHardware.aprilTagCamera.initAprilTag();
+//        markerPosSeen = robotHardware.camera.pipeline.markerPos;
+//        String testMarkerPosSeen = "Left";
 
-        //do work for auto now
-//        robotHardware.driveStraight(0.3, 12.0, 0.0);
-//        sleep(1000);
-//        robotHardware.driveStraight(0.3, -12.0, 0.0);
-       // sleep(1000);
+        robotHardware.camera.closeCamera(); //if ur reading this,s ur gay see; 2nd def.
 
-        robotHardware.turnToHeading(0.3, 90.0);
-//        robotHardware.holdHeading(robotHardware.TURN_SPEED, 90.0, 0.5);
-//
-//        robotHardware.driveStraight(robotHardware.DRIVE_SPEED, 12.0, 90.0);
-//        robotHardware.turnToHeading(robotHardware.TURN_SPEED, 180.0);
-//        robotHardware.holdHeading(robotHardware.TURN_SPEED, 180.0, 0.5);
-//
-//        robotHardware.driveStraight(robotHardware.DRIVE_SPEED, 12.0, 180.0);
-//        robotHardware.turnToHeading(robotHardware.TURN_SPEED, 270.0);
-//        robotHardware.holdHeading(robotHardware.TURN_SPEED, 270.0, 0.5);
-//
-//        robotHardware.driveStraight(robotHardware.DRIVE_SPEED, 12.0, 270.0);
-//        robotHardware.turnToHeading(robotHardware.TURN_SPEED, 360.0);
-//        robotHardware.holdHeading(robotHardware.TURN_SPEED, 360.0, 0.5);
-//
-//        robotHardware.driveStraight(robotHardware.DRIVE_SPEED, 12.0, 360.0);
-
-        //starts looking for april tag
+        if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Left)
+        {
+            robotHardware.driveStraight(0.5, 5, 0.0); //drives off the edge so it does hit the wall
+            robotHardware.turnToHeading(0.5, -22.0);
+            robotHardware.driveStraight(0.5, 12, -22.0);
+            robotHardware.driveStraight(0.5, -12, -22.0);
+            robotHardware.turnToHeading(0.5, 0.0);
+            robotHardware.driveStraight(0.5, 45, 0.0);
+            robotHardware.turnToHeading(0.5, 90);
+            robotHardware.driveStraight(0.5, 60, 90);
+        }
+        else if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Center)
+        {
+            robotHardware.driveStraight(0.5, 25, 0.0);
+        }
 
 
     }

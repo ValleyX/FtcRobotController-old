@@ -22,7 +22,7 @@ public class TestCode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Camera camera = new Camera(this);
+//        Camera camera = new Camera(this);
 
 
         lFMotor = hardwareMap.get(DcMotor.class, "lFDrive");

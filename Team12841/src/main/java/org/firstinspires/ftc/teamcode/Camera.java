@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -20,15 +21,19 @@ public class Camera {
     public SkystoneDeterminationPipeline pipeline;//The area you checking on the camera stream
     LinearOpMode opMode_; //This allows it to be used throughout the entire class
     OpenCvWebcam webcam;
+
+    SkystoneDeterminationPipeline.RobotPos side_;
+
     //Pass in LinearOp Mode and opMode
-    public Camera(LinearOpMode opMode){
+    public Camera(LinearOpMode opMode, SkystoneDeterminationPipeline.RobotPos side) {
         //Assigns the Camera object on the hardware map
         opMode_ = opMode;
+        side_ = side;
         int cameraMonitorViewId = opMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode_.hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(opMode_.hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
 
         //gives the pipeline an area to be in
-        pipeline = new SkystoneDeterminationPipeline(261, 75);
+        pipeline = new SkystoneDeterminationPipeline(side_);
         webcam.setPipeline(pipeline);
 
         // Timeout for obtaining permission is configurable (keeps things from breaking idk)
@@ -38,7 +43,9 @@ public class Camera {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
+//                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
             }
 
             //if you screw something up
@@ -56,8 +63,16 @@ public class Camera {
             Right,
             Center
         }
-        public MarkerPos markerPos = MarkerPos.Left; //Gives it a default value, will change
 
+        //Used to find whether you're on the red or blue side
+        public enum RobotPos {
+            RedL,
+            RedR,
+            BlueL,
+            BlueR
+        }
+
+        public MarkerPos markerPos = null; //Gives it a default value, will change
 
 
         //Makes the Colors
@@ -71,24 +86,20 @@ public class Camera {
         Point REGION3_TOPLEFT_ANCHOR_POINT;
 
         //gives the width and height for each box (added onto anchorpoint to get the bottom right corner of the box)
-        static final int REGION_WIDTH = 55;
-        static final int REGION_HEIGHT = 80;
+        static final int REGION_WIDTH = 44;
+        static final int REGION_HEIGHT = 53;
 
         //point A is the top left, point B is the bottom right
         Point region1_pointA;
         Point region1_pointB;
         Point region2_pointA;
         Point region2_pointB;
-        Point region3_pointA;
-        Point region3_pointB;
 
         //Working variables
         Mat region1_Cb;
         Mat region1_Cr;
         Mat region2_Cb;
         Mat region2_Cr;
-        Mat region3_Cb;
-        Mat region3_Cr;
 
         Mat Cb = new Mat();
         Mat Cr = new Mat();
@@ -98,22 +109,30 @@ public class Camera {
         //makes positions for each color depending on which on is higher
         int redPosition;
         int bluePosition;
+        int avgBlue1;
+        int avgBlue2;
+        int avgRed1;
+        int avgRed2;
 
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile SkystoneDeterminationPipeline.MarkerPos position;
+        SkystoneDeterminationPipeline.RobotPos side_;
 
         //assigns the placement values to the corners of the box (A=topleft, B=bottomright)
-        public SkystoneDeterminationPipeline(int x, int y) {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(x, y); // 200, 165
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(137, 75);
-            REGION3_TOPLEFT_ANCHOR_POINT = new Point(0, 75);
+        public SkystoneDeterminationPipeline(RobotPos side) {
+            side_ = side;
+            if (side_ == RobotPos.RedR || side_ == RobotPos.BlueR) {
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(245, 120); // red box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(90, 97); //blue box
+            } else if (side_ == RobotPos.RedL || side_ == RobotPos.BlueL) {
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(8, 110); // red box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(190, 92); //blue box
+            }
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
             region2_pointA = new Point(REGION2_TOPLEFT_ANCHOR_POINT.x, REGION2_TOPLEFT_ANCHOR_POINT.y);
             region2_pointB = new Point(REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-            region3_pointA = new Point(REGION3_TOPLEFT_ANCHOR_POINT.x, REGION3_TOPLEFT_ANCHOR_POINT.y);
-            region3_pointB = new Point(REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
         }
 
 
@@ -132,8 +151,6 @@ public class Camera {
             region1_Cr = Cr.submat(new Rect(region1_pointA, region1_pointB));
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
             region2_Cr = Cr.submat(new Rect(region2_pointA, region2_pointB));
-            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
-            region3_Cr = Cr.submat(new Rect(region3_pointA, region3_pointB));
         }
 
         @Override
@@ -141,59 +158,52 @@ public class Camera {
 
             inputToCb(input);
 
-            //checks the red & blue values for the 3 boxes and gives them values (score of how blue or red they are)
-            int avgBlue1 = (int) Core.mean(region1_Cb).val[0];
-            int avgBlue2 = (int) Core.mean(region2_Cb).val[0];
-            int avgBlue3 = (int) Core.mean(region3_Cb).val[0];
-            int avgRed1 = (int) Core.mean(region1_Cr).val[0];
-            int avgRed2 = (int) Core.mean(region2_Cr).val[0];
-            int avgRed3 = (int) Core.mean(region3_Cr).val[0];
+            //checks the red & blue values for the 2 boxes and gives them values (score of how blue or red they are)
+            avgBlue1 = (int) Core.mean(region1_Cb).val[0];
+            avgBlue2 = (int) Core.mean(region2_Cb).val[0];
+            avgRed1 = (int) Core.mean(region1_Cr).val[0];
+            avgRed2 = (int) Core.mean(region2_Cr).val[0];
+            int minimumColorValue = 100;
+//beANS
 
-            //compares them and picks the most blue
-            if (avgBlue1 > avgBlue2 && avgBlue1 > avgBlue3) {
-                avgBlue = avgBlue1;
+            //compares them and picks the least red
+            if (avgRed1 < avgRed2 && avgRed1 < minimumColorValue) {
                 bluePosition = 0;
-            }
-
-            else if (avgBlue2 > avgBlue1 && avgBlue2 > avgBlue3) {
-                avgBlue = avgBlue2;
+            } else if (avgRed2 < avgRed1 && avgRed2 < minimumColorValue) {
                 bluePosition = 1;
-            }
-            else if (avgBlue3 > avgBlue1 && avgBlue3 > avgBlue2) {
-                avgBlue = avgBlue3;
+            } else
                 bluePosition = 2;
-            }
-            //compares them and picks the most red
-            if (avgRed1 > avgRed2 && avgRed1 > avgRed3) {
-                avgRed = avgRed1;
+
+            //compares them and picks the least blue
+            if (avgBlue1 < avgBlue2 && avgBlue1 < minimumColorValue) { //THIS IS PURPOSEFUL IT WAS BEING WEIRD SO WE ADAPTED
                 redPosition = 0;
-            }
-            else if (avgRed2 > avgRed1 && avgRed2 > avgRed3) {
-                avgRed = avgRed2;
-                redPosition = 1;
-            }
-            else if (avgRed3 > avgRed1 && avgRed3 > avgRed2) {
-                avgRed = avgRed3;
-                redPosition = 2;
-            }
+            } else if (avgBlue2 < avgBlue1 && avgBlue2 < minimumColorValue) {
+                redPosition = 1;//THIS IS PURPOSEFUL
+            } else
+                redPosition = 2; //THIS IS PURPOSEFUL
 
 
             //REMEMBER TO PUT IF STATEMENT
-            if (avgBlue > avgRed){
-                if(bluePosition == 0)
+            if (side_ == RobotPos.BlueR || side_ == RobotPos.BlueL) {
+                if (bluePosition == 0)
                     markerPos = MarkerPos.Right;
-                else if(bluePosition == 1)
+                else if (bluePosition == 1)
                     markerPos = MarkerPos.Center;
-                else if(bluePosition == 2)
+                else if (bluePosition == 2)
+                    markerPos = MarkerPos.Left;
+            } else if (side_ == RobotPos.RedL || side_ == RobotPos.RedR) {
+                if (redPosition == 0)
+                    markerPos = MarkerPos.Right;
+                else if (redPosition == 1)
+                    markerPos = MarkerPos.Center;
+                else if (redPosition == 2)
                     markerPos = MarkerPos.Left;
             }
-            else if (avgRed > avgBlue){
-                if(redPosition == 0)
-                    markerPos = MarkerPos.Right;
-                else if(redPosition == 1)
-                    markerPos = MarkerPos.Center;
-                else if(redPosition == 2)
-                    markerPos = MarkerPos.Left;
+            if (side_ == RobotPos.BlueL && markerPos == MarkerPos.Left || side_ == RobotPos.RedL && markerPos == MarkerPos.Left) {
+                markerPos = MarkerPos.Right;
+            }
+            else if (side_ == RobotPos.BlueL && markerPos == MarkerPos.Right || side_ == RobotPos.RedL && markerPos == MarkerPos.Right) {
+                markerPos = MarkerPos.Left;
             }
 
 
@@ -211,26 +221,19 @@ public class Camera {
                     BLUE, // The color the rectangle is drawn in
                     2); // Negative thickness means solid fill
 
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region3_pointA, // First point which defines the rectangle
-                    region3_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-
-
 
             return input;
         }
+
         public int getAnalysis() {
             return avgBlue;
         }
     }
-    public void closeCamera(){
-        opMode_.sleep(5000);
+
+    public void closeCamera() {
+        opMode_.sleep(10); //5000
         webcam.setPipeline(null);
         webcam.closeCameraDevice();
-        opMode_.sleep(2000);
+        opMode_.sleep(10); //5000
     }
 }

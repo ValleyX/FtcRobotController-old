@@ -152,7 +152,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Camera CVCam = new Camera(this);
+//        Camera CVCam = new Camera(this);
 
         // Initialize the drive system variables.
         lFMotor  = hardwareMap.get(DcMotor.class, "lFMotor");
@@ -195,7 +195,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
-            telemetry.addData("Target Position = ",CVCam.pipeline.markerPos);
+//            telemetry.addData("Target Position = ",CVCam.pipeline.markerPos);
             telemetry.update();
         }
 

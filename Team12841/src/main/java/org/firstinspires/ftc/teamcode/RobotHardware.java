@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -14,39 +15,43 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class RobotHardware {
     //This does all the math for encoder drive
-    static final double     COUNTS_PER_MOTOR_REV    = 28 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 20 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    static final double COUNTS_PER_MOTOR_REV = 28;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 20;     // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double DRIVE_SPEED = 0.6;
+    static final double TURN_SPEED = 0.5;
     private ElapsedTime runtime = new ElapsedTime();
 
     LinearOpMode opMode_;
-    public DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
-    public DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
-    public DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
-    public DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
+    public DcMotor leftFrontDrive = null;  //  Used to control the left front drive wheel
+    public DcMotor rightFrontDrive = null;  //  Used to control the right front drive wheel
+    public DcMotor leftBackDrive = null;  //  Used to control the left back drive wheel
+    public DcMotor rightBackDrive = null;  //  Used to control the right back drive wheel
 
+    public DcMotor elbowMotor = null; //Motor used to move the lift
+    public DcMotor elevatorMotor = null;
+    public DcMotor intakeMotor = null;
+    public Servo bucket = null;
     public Camera camera = null;
     public AprilTagCamera aprilTagCamera = null;
 
-    private IMU imu         = null;      // Control/Expansion Hub IMU
+    public IMU imu = null;      // Control/Expansion Hub IMU
 
-    private double          headingError  = 0;
+    private double headingError = 0;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
-    private double  targetHeading = 0;
-    private double  driveSpeed    = 0;
-    private double  turnSpeed     = 0;
-    private double  leftSpeed     = 0;
-    private double  rightSpeed    = 0;
-    private int     leftTargetF    = 0;
-    private int     leftTargetB    = 0;
-    private int     rightTargetF   = 0;
-    private int     rightTargetB    = 0;
+    private double targetHeading = 0;
+    private double driveSpeed = 0;
+    private double turnSpeed = 0;
+    private double leftSpeed = 0;
+    private double rightSpeed = 0;
+    private int leftTargetF = 0;
+    private int leftTargetB = 0;
+    private int rightTargetF = 0;
+    private int rightTargetB = 0;
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -58,29 +63,34 @@ public class RobotHardware {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     HEADING_THRESHOLD       = 2.0 ;    // How close must the heading get to the target before moving to next step.
+    static final double HEADING_THRESHOLD = 0.4;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
-    static final double     P_TURN_GAIN            = 0.047;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    static final double P_TURN_GAIN = 0.047;     // Larger is more responsive, but also less stable
+    static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
+    Camera.SkystoneDeterminationPipeline.RobotPos side_;
 
-    RobotHardware(LinearOpMode opMode)
-    {
+    RobotHardware(LinearOpMode opMode, Camera.SkystoneDeterminationPipeline.RobotPos side) {
+        side_ = side;
         opMode_ = opMode;
         //mapping motors
-        leftFrontDrive  = opMode_.hardwareMap.get(DcMotor.class, "lFMotor");
+        leftFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "lFMotor");
         rightFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "rFMotor");
-        leftBackDrive  = opMode_.hardwareMap.get(DcMotor.class, "lBMotor");
+        leftBackDrive = opMode_.hardwareMap.get(DcMotor.class, "lBMotor");
         rightBackDrive = opMode_.hardwareMap.get(DcMotor.class, "rBMotor");
+        /*elbowMotor = opMode_.hardwareMap.get(DcMotor.class, "elbowMotor");
+        elevatorMotor = opMode_.hardwareMap.get(DcMotor.class, "elevatorMotor");
+        intakeMotor = opMode_.hardwareMap.get(DcMotor.class, "intakeMotor");
+        bucket = opMode_.hardwareMap.get(Servo.class, "bucket");*/
 
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        camera = new Camera(opMode_);
-        aprilTagCamera = new AprilTagCamera(opMode_,this);
+        camera = new Camera(opMode_, side_);
+        aprilTagCamera = new AprilTagCamera(opMode_, this);
         //setting drive activities
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,7 +109,7 @@ public class RobotHardware {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -107,16 +117,6 @@ public class RobotHardware {
         imu = opMode_.hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
-
-
-
-
-
-
-
-
-
-
 
 
     public void driveStraight(double maxDriveSpeed,
@@ -127,7 +127,7 @@ public class RobotHardware {
         if (opMode_.opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            int moveCounts = (int) (distance * COUNTS_PER_INCH);
             leftTargetF = leftFrontDrive.getCurrentPosition() + moveCounts;
             leftTargetB = leftBackDrive.getCurrentPosition() + moveCounts;
             rightTargetF = rightFrontDrive.getCurrentPosition() + moveCounts;
@@ -151,7 +151,7 @@ public class RobotHardware {
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opMode_.opModeIsActive() &&
-                    (leftBackDrive.isBusy() && leftFrontDrive.isBusy() && rightBackDrive.isBusy() && rightFrontDrive.isBusy())) {
+                    (leftBackDrive.isBusy() || leftFrontDrive.isBusy() || rightBackDrive.isBusy() || rightFrontDrive.isBusy())) {
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -185,18 +185,18 @@ public class RobotHardware {
     }
 
     /**
-     *  Spin on the central axis to point in a new direction.
-     *  <p>
-     *  Move will stop if either of these conditions occur:
-     *  <p>
-     *  1) Move gets to the heading (angle)
-     *  <p>
-     *  2) Driver stops the OpMode running.
+     * Spin on the central axis to point in a new direction.
+     * <p>
+     * Move will stop if either of these conditions occur:
+     * <p>
+     * 1) Move gets to the heading (angle)
+     * <p>
+     * 2) Driver stops the OpMode running.
      *
      * @param maxTurnSpeed Desired MAX speed of turn. (range 0 to +1.0)
-     * @param heading Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *              If a relative angle is required, add/subtract from current heading.
+     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                     0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                     If a relative angle is required, add/subtract from current heading.
      */
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
@@ -226,17 +226,17 @@ public class RobotHardware {
     }
 
     /**
-     *  Obtain & hold a heading for a finite amount of time
-     *  <p>
-     *  Move will stop once the requested time has elapsed
-     *  <p>
-     *  This function is useful for giving the robot a moment to stabilize it's heading between movements.
+     * Obtain & hold a heading for a finite amount of time
+     * <p>
+     * Move will stop once the requested time has elapsed
+     * <p>
+     * This function is useful for giving the robot a moment to stabilize it's heading between movements.
      *
-     * @param maxTurnSpeed      Maximum differential turn speed (range 0 to +1.0)
-     * @param heading    Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
+     * @param maxTurnSpeed Maximum differential turn speed (range 0 to +1.0)
+     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                     0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                     If a relative angle is required, add/subtract from current heading.
+     * @param holdTime     Length of time (in seconds) to hold the specified heading.
      */
     public void holdHeading(double maxTurnSpeed, double heading, double holdTime) {
 
@@ -267,9 +267,9 @@ public class RobotHardware {
     /**
      * Use a Proportional Controller to determine how much steering correction is required.
      *
-     * @param desiredHeading        The desired absolute heading (relative to last heading reset)
-     * @param proportionalGain      Gain factor applied to heading error to obtain turning power.
-     * @return                      Turning power needed to get to required heading.
+     * @param desiredHeading   The desired absolute heading (relative to last heading reset)
+     * @param proportionalGain Gain factor applied to heading error to obtain turning power.
+     * @return Turning power needed to get to required heading.
      */
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         targetHeading = desiredHeading;  // Save for telemetry
@@ -278,7 +278,7 @@ public class RobotHardware {
         headingError = targetHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees
-        while (headingError > 180)  headingError -= 360;
+        while (headingError > 180) headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
@@ -288,22 +288,22 @@ public class RobotHardware {
     /**
      * Take separate drive (fwd/rev) and turn (right/left) requests,
      * combines them, and applies the appropriate speed commands to the left and right wheel motors.
+     *
      * @param drive forward motor speed
      * @param turn  clockwise turning motor speed.
      */
     public void moveRobot(double drive, double turn) {
         driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
-        turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
+        turnSpeed = turn;      // save this value as a class member so it can be used by telemetry.
 
         //leftSpeed  = drive - turn;
         //rightSpeed = drive + turn;
-        leftSpeed  = drive + turn;
+        leftSpeed = drive + turn;
         rightSpeed = drive - turn;
 
         // Scale speeds down if either one exceeds +/- 1.0;
         double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-        if (max > 1.0)
-        {
+        if (max > 1.0) {
             leftSpeed /= max;
             rightSpeed /= max;
         }
@@ -316,23 +316,23 @@ public class RobotHardware {
     }
 
     /**
-     *  Display the various control parameters while driving
+     * Display the various control parameters while driving
      *
-     * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
+     * @param straight Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
      */
     private void sendTelemetry(boolean straight) {
 
         if (straight) {
             opMode_.telemetry.addData("Motion", "Drive Straight");
-            opMode_.telemetry.addData("Target Pos LF:LB:RF:RB",  "%7d:%7d:%7d:%7d",      leftTargetF, leftTargetB,  rightTargetF, rightTargetB);
-            opMode_.telemetry.addData("Actual Pos LF:LB:RF:RB",  "%7d:%7d:%7d:%7d",      leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
-                                              rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            opMode_.telemetry.addData("Target Pos LF:LB:RF:RB", "%7d:%7d:%7d:%7d", leftTargetF, leftTargetB, rightTargetF, rightTargetB);
+            opMode_.telemetry.addData("Actual Pos LF:LB:RF:RB", "%7d:%7d:%7d:%7d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(),
+                    rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
         } else {
             opMode_.telemetry.addData("Motion", "Turning");
         }
 
         opMode_.telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
-        opMode_.telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
+        opMode_.telemetry.addData("Error  : Steer Pwr", "%5.1f : %5.1f", headingError, turnSpeed);
         opMode_.telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
         opMode_.telemetry.update();
     }
