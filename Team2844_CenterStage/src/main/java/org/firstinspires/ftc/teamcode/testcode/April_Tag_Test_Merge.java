@@ -90,14 +90,15 @@ public class April_Tag_Test_Merge extends LinearOpMode
 
 
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 18.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 30.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.25  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.1 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    final double TURN_GAIN   =  0.05  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    final double SPEED_GAIN  =  0.1  ;   //  was 0.25, Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    final double STRAFE_GAIN =  0.0025 ;   // was 0.05, was 0.1, Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    final double TURN_GAIN   =  0.05 ;   //was 0.025, was 0.05  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    //final double TURN_GAIN   =  0.5 ;   //was 0.025, was 0.05  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
     final double MAX_AUTO_SPEED = 1;   // 0.5 Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
@@ -109,7 +110,7 @@ public class April_Tag_Test_Merge extends LinearOpMode
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 */
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private static final int DESIRED_TAG_ID = 1;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
    // private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;
@@ -130,6 +131,9 @@ public class April_Tag_Test_Merge extends LinearOpMode
          robot = new RobotHardware(this, true);
          AprilTag aprilTag = new AprilTag(robot);
          //aprilTag = new RobotHardware.AprilTag(robot);
+
+
+
         aprilTag.initAprilTag(robot);
        // aprilTag.initAprilTag(robot);
 /*
@@ -157,7 +161,7 @@ public class April_Tag_Test_Merge extends LinearOpMode
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         waitForStart();
-        int AprilTagID = 2;
+
 
         boolean found = false;
 /*
@@ -225,8 +229,8 @@ public class April_Tag_Test_Merge extends LinearOpMode
             //List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             List<AprilTagDetection> currentDetections =  aprilTag.aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
-                if ((detection.metadata != null) &&
-                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
+                if (/*(detection.metadata != null) &&
+                    ((DESIRED_TAG_ID < 0) || */((detection.id == DESIRED_TAG_ID))  ){
                     targetFound = true;
                     desiredTag = detection;
                     break;  // don't look any further.
@@ -253,6 +257,8 @@ public class April_Tag_Test_Merge extends LinearOpMode
                 double  rangeError1      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
                 double  headingError1    = desiredTag.ftcPose.bearing;
                 double  yawError1        = desiredTag.ftcPose.yaw;
+
+                telemetry.addData("Auto","range %5.2f, heading %5.2f, yaw %5.2f ", rangeError1, headingError1, yawError1);
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
                 drive  = Range.clip(rangeError1 * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
@@ -284,8 +290,12 @@ public class April_Tag_Test_Merge extends LinearOpMode
             telemetry.update();
 
                 // Apply desired axes motions to the drivetrain.
-            robot.moveRobot(drive, strafe, turn);
-            //moveRobot(drive, strafe, turn);
+            //robot.moveRobot(drive, strafe, turn);
+
+            strafe = turn;
+            turn = 0;
+
+            moveRobot(drive, strafe, turn);
             sleep(10);
         }
     }

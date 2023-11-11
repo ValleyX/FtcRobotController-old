@@ -39,17 +39,25 @@ public class RobotHardware {
 
 
     // Adjust these numbers to suit your robot.
-    public final double DESIRED_DISTANCE = 18.0; //  this is how close the camera should get to the target (inches)
+    public final double DESIRED_DISTANCE = 30.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
     //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
+    /*
     public final double SPEED_GAIN  =  0.25  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     public final double STRAFE_GAIN =  0.1 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     public final double TURN_GAIN   =  0.05  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+*/
+    public final double SPEED_GAIN  =  0.1  ;   //  was 0.25, Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    public final double STRAFE_GAIN =  0.0025 ;   // was 0.05, was 0.1, Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    public final double TURN_GAIN   =  0.3 ;   //was, .1, was 0.025, was 0.05  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+
 
     public final double MAX_AUTO_SPEED = 1;   // 0.5 Clip the approach speed to this max value (adjust for your robot)
     public final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
+    //public final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
     public final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
     public final double OD_COUNTS_PER_MOTOR_REV = 8192;    //  AndyMark Motor Encoder
@@ -113,6 +121,8 @@ public class RobotHardware {
 
     public static double delayTimer = 2000; //delay timer for detection
 
+    public final double deadband = 0.2; //later move to RobotHardware or place with all the constants
+
 
 
     //make motors
@@ -167,10 +177,10 @@ public class RobotHardware {
 */
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 /*
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
@@ -187,17 +197,21 @@ public class RobotHardware {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 */
 
-/* uncomment on real robot
+
 
         //declare liftMotor Stuff
         liftMotorLeft = OpMode_.hardwareMap.dcMotor.get("liftMotorLeft");
         liftMotorRight = OpMode_.hardwareMap.dcMotor.get("liftMotorRight");
 
-        liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -212,15 +226,10 @@ public class RobotHardware {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-*/
 
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //RIGHT SIDE REVERSED
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE); //RIGHT SIDE REVERSED
-        // motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
 
 
 
@@ -229,29 +238,24 @@ public class RobotHardware {
          *
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;  //TODO changed when get final robot
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
        imu = OpMode_.hardwareMap.get(IMU.class, "imu");
 
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-/*
-        // Retrieve the IMU from the hardware map
-        imuFieldCentric = OpMode_.hardwareMap.get(BNO055IMU.class, "imuFieldCentric");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        // Technically this is the default, however specifying it is clearer
-          parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-          imuFieldCentric.initialize(parameters);
-        // Without this, data retrieving from the IMU throws an exception
-*/
 
-     //   camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
-        /*
+
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+/*
+        camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
+
         pipeline = new RobotHardware.CenterStagePipeline( checkBlueColorAuto);
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
+
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, camCam, camCam);
 

@@ -146,7 +146,7 @@ public class GyroDrive
             robot_.rightFrontDrive.setTargetPosition(robot_.rightFrontTarget);
             robot_.rightBackDrive.setTargetPosition(robot_.rightBackTarget);
 
-            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION); //makes robot motors
             robot_.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot_.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot_.rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -179,7 +179,7 @@ public class GyroDrive
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
 
-            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Makes motors run using encoders
             robot_.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot_.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -208,7 +208,7 @@ public class GyroDrive
             robot_.rightFrontSpeed /= max;
         }
 
-        robot_.leftFrontDrive.setPower( robot_.leftFrontSpeed);
+        robot_.leftFrontDrive.setPower( robot_.leftFrontSpeed); //setting power to the motors based on speeds
         robot_.leftBackDrive.setPower( robot_.leftFrontSpeed);
         robot_.rightFrontDrive.setPower( robot_.rightFrontSpeed);
         robot_.rightBackDrive.setPower( robot_.rightFrontSpeed);
@@ -240,7 +240,7 @@ public class GyroDrive
             moveRobot(0, robot_.turnSpeed);
 
             // Display drive status for the driver.
-            sendTelemetry(false);
+           // sendTelemetry(false);
         }
 
         // Stop all motion;
@@ -261,6 +261,8 @@ public class GyroDrive
      * @param holdTime   Length of time (in seconds) to hold the specified heading.
      */
     public void holdHeading(double maxTurnSpeed, double heading, double holdTime) {
+
+        heading = -heading;  //this is reversed in imu
 
         ElapsedTime holdTimer = new ElapsedTime();
         holdTimer.reset();
@@ -301,4 +303,15 @@ public class GyroDrive
         robot_.OpMode_.telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", robot_.leftFrontSpeed, robot_.rightFrontSpeed);
         robot_.OpMode_.telemetry.update();
     }
+    //
+
 }
+
+//preparing notes for control award
+
+//Use camera , use openCv
+//use imu in gyroscope drive
+//practiced apriltag with camera
+//practiced with odemetry with odemtry wheels
+//switchable camera and plan to have to 3 cameeras
+//

@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class LiftDrive {
 
     private RobotHardware robot_; //gets the robot hardware into this class
-    DcMotor liftMotorLeft; //makes motor type
-    DcMotor liftMotorRight; //makes motor type
+    //DcMotor liftMotorLeft; //makes motor type
+    //DcMotor liftMotorRight; //makes motor type
     ElapsedTime timeRunning; //creates a timer object that we can use anywhere here, like a double but for time
 
     //constructor
@@ -21,8 +21,8 @@ public class LiftDrive {
 
         robot_ = robot; //linking (pointing) to instantiated RobotHardwareClass
 
-        liftMotorLeft = robot_.liftMotorLeft; //gets motor from RobotHardware
-        liftMotorRight = robot_.liftMotorRight; //gets motor from RobotHardware
+        //liftMotorLeft = robot_.liftMotorLeft; //gets motor from RobotHardware
+        //liftMotorRight = robot_.liftMotorRight; //gets motor from RobotHardware
         timeRunning = new ElapsedTime(); //creates new timer object
 
     }
@@ -37,23 +37,23 @@ public class LiftDrive {
     public void liftToHeight (double liftInches, double liftSpeed, double errorMargin, double timeOutMS, boolean wait) {
 
         //gets the rotations per inch, and then sets the distance that we want the lift to go to
-        int newLiftTarget = liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+        int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
 
         //tells motors to use the encoder while running
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //sets the target position to the distance we want the lift to go to
-        liftMotorLeft.setTargetPosition(newLiftTarget);
-        liftMotorRight.setTargetPosition(newLiftTarget);
+        robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
+        robot_.liftMotorRight.setTargetPosition(newLiftTarget);
 
         //sets the motors to run to position mode
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //start motion
-        liftMotorLeft.setPower(Math.abs(liftSpeed));
-        liftMotorRight.setPower(Math.abs(liftSpeed));
+        robot_.liftMotorLeft.setPower(Math.abs(liftSpeed));
+        robot_.liftMotorRight.setPower(Math.abs(liftSpeed));
 
 
 
@@ -64,11 +64,11 @@ public class LiftDrive {
 
             timeRunning.reset();
 
-            while ((liftMotorLeft.isBusy() || liftMotorRight.isBusy())
-                    && (liftMotorLeft.getCurrentPosition() > (newLiftTarget + errorMargin)
-                    || liftMotorLeft.getCurrentPosition() < (newLiftTarget - errorMargin))
-                    && (liftMotorRight.getCurrentPosition() > (newLiftTarget + errorMargin)
-                    || liftMotorRight.getCurrentPosition() < (newLiftTarget - errorMargin))
+            while ((robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
+                    && (robot_.liftMotorLeft.getCurrentPosition() > (newLiftTarget + errorMargin)
+                    || robot_.liftMotorLeft.getCurrentPosition() < (newLiftTarget - errorMargin))
+                    && (robot_.liftMotorRight.getCurrentPosition() > (newLiftTarget + errorMargin)
+                    || robot_.liftMotorRight.getCurrentPosition() < (newLiftTarget - errorMargin))
                     || (timeRunning.milliseconds() < timeOutMS))
             {
 
@@ -77,8 +77,8 @@ public class LiftDrive {
             } //while loop end bracket
 
             //commit STOP
-            liftMotorLeft.setPower(0);
-            liftMotorRight.setPower(0);
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
 
         } //if wait==true statement end bracket
 
@@ -93,29 +93,29 @@ public class LiftDrive {
     public void liftStepUp () { //steps the lift up a row
 
         //check to make sure that we are not at max height
-        if (liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || liftMotorRight.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT) {
+        if (robot_.liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || robot_.liftMotorRight.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT) {
 
             //stop the motors from breaking the robot if we are at the top of our reach
-            liftMotorLeft.setPower(0);
-            liftMotorRight.setPower(0);
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
 
         }
         else { //if we aren't going to break ourselves, go do the thing
 
             //sets lift target
-            int newLiftTarget = liftMotorLeft.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
 
             //sets the target position to the distance we want the lift to go to
-            liftMotorLeft.setTargetPosition(newLiftTarget);
-            liftMotorRight.setTargetPosition(newLiftTarget);
+            robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
+            robot_.liftMotorRight.setTargetPosition(newLiftTarget);
 
             //tells motor to commit do with go to position mode
-            liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //start motion
-            liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
-            liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
+            robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
+            robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
         } //else logic statement end bracket
 
@@ -125,30 +125,30 @@ public class LiftDrive {
     //steps the lift DOWN a notch essentially
     public void liftStepDown () { //steps the lift up a row
 
-        if (liftMotorLeft.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT || liftMotorRight.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT) {
+        if (robot_.liftMotorLeft.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT || robot_.liftMotorRight.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT) {
 
             //stop the motors from breaking the robot if we are at the bottom of our reach
             //0 since that should be the bottom
-            liftMotorLeft.setPower(0);
-            liftMotorRight.setPower(0);
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
 
         }
         else { //if we won't break ourselves, then do the thing
 
             //sets lift target, subtracts the step value since its going down
-            int newLiftTarget = liftMotorLeft.getCurrentPosition() - (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() - (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
 
             //sets the target position to the distance we want the lift to go to
-            liftMotorLeft.setTargetPosition(newLiftTarget);
-            liftMotorRight.setTargetPosition(newLiftTarget);
+            robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
+            robot_.liftMotorRight.setTargetPosition(newLiftTarget);
 
             //tells motor to use run to pos mode when told to run
-            liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             //start motion, lift speed is the max speed of the lift for accuracy
-            liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
-            liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
+            robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
+            robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
         } //else logic statement end bracket
 
@@ -161,19 +161,34 @@ public class LiftDrive {
         int newLiftTarget = 0; //sets target to the min height
 
         //sets the motors to go to the target
-        liftMotorLeft.setTargetPosition(newLiftTarget);
-        liftMotorRight.setTargetPosition(newLiftTarget);
+        robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
+        robot_.liftMotorRight.setTargetPosition(newLiftTarget);
 
         //makes motor commit do (go to the position)
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //start motion, lift speed is max speed allowed for the lift so it is speedy but accurate
-        liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
-        liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
+        robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
+        robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
     } //liftReset method end bracket
 
+
+    //moves lift without steps
+    public void moveLift(double input) {
+
+//        if (robot_.liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || robot_.liftMotorLeft.getCurrentPosition() <= robot_.MIN_LIFT_HEIGHT){
+//            robot_.liftMotorLeft.setPower(0);
+//            robot_.liftMotorRight.setPower(0);
+//        }
+//        else {
+            robot_.liftMotorLeft.setPower(input);
+            robot_.liftMotorRight.setPower(input);
+//        }
+
+
+    } //moveLift method end bracket
 
 
 }   //class end bracket

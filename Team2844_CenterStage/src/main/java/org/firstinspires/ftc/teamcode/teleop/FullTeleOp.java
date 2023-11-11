@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,10 +10,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Drivers.GyroDrive;
+import org.firstinspires.ftc.teamcode.Drivers.IntakeDriver;
+import org.firstinspires.ftc.teamcode.Drivers.LiftDrive;
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -24,12 +20,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-//@Disabled
-@TeleOp(name = "fieldcentric+AprilTracktm")
-public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
+//@Disabled
+@TeleOp(name = "FullTeleOp")
+public class FullTeleOp extends LinearOpMode {
 
     RobotHardware robot;
+    LiftDrive liftDrive;
+    IntakeDriver intakeDriver;
+
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
@@ -38,18 +37,22 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
 
-    boolean targetFound = false;    // Set to true when an AprilTag target is detected
-    double drive = 0;        // Desired forward power/speed (-1 to +1)
-    double strafe = 0;        // Desired strafe power/speed (-1 to +1)
-    double turn = 0;        // Desired turning power/speed (-1 to +1)
+
+
+    boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+    double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+    double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+    double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
     @Override
     public void runOpMode() throws InterruptedException {
 
 
-        // Initialize the April tag Detection process
+        // Initialize the Apriltag Detection process
         initAprilTag();
-        robot = new RobotHardware(this, true);
+        robot = new RobotHardware(this,true);
+        intakeDriver = new IntakeDriver(robot);
+        liftDrive = new LiftDrive(robot);
 
 
         waitForStart();
@@ -74,8 +77,13 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     }
 
     //make the function for field centric driving
-    public void fieldCentricControl() {
+    public void fieldCentricControl () {
 
+
+
+
+        robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -85,12 +93,13 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         // Read inverse IMU heading, as the IMU heading is CW positive
 
         //Gets the bot heading by use Geting angles from imu and geting the yaw in degress from that
-        double botHeading = -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
+        double botHeading =// -robot.imuFieldCentric.getAngularOrientation().firstAngle;
+                -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+
 
 
         // Denominator is the largest motor power (absolute value) or 1
@@ -103,17 +112,15 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         double backRightPower = (rotY + rotX - rx) / denominator;
 
 
-        //if robot found tag, then skip this and go to tag
 
+        //if robot found tag, then skip this and go to tag
         robot.leftFrontDrive.setPower(frontLeftPower);
         robot.leftBackDrive.setPower(backLeftPower);
         robot.rightFrontDrive.setPower(frontRightPower);
         robot.rightBackDrive.setPower(backRightPower);
 
-        telemetry.addData("heading", botHeading);
-        telemetry.addData("headingDegrees", -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("headingRoll", -robot.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
-        telemetry.addData("headingPitch", -robot.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
+
+
 
 
         telemetry.addData("rotX", rotX);
@@ -123,14 +130,73 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         telemetry.addData("back left power", backLeftPower);
         telemetry.addData("back right power", backRightPower);
         telemetry.addData("denominator", denominator);
+
+
+
+
+        //----------------------------------------------------------------------------------------------
+        //AUXILIARY CONTROLS
+
+        //Y = step lift up
+        if (gamepad1.y == true) {
+            liftDrive.liftStepUp();
+        }
+
+        //A = step lift down
+        if (gamepad1.a == true) {
+            liftDrive.liftStepDown();
+        }
+
+        //B = reset lift
+        if (gamepad1.b == true) {
+            liftDrive.liftReset();
+        }
+
+//        //X = score pixel
+//        if (gamepad1.x == true) {
+//            liftDrive.openBucket();
+//        }
+//        else {
+//            liftDrive.closeBucket();
+//        }
+
+
+        //Left Trigger = intake
+        if (gamepad1.left_trigger >= 0.1) {
+            intakeDriver.intakeOn(true, 1);
+        }
+        else {
+            intakeDriver.intakeOn(false, 0);
+        }
+
+        //Right Trigger = outtake
+        if (gamepad1.right_trigger >= 0.1) {
+            intakeDriver.intakeOn(true, -1);
+        }
+        else {
+            intakeDriver.intakeOn(false, 0);
+        }
+
+        telemetry.addData("right sticky", gamepad2.right_stick_y );
+
+
+        //Manipulator stick to move lift
+        if(gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
+            liftDrive.moveLift(-gamepad2.right_stick_y);
+            telemetry.addData("in right sticky", gamepad2.right_stick_y );
+        }
+
+
+
+
         telemetry.update();
 
-    }
+    } //field centric drive thingy end bracket
 
 
-    //
+    //APRIL TAG STUFF
 //_________________________________________________________________________________________________________________-
-    public void aprilTagDrive() {
+    public void aprilTagDrive () {
 
         //reverses motors so that the FIRST provided code works correctly
         robot.rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -138,14 +204,15 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //sets initial status for variables
         targetFound = false;
-        desiredTag = null;
+        desiredTag  = null;
 
         // Step through the list of detected tags and look for a matching tag
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if ((detection.metadata != null) &&
-                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))) {
+                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
                 targetFound = true;
                 desiredTag = detection;
                 break;  // don't look any further.
@@ -156,36 +223,36 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
         // Tell the driver what we see, and what to do.
         if (targetFound) {
-            telemetry.addData(">", "HOLD Left-Bumper to Drive to Target\n");
+            telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
             telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-            telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
-            telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
-            telemetry.addData("Yaw", "%3.0f degrees", desiredTag.ftcPose.yaw);
+            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
         } else {
-            telemetry.addData(">", "Drive using joysticks to find valid target\n");
+            telemetry.addData(">","Drive using joysticks to find valid target\n");
         }
 
         // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
         if (gamepad1.left_bumper && targetFound) {
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (desiredTag.ftcPose.range - robot.DESIRED_DISTANCE);
-            double headingError = desiredTag.ftcPose.bearing;
-            double yawError = desiredTag.ftcPose.yaw;
+            double  rangeError      = (desiredTag.ftcPose.range - robot.DESIRED_DISTANCE);
+            double  headingError    = desiredTag.ftcPose.bearing;
+            double  yawError        = desiredTag.ftcPose.yaw;
 
             // Use the speed and turn "gains" to calculate how we want the robot to move.
-            drive = Range.clip(rangeError * robot.SPEED_GAIN, -robot.MAX_AUTO_SPEED, robot.MAX_AUTO_SPEED);
-            turn = Range.clip(headingError * robot.TURN_GAIN, -robot.MAX_AUTO_TURN, robot.MAX_AUTO_TURN);
+            drive  = Range.clip(rangeError * robot.SPEED_GAIN, -robot.MAX_AUTO_SPEED, robot.MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * robot.TURN_GAIN, -robot.MAX_AUTO_TURN, robot.MAX_AUTO_TURN) ;
             strafe = Range.clip(-yawError * robot.STRAFE_GAIN, -robot.MAX_AUTO_STRAFE, robot.MAX_AUTO_STRAFE);
 
-            telemetry.addData("Auto", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
         } else {
 
             // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-            drive = -gamepad1.left_stick_y / 2.0;  // Reduce drive rate to 50%.
-            strafe = -gamepad1.left_stick_x / 2.0;  // Reduce strafe rate to 50%.
-            turn = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-            telemetry.addData("Manual", "Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+            strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
+            turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
+            telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
         }
         telemetry.update();
 
@@ -194,6 +261,9 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         sleep(10);
 
     }
+
+
+
 
 
     /**
@@ -207,16 +277,17 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
      */
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double leftFrontPower = x - y - yaw;
-        double rightFrontPower = x + y + yaw;
-        double leftBackPower = x + y - yaw;
-        double rightBackPower = x - y + yaw;
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
+        //prevents motor overwork
         if (max > 1.0) {
             leftFrontPower /= max;
             rightFrontPower /= max;
@@ -232,7 +303,7 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     }
 
     /**
-     * Initialize the AprilTag processor.
+     * Initialize the AprilTag processor. *black magic*
      */
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
@@ -256,7 +327,7 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
      Manually set the camera gain and exposure.
      This can only be called AFTER calling initAprilTag(), and only works for Webcams;
     */
-    private void setManualExposure(int exposureMS, int gain) {
+    private void    setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
@@ -275,13 +346,14 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         }
 
         // Set camera controls unless we are stopping.
-        if (!isStopRequested()) {
+        if (!isStopRequested())
+        {
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
                 sleep(50);
             }
-            exposureControl.setExposure((long) exposureMS, TimeUnit.MILLISECONDS);
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
             sleep(20);
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             gainControl.setGain(gain);
@@ -290,4 +362,4 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     }
 
 
-}
+} //TeleOp end bracket

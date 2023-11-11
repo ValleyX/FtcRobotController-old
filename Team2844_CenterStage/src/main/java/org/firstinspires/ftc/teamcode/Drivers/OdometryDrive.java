@@ -225,21 +225,6 @@ public class OdometryDrive {
             robot_.rightFrontDrive.setPower((robotMovementX - c_nPi * Math.abs(turnCorrection)));
 
 
-
-           /*(don't add)
-           // else
-          //  {
-                robot_.leftBack.setPower(-robotMovementX +  (c_nPi * Math.abs(turnCorrection)));
-                robot_.leftFront.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
-                robot_.rightBack.setPower(robotMovementX - (c_nPi * Math.abs(turnCorrection)));
-                robot_.rightFront.setPower(-robotMovementX + (c_nPi * Math.abs(turnCorrection)));
-               // robot_.rightPower(-robotMovementY - (c_nPi * Math.abs(turnCorrection)));
-               // robot_.leftPower(-robotMovementY);
-          //  }
-          */
-
-
-
             robot_.OpMode_.idle();
         }
         //stop robot
@@ -276,8 +261,6 @@ public class OdometryDrive {
             robot_.OpMode_.telemetry.addData("encoder right: ", robot_.verticalRight.getCurrentPosition());
             robot_.OpMode_.telemetry.addData("encoder horz: ", robot_.horizontal.getCurrentPosition());
 
-
-            //System.out.println("ValleyX: turnCorrection " + turnCorrection);
 
 
             //constant to help with correcting angle
