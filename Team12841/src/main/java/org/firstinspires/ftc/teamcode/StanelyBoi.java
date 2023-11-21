@@ -16,37 +16,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-
-@TeleOp(name = "PLEASE WORK")
-public class FieldCentric extends LinearOpMode {
+@Disabled
+@TeleOp(name = "Single Drive")
+public class StanelyBoi extends LinearOpMode {
     IMU imu;
+    RobotHardware robothardware;
+    LiftHardware lifthardware;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("lFMotor");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("lBMotor");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("rFMotor");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("rBMotor");
-        DcMotor intake = hardwareMap.dcMotor.get("intake");
 
-
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Retrieve the IMU from the hardware map
-       // BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        robothardware = new RobotHardware(this, Camera.SkystoneDeterminationPipeline.RobotPos.BlueL);
+        lifthardware = new LiftHardware(robothardware);
+        DcMotor elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
 
 
         //BHI260IMU imu = hardwareMap.get(BHI260IMU.class, "imu");
@@ -72,7 +54,7 @@ public class FieldCentric extends LinearOpMode {
          */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         //RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
@@ -88,35 +70,20 @@ public class FieldCentric extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.2; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
+            double elbowPosition = 0;
 
-            /*if(gamepad1.right_bumper){
-                intake.setPower(0.7);
-            }
-            else if (gamepad1.left_bumper){
-                intake.setPower(-.7);
-            }
-            else
-                intake.setPower(0);*/
+            robothardware.elbowMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            if(gamepad1.right_trigger > 0.2 ){
-                intake.setPower(gamepad1.right_trigger);
-            }
-            else if (gamepad1.left_trigger > .2){
-                intake.setPower(-gamepad1.left_trigger);
-            }
-            else
-                intake.setPower(0);
 
             // Read inverse IMU heading, as the IMU heading is CW positive
             //double botHeading = -imu.getAngularOrientation().firstAngle;
             // Retrieve Rotational Angles and Velocities
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
-            double botHeading = 0;//-orientation.getYaw(AngleUnit.RADIANS);
+            double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
 
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-
 
 
             // Denominator is the largest motor power (absolute value) or 1
@@ -128,10 +95,23 @@ public class FieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            robothardware.leftFrontDrive.setPower(frontLeftPower);
+            robothardware.leftBackDrive.setPower(backLeftPower);
+            robothardware.rightFrontDrive.setPower(frontRightPower);
+            robothardware.rightBackDrive.setPower(backRightPower);
+            /*
+            if(gamepad1.b == true)
+                robothardware.elbowMotor.setPower(1);
+            else if(gamepad1.x == true)
+                robothardware.elbowMotor.setPower(-1);
+            else
+                robothardware.elbowMotor.setPower(0);
+            */
+            double lefty = -gamepad2.left_stick_y;
+            //liftMotor.setPower(lefty);
+            telemetry.addData("left_stickY", lefty);
+
+            telemetry.addData("left_stickY", lefty);
 
             telemetry.addData("rotX", rotX);
             telemetry.addData("rotY", rotY);

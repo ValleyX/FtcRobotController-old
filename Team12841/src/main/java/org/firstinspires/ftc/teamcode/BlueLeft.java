@@ -9,15 +9,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
-@Autonomous(name = "RedRight")
+@Autonomous(name = "BlueLeft")
 
-public class RedRight extends LinearOpMode {
+public class BlueLeft extends LinearOpMode {
     RobotHardware robotHardware;
     AprilTagCamera aprilTag;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robotHardware = new RobotHardware(this, Camera.SkystoneDeterminationPipeline.RobotPos.RedR);
+        robotHardware = new RobotHardware(this, Camera.SkystoneDeterminationPipeline.RobotPos.BlueL);
 //        Camera.SkystoneDeterminationPipeline.MarkerPos markerPosSeen;
         aprilTag = new AprilTagCamera(this, robotHardware);
 
@@ -43,24 +43,22 @@ public class RedRight extends LinearOpMode {
             aprilTag.Desired_Tag_Id = 4;
             aprilTag.initAprilTag();
 
-
-            robotHardware.driveStraight(0.1, 20, 0.0); //drives off the edge so it does hit the wall
-            robotHardware.turnToHeading(0.1, -60);
-            robotHardware.driveStraight(0.3, 10, -60);
-            robotHardware.driveStraight(0.5, -40, -60);
-            robotHardware.turnToHeading(0.5, 90);
-            robotHardware.driveStraight(0.5, 20, 90);
+            robotHardware.driveStraight(0.3, 5, 0.0); //drives off the edge so it does hit the wall
+            robotHardware.turnToHeading(0.3, -22.0);
+            robotHardware.driveStraight(0.3, 18, -22.0);
+            robotHardware.driveStraight(0.3, -21, -22.0);
+            robotHardware.turnToHeading(0.5, -90);
+            robotHardware.driveStraight(0.5, 40, -90);
 
             double XError = 0;
-
-            /*while (opModeIsActive()) {
+            /*
+            while (opModeIsActive()) {
                 aprilTag.targetFound = false;
                 // Step through the list of detected tags and look for a matching tag
                 List<AprilTagDetection> currentDetections = aprilTag.aprilTag.getDetections();
                 if (currentDetections != null) {
                     for (AprilTagDetection detection : currentDetections) {
-                        if ((detection.metadata != null) &&
-                                ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
+                        if ((detection.metadata != null) && ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
                             aprilTag.targetFound = true;
                             aprilTag.desiredTag = detection;
                             break;  // don't look any further.
@@ -127,7 +125,9 @@ public class RedRight extends LinearOpMode {
                     }
                     sleep(10);
                 }
-            }*/
+            }
+
+             */
 
 
         } else if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Center) {
@@ -137,19 +137,18 @@ public class RedRight extends LinearOpMode {
 
             robotHardware.driveStraight(0.3, 33.5, 0.0);
             robotHardware.driveStraight(0.3, -33, 0);
-            robotHardware.turnToHeading(0.3, 90);
-            robotHardware.driveStraight(0.3,40, 90);
+            robotHardware.turnToHeading(0.3, -90);
+            robotHardware.driveStraight(0.3,40, -90);
 
             double XError = 0;
-
-            /*while (opModeIsActive()) {
+            /*
+            while (opModeIsActive()) {
                 aprilTag.targetFound = false;
                 // Step through the list of detected tags and look for a matching tag
                 List<AprilTagDetection> currentDetections = aprilTag.aprilTag.getDetections();
                 if (currentDetections != null) {
                     for (AprilTagDetection detection : currentDetections) {
-                        if ((detection.metadata != null) &&
-                                ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
+                        if ((detection.metadata != null) && ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
                             aprilTag.targetFound = true;
                             aprilTag.desiredTag = detection;
                             break;  // don't look any further.
@@ -224,23 +223,23 @@ public class RedRight extends LinearOpMode {
             aprilTag.Desired_Tag_Id = 6;
             aprilTag.initAprilTag();
 
-            robotHardware.driveStraight(0.3, 5, 0.0); //drives off the edge so it does hit the wall
-            robotHardware.turnToHeading(0.3, 22.0);
-            robotHardware.driveStraight(0.3, 20, 22.0);
-            robotHardware.driveStraight(0.3, -23, 22.0);
-            robotHardware.turnToHeading(0.3, 90);
-            robotHardware.driveStraight(0.3, 40, 90);
+
+            robotHardware.driveStraight(0.08, 18, 0.0); //drives off the edge so it does hit the wall
+            robotHardware.turnToHeading(0.1, 55);
+            robotHardware.driveStraight(0.1, 12, 55);
+            robotHardware.driveStraight(0.5, -42, 55);
+            robotHardware.turnToHeading(0.3, -90);
+            robotHardware.driveStraight(0.3, 20, -90);
 
             double XError = 0;
-
-            /*while (opModeIsActive()) {
+            /*
+            while (opModeIsActive()) {
                 aprilTag.targetFound = false;
                 // Step through the list of detected tags and look for a matching tag
                 List<AprilTagDetection> currentDetections = aprilTag.aprilTag.getDetections();
                 if (currentDetections != null) {
                     for (AprilTagDetection detection : currentDetections) {
-                        if ((detection.metadata != null) &&
-                                ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
+                        if ((detection.metadata != null) && ((aprilTag.Desired_Tag_Id < 0) || (detection.id == aprilTag.Desired_Tag_Id))) {
                             aprilTag.targetFound = true;
                             aprilTag.desiredTag = detection;
                             break;  // don't look any further.
@@ -307,7 +306,10 @@ public class RedRight extends LinearOpMode {
                     }
                     sleep(10);
                 }
-            }*/
+            }
+        }
+
+             */
         }
     }
 }

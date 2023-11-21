@@ -27,10 +27,10 @@ public class LiftHardware {
         robotHardware_.elbowMotor.setTargetPosition(0);
         robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardware_.elevatorMotor.setTargetPosition(0);
-        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
     }
 
     public void moveElbow(double degree, double speed)

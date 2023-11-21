@@ -27,26 +27,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.Drivers;
+package org.firstinspires.ftc.teamcode.testcode;
 
-import android.graphics.Path;
-
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -104,18 +95,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //Not implemented in any hardware
 //Changed so that it works with a 4 motor drive
 //Robot changed to accommodate this Gyro drive, ports that 0 -3 connected to the Odemetry where changed to connect to the motor encoders
-
-public class GyroDrive
+@Disabled
+public class GyroDriveTest
 {
-    public RobotHardware robot_;
+    public RobotHardwareTestVersion robot_;
     public OpMode opMode_;
 
-    public NavxMicroNavigationSensor navxMicro;
 
 
-
-
-    public GyroDrive(RobotHardware robot){
+    public GyroDriveTest(RobotHardwareTestVersion robot){
         robot_ = robot;
     }
 
@@ -123,11 +111,8 @@ public class GyroDrive
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         robot_.targetHeading = desiredHeading;  // Save for telemetry
 
-        //robot_.angles = robot_.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
         // Determine the heading current error
-        robot_.headingError = robot_.targetHeading - robot_.getNavXHeading()/*getHeading()*/;
-
+        robot_.headingError = robot_.targetHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees
         while (robot_.headingError > 180)  robot_.headingError -= 360;
@@ -147,26 +132,23 @@ public class GyroDrive
 
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * robot_.COUNTS_PER_INCH);
-            robot_.leftFrontTarget = robot_.leftFrontDrive.getCurrentPosition() + moveCounts;
-            robot_.leftBackTarget = robot_.leftBackDrive.getCurrentPosition() + moveCounts;
-            robot_.rightFrontTarget = robot_.rightFrontDrive.getCurrentPosition() + moveCounts;
-            robot_.rightBackTarget = robot_.rightBackDrive.getCurrentPosition() + moveCounts;
+            robot_.leftFrontTarget = robot_.motorFrontLeft.getCurrentPosition() + moveCounts;
+            robot_.leftBackTarget = robot_.motorBackLeft.getCurrentPosition() + moveCounts;
+            robot_.rightFrontTarget = robot_.motorFrontRight.getCurrentPosition() + moveCounts;
+            robot_.rightBackTarget = robot_.motorBackRight.getCurrentPosition() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            robot_.leftFrontDrive.setTargetPosition(robot_.leftFrontTarget);
-            robot_.leftBackDrive.setTargetPosition(robot_.leftBackTarget);
-            robot_.rightFrontDrive.setTargetPosition(robot_.rightFrontTarget);
-            robot_.rightBackDrive.setTargetPosition(robot_.rightBackTarget);
+            robot_.motorFrontLeft.setTargetPosition(robot_.leftFrontTarget);
+            robot_.motorBackLeft.setTargetPosition(robot_.leftBackTarget);
+            robot_.motorFrontRight.setTargetPosition(robot_.rightFrontTarget);
+            robot_.motorBackRight.setTargetPosition(robot_.rightBackTarget);
 
-            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION); //makes robot motors
-            robot_.leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot_.rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot_.rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION); //makes robot motors
+            robot_.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot_.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot_.leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot_.leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot_.rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            robot_.rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -175,9 +157,9 @@ public class GyroDrive
 
             // keep looping while we are still active, and BOTH motors are running.
             //robot_.OpMode_.opModeIsActive() && during 10/24/2024 testing
-            while (robot_.OpMode_.opModeIsActive() &&
-                 //   (robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
-                (robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
+            while (
+                    //(robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
+                (robot_.motorFrontRight.isBusy() || robot_.motorBackRight.isBusy() || robot_.motorFrontRight.isBusy() || robot_.motorBackRight.isBusy())) {
 
                 // Determine required steering to keep on heading
                 robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_DRIVE_GAIN);
@@ -196,10 +178,10 @@ public class GyroDrive
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
 
-            robot_.leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Makes motors run using encoders
-            robot_.leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot_.rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot_.rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Makes motors run using encoders
+            robot_.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot_.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -225,17 +207,18 @@ public class GyroDrive
             robot_.rightFrontSpeed /= max;
         }
 
-        robot_.leftFrontDrive.setPower( robot_.leftFrontSpeed); //setting power to the motors based on speeds
-        robot_.leftBackDrive.setPower( robot_.leftFrontSpeed);
-        robot_.rightFrontDrive.setPower( robot_.rightFrontSpeed);
-        robot_.rightBackDrive.setPower( robot_.rightFrontSpeed);
+        robot_.motorFrontLeft.setPower( robot_.leftFrontSpeed); //setting power to the motors based on speeds
+        robot_.motorBackLeft.setPower( robot_.leftFrontSpeed);
+        robot_.motorFrontRight.setPower( robot_.rightFrontSpeed);
+        robot_.motorBackRight.setPower( robot_.rightFrontSpeed);
     }
 
 
     public  double getHeading() {
         YawPitchRollAngles orientation = robot_.imu.getRobotYawPitchRollAngles();
 
-        return orientation.getYaw(AngleUnit.DEGREES);
+
+       return orientation.getYaw(AngleUnit.DEGREES);
     }
 
     public void turnToHeading(double maxTurnSpeed, double heading) {
@@ -249,9 +232,6 @@ public class GyroDrive
 
             // Determine required steering to keep on heading
             robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_TURN_GAIN);
-
-            System.out.println("ValleyX: heading Error " + robot_.headingError);
-            sendTelemetry(true);
 
             // Clip the speed to the maximum permitted value.
             robot_.turnSpeed = Range.clip(robot_.turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -310,24 +290,19 @@ public class GyroDrive
 
         if (straight) {
             robot_.OpMode_.telemetry.addData("Motion", "Drive Straight");
-            robot_.OpMode_.telemetry.addData("Target Pos Lf:Rf:Rb:Lb",  "%7d:%7d:%7d:%7d",
-                    robot_.leftFrontTarget, robot_.rightFrontTarget, robot_.rightBackTarget, robot_.leftBackTarget);
+            robot_.OpMode_.telemetry.addData("Target Pos L:R",  "%7d:%7d", robot_.leftFrontTarget, robot_.rightFrontTarget);
 
-            robot_.OpMode_.telemetry.addData("Actual Pos Lf:Rf:Rb:Lb",  "%7d:%7d:%7d:%7d",      robot_.leftFrontDrive.getCurrentPosition(),
-                    robot_.rightFrontDrive.getCurrentPosition(),robot_.rightBackDrive.getCurrentPosition(), robot_.leftBackDrive.getCurrentPosition());
+            robot_.OpMode_.telemetry.addData("Actual Pos Lf : Lb",  "%7d:%7d",      robot_.motorFrontLeft.getCurrentPosition(),
+                    robot_.motorFrontRight.getCurrentPosition());
         } else {
             robot_.OpMode_.telemetry.addData("Motion", "Turning");
         }
 
-        robot_.OpMode_.telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", robot_.targetHeading, robot_.angles.firstAngle/*getHeading()*/);
+        robot_.OpMode_.telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", robot_.targetHeading, getHeading());
         robot_.OpMode_.telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", robot_.headingError, robot_.turnSpeed);
         robot_.OpMode_.telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", robot_.leftFrontSpeed, robot_.rightFrontSpeed);
         robot_.OpMode_.telemetry.update();
     }
-
-
-
-
     //
 
 }

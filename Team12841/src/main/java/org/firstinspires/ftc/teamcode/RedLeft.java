@@ -30,20 +30,37 @@ public class RedLeft extends LinearOpMode {
 
         if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Left)
         {
-            robotHardware.driveStraight(0.5, 5, 0.0); //drives off the edge so it does hit the wall
-            robotHardware.turnToHeading(0.5, -22.0);
-            robotHardware.driveStraight(0.5, 12, -22.0);
-            robotHardware.driveStraight(0.5, -12, -22.0);
-            robotHardware.turnToHeading(0.5, 0.0);
-            robotHardware.driveStraight(0.5, 45, 0.0);
-            robotHardware.turnToHeading(0.5, 90);
-            robotHardware.driveStraight(0.5, 60, 90);
+            robotHardware.driveStraight(0.3, 5, 0.0); //drives off the edge so it does hit the wall
+            robotHardware.turnToHeading(0.3, -22.0);
+            robotHardware.driveStraight(0.3, 16, -22.0);
+            robotHardware.driveStraight(0.3, -20, -22.0);
+            robotHardware.turnToHeading(0.3, 0);
+
+            robotHardware.driveStraight(0.3, 48, 0.0);
+            robotHardware.turnToHeading(0.3, 92);
+            robotHardware.driveStraight(0.3, 100, 92);
         }
         else if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Center)
         {
-            robotHardware.driveStraight(0.5, 25, 0.0);
+            robotHardware.driveStraight(0.3, 33.5, 0.0);
+            robotHardware.driveStraight(0.3, -13, 0);
+            robotHardware.turnToHeading(0.3, -90);
+            robotHardware.driveStraight(0.3,13, -90);
+            robotHardware.turnToHeading(0.3, 0);
+            robotHardware.driveStraight(0.3, 29, 0.0);
+            robotHardware.turnToHeading(0.3, 92);
+            robotHardware.driveStraight(0.3, 120, 92);
         }
-
+        else if (robotHardware.camera.pipeline.markerPos == Camera.SkystoneDeterminationPipeline.MarkerPos.Right){
+            robotHardware.driveStraight(0.1, 20, 0.0); //drives off the edge so it does hit the wall
+            robotHardware.turnToHeading(0.1, 60);
+            robotHardware.driveStraight(0.1, 12, 60);
+            robotHardware.driveStraight(0.3, -14, 60);
+            robotHardware.turnToHeading(0.3, 0);
+            robotHardware.driveStraight(0.3, 31, 0.0);
+            robotHardware.turnToHeading(0.3, 92);
+            robotHardware.driveStraight(0.3, 100, 92);
+        }
 
     }
 }

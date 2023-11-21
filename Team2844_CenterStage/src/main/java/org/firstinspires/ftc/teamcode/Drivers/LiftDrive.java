@@ -26,26 +26,25 @@ public class LiftDrive {
         timeRunning = new ElapsedTime(); //creates new timer object
 
     }
-
-
     //function to set the lift to a certain height
-        //liftInches = how far lift is up in inches
-        //liftSpeed = how fast the lift runs 0 to 1
-        //errorMargin = how much height error is allowable in the function
-        //timeOutMS = how long the program will try to do the thing before it gives up and exits
-        //wait = if it is going to stop other functions and just do this, or if it isn't going to do that and basically allows multitasking
-    public void liftToHeight (double liftInches, double liftSpeed, double errorMargin, double timeOutMS, boolean wait) {
+    //liftInches = how far lift is up in inches
+    //liftSpeed = how fast the lift runs 0 to 1
+    //errorMargin = how much height error is allowable in the function
+    //timeOutMS = how long the program will try to do the thing before it gives up and exits
+    //wait = if it is going to stop other functions and just do this, or if it isn't going to do that and basically allows multitasking
+    public void liftToEncoderCount (int liftCounts, double liftSpeed, int errorMargin, double timeOutMS, boolean wait) {
 
         //gets the rotations per inch, and then sets the distance that we want the lift to go to
-        int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+        //int newLeftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+        //int newRightTarget = robot_.liftMotorRight.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
 
         //tells motors to use the encoder while running
         robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //sets the target position to the distance we want the lift to go to
-        robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
-        robot_.liftMotorRight.setTargetPosition(newLiftTarget);
+        robot_.liftMotorLeft.setTargetPosition(liftCounts);
+        robot_.liftMotorRight.setTargetPosition(liftCounts);
 
         //sets the motors to run to position mode
         robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -65,14 +64,76 @@ public class LiftDrive {
             timeRunning.reset();
 
             while ((robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
-                    && (robot_.liftMotorLeft.getCurrentPosition() > (newLiftTarget + errorMargin)
-                    || robot_.liftMotorLeft.getCurrentPosition() < (newLiftTarget - errorMargin))
-                    && (robot_.liftMotorRight.getCurrentPosition() > (newLiftTarget + errorMargin)
-                    || robot_.liftMotorRight.getCurrentPosition() < (newLiftTarget - errorMargin))
+                    && (robot_.liftMotorLeft.getCurrentPosition() > (liftCounts + errorMargin)
+                    || robot_.liftMotorLeft.getCurrentPosition() < (liftCounts - errorMargin))
+                    && (robot_.liftMotorRight.getCurrentPosition() > (liftCounts + errorMargin)
+                    || robot_.liftMotorRight.getCurrentPosition() < (liftCounts - errorMargin))
                     || (timeRunning.milliseconds() < timeOutMS))
             {
 
+                robot_.OpMode_.sleep(1); //to yield
 
+            } //while loop end bracket
+
+            //commit STOP
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
+
+        } //if wait==true statement end bracket
+
+
+
+
+    }   //liftToHeight method end bracket
+
+
+
+    //function to set the lift to a certain height
+        //liftInches = how far lift is up in inches
+        //liftSpeed = how fast the lift runs 0 to 1
+        //errorMargin = how much height error is allowable in the function
+        //timeOutMS = how long the program will try to do the thing before it gives up and exits
+        //wait = if it is going to stop other functions and just do this, or if it isn't going to do that and basically allows multitasking
+    public void liftToHeight (double liftInches, double liftSpeed, double errorMargin, double timeOutMS, boolean wait) {
+
+        //gets the rotations per inch, and then sets the distance that we want the lift to go to
+        int newLeftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+        int newRightTarget = robot_.liftMotorRight.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+
+        //tells motors to use the encoder while running
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //sets the target position to the distance we want the lift to go to
+        robot_.liftMotorLeft.setTargetPosition(newLeftTarget);
+        robot_.liftMotorRight.setTargetPosition(newRightTarget);
+
+        //sets the motors to run to position mode
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //start motion
+        robot_.liftMotorLeft.setPower(Math.abs(liftSpeed));
+        robot_.liftMotorRight.setPower(Math.abs(liftSpeed));
+
+
+
+        //logic to determine if it should wait for the lift to get to the right spot
+
+        //if we want the function to wait, it will stop all other parts of robot until the lift is in the right spot
+        if (wait == true) {
+
+            timeRunning.reset();
+
+            while ((robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
+                    && (robot_.liftMotorLeft.getCurrentPosition() > (newLeftTarget + errorMargin)
+                    || robot_.liftMotorLeft.getCurrentPosition() < (newLeftTarget - errorMargin))
+                    && (robot_.liftMotorRight.getCurrentPosition() > (newRightTarget + errorMargin)
+                    || robot_.liftMotorRight.getCurrentPosition() < (newRightTarget - errorMargin))
+                    || (timeRunning.milliseconds() < timeOutMS))
+            {
+
+               robot_.OpMode_.sleep(1); //to yield
 
             } //while loop end bracket
 
@@ -103,12 +164,14 @@ public class LiftDrive {
         else { //if we aren't going to break ourselves, go do the thing
 
             //sets lift target
-            int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
-            robot_.OpMode_.telemetry.addData("newLiftTarget", newLiftTarget );
+            int newLeftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            int newRightTarget = robot_.liftMotorRight.getCurrentPosition() + (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            robot_.OpMode_.telemetry.addData("newLeftTarget", newLeftTarget );
+            robot_.OpMode_.telemetry.addData("newRightTarget", newRightTarget );
 
             //sets the target position to the distance we want the lift to go to
-            robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
-            robot_.liftMotorRight.setTargetPosition(newLiftTarget);
+            robot_.liftMotorLeft.setTargetPosition(newLeftTarget);
+            robot_.liftMotorRight.setTargetPosition(newRightTarget);
 
             //tells motor to commit do with go to position mode
             robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -119,7 +182,7 @@ public class LiftDrive {
             robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
             //wait until it gets to position
-            while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy()) {
+            while (robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy()) {
                 robot_.OpMode_.sleep(1);
             }
 
@@ -148,11 +211,12 @@ public class LiftDrive {
         else { //if we won't break ourselves, then do the thing
 
             //sets lift target, subtracts the step value since its going down
-            int newLiftTarget = robot_.liftMotorLeft.getCurrentPosition() - (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            int newLeftTarget = robot_.liftMotorLeft.getCurrentPosition() - (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
+            int newRightTarget = robot_.liftMotorRight.getCurrentPosition() - (int)(robot_.LIFT_STEP * robot_.LIFT_COUNTS_PER_INCH);
 
             //sets the target position to the distance we want the lift to go to
-            robot_.liftMotorLeft.setTargetPosition(newLiftTarget);
-            robot_.liftMotorRight.setTargetPosition(newLiftTarget);
+            robot_.liftMotorLeft.setTargetPosition(newLeftTarget);
+            robot_.liftMotorRight.setTargetPosition(newRightTarget);
 
             //tells motor to use run to pos mode when told to run
             robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -193,8 +257,11 @@ public class LiftDrive {
         robot_.liftMotorLeft.setPower(Math.abs(robot_.LIFT_SPEED));
         robot_.liftMotorRight.setPower(Math.abs(robot_.LIFT_SPEED));
 
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
         //wait until it gets to position
-        while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy()) {
+        while (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy() && timer.seconds() < 2) {
             robot_.OpMode_.sleep(1);
         }
 

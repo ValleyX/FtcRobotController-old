@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Drivers.OdometryGlobalCoordinatePosition;
  * Example OpMode that runs the GlobalCoordinatePosition thread and accesses the (x, y, theta) coordinate values
  */
 
+@Disabled
 @TeleOp(name = "Global Coordinate Position Test", group = "Calibration")
 public class GlobalPosUpdateTest extends LinearOpMode {
 

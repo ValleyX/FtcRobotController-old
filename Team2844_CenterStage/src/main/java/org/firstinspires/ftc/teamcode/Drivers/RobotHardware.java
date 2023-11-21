@@ -3,11 +3,16 @@ package org.firstinspires.ftc.teamcode.Drivers;
 //import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.IMU;
 
@@ -15,6 +20,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -84,8 +93,8 @@ public class RobotHardware {
     public static double MAX_CLIMB_SPEED = 0.75; //max speed for the climber
 
     //Added to test Gyroscope -------------------
-    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     COUNTS_PER_MOTOR_REV    = 28 ;   // eg: GoBILDA 312 RPM Yellow Jacket
+    static final double     DRIVE_GEAR_REDUCTION    = 20.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
 
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -130,6 +139,12 @@ public class RobotHardware {
     public final double deadband = 0.2; //later move to RobotHardware or place with all the constants
 
 
+    //Bucket constants
+    public static final double BUCKET_OPEN = 0.87;//constant for bucket open
+    public static final double BUCKET_CLOSED = 1;
+
+    public static final double BUCKET_MIDDLE = (BUCKET_CLOSED + BUCKET_OPEN) / 2;
+
 
     //make motors
 
@@ -164,8 +179,19 @@ public class RobotHardware {
     public CenterStagePipeline pipeline;
     public OpenCvSwitchableWebcam switchableWebcam;
 
+    public Servo bucketServo;
+
+    public TouchSensor touchSensor;
+
+    public IntegratingGyroscope gyro;
+    public NavxMicroNavigationSensor navxMicro;
+    public Orientation angles;
+
+    double saveGryoAngle;
+
     public RobotHardware(LinearOpMode opMode,boolean checkBlueColorAuto) {
         OpMode_ = opMode;
+        saveGryoAngle = 0;
 
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -226,16 +252,24 @@ public class RobotHardware {
         //declare intakeMotor Stuff
         intakeMotor = OpMode_.hardwareMap.dcMotor.get("intakeMotor");
 
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //declare bucket servo
+        bucketServo = OpMode_.hardwareMap.servo.get("bucketServo");
+        bucketServo.setPosition(BUCKET_CLOSED);
+
+        //external imu
+        navxMicro = OpMode_.hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = (IntegratingGyroscope)navxMicro;
 
 
-
+        //touch sensor for lift
+       // touchSensor = OpMode_.hardwareMap.get(TouchSensor.class, "sensor_touch");
 
 
 
@@ -245,18 +279,19 @@ public class RobotHardware {
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+        //RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
        imu = OpMode_.hardwareMap.get(IMU.class, "imu");
-
+       // imu = OpMode_.hardwareMap.get(IMU.class, "imu2");
 
 
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+       imu.resetYaw();
 
-/*
         camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
 
         pipeline = new RobotHardware.CenterStagePipeline( checkBlueColorAuto);
@@ -264,6 +299,8 @@ public class RobotHardware {
 
 
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, camCam, camCam);
+
+         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
         switchableWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -294,7 +331,7 @@ public class RobotHardware {
         });
 
         switchableWebcam.setPipeline(pipeline);
-*/
+
 
         // Wait for the game to start (Display Gyro value while waiting)
 
@@ -327,7 +364,7 @@ public class RobotHardware {
         Point REGION1_TOPLEFT_ANCHOR_POINT,REGION2_TOPLEFT_ANCHOR_POINT, REGION3_TOPLEFT_ANCHOR_POINT;
 
         static final int REGION_WIDTH = 130;
-        static final int REGION_HEIGHT = 130;
+        static final int REGION_HEIGHT = 33;
 
         Point region1_pointA, region1_pointB, region2_pointA, region2_pointB, region3_pointA,region3_pointB;
 
@@ -368,10 +405,17 @@ public class RobotHardware {
 
             checkBlue = isBlue;
 
-            //anchors to change boxes cordinates if neccary
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 200);
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(250, 200);
-            REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200);
+            if(checkBlue) { //starting position is blue
+                //anchors to change boxes cordinates if neccary
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 300);
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(350, 300);
+                REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200);
+            }
+            else{ //starting position is red
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 300);
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(350, 300);
+                REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200);
+            }
 
             //Creating points points for later boxes
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
@@ -387,7 +431,7 @@ public class RobotHardware {
         void inputToCb(Mat input) {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, B, 2);
-            Core.extractChannel(YCrCb, R, 0);
+            Core.extractChannel(YCrCb, R, 1);
 
         }
 
@@ -416,7 +460,7 @@ public class RobotHardware {
             avg2R = (int) Core.mean(region2_R).val[0];
             avg2B = (int) Core.mean(region2_B).val[0];
 
-            avg3R = (int) Core.mean(region3_R).val[0];
+            avg3R = (int) Core.mean(region3_R).val[0];//maybe set these to a constant because camera can't see the right size
             avg3B = (int) Core.mean(region3_B).val[0];
 
 
@@ -448,23 +492,23 @@ public class RobotHardware {
             //compares color of boxes to find greatest value of red, then blue
             //red
             if (checkBlue == false) {
-                if (avgR > avg2R && avgR > avg3R) {
+                if (avgR > avg2R && avgR > avg3R && avgR > 140) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avg2R > avgR && avg2R > avg3R) {
+                else if (avg2R > avgR && avg2R > avg3R && avg2R > 140) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Middle;
                 }
-                else if (avg3R > avgR && avg3R > avg2R) {
+                else /*if (avg3R > avgR && avg3R > avg2R)*/ {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Right;
                 }
             }
 
             //blue
             else {
-                if (avgB > avg2B && avgB > avg3B) {
+                if (avgB > avg2B && avgB > avg3B && avgB > 135) {//value was 140
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avg2B > avgB && avg2B > avg3B) {
+                else if (avg2B > avgB && avg2B > avg3B && avg2B > 135) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Middle;
                 }
                 else  {
@@ -547,6 +591,66 @@ public class RobotHardware {
     public void rightPower(double power) {
         motorBackRight.setPower(power);
         motorFrontRight.setPower(power);
+
+    }
+
+    public void calibrateNavX(){
+        OpMode_.telemetry.log().add("Gyro Calibrating. Do Not Move!");
+
+        // Wait until the gyro calibration is complete
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (navxMicro.isCalibrating())  {
+            OpMode_.telemetry.addData("calibrating", "%s", Math.round(timer.seconds())%2==0 ? "|.." : "..|");
+            OpMode_.telemetry.update();
+            // Thread.sleep(50);
+        }
+        OpMode_.telemetry.log().clear(); OpMode_.telemetry.log().add("Gyro Calibrated. Press Start.");
+        OpMode_.telemetry.clear(); OpMode_.telemetry.update();
+
+        // Wait for the start button to be pressed
+        OpMode_.waitForStart();
+        OpMode_.telemetry.log().clear();
+
+        while (OpMode_.opModeIsActive()) {
+
+            // Read dimensionalized data from the gyro. This gyro can report angular velocities
+            // about all three axes. Additionally, it internally integrates the Z axis to
+            // be able to report an absolute angular Z orientation.
+            //AngularVelocity rates = gyro.getAngularVelocity(AngleUnit.DEGREES);
+             angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+           /* telemetry.addLine()
+                .addData("dx", formatRate(rates.xRotationRate))
+                .addData("dy", formatRate(rates.yRotationRate))
+                .addData("dz", "%s deg/s", formatRate(rates.zRotationRate));*/
+
+            OpMode_.telemetry.addLine()
+                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
+                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
+                    .addData("pitch", "%s deg", formatAngle(angles.angleUnit, angles.thirdAngle));
+            OpMode_.telemetry.update();
+
+            OpMode_.idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+        }
+    }
+    String formatAngle(AngleUnit angleUnit, double angle) {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+
+    String formatDegrees(double degrees){
+        return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+
+    public double getNavXHeading(){
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle - saveGryoAngle;
+    }
+
+    public void resetNavXHeading(){
+        //angles.firstAngle = 0;
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        saveGryoAngle = angles.firstAngle;
 
     }
 }

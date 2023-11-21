@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.testcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -98,6 +99,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //Changed so that it works with a 4 motor drive
 //Robot changed to accommodate this Gyro drive, ports that 0 -3 connected to the Odemetry where changed to connect to the motor encoders
 
+@Disabled
 @Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
 
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode

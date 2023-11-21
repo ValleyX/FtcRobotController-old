@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.testcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
@@ -19,6 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
+@Disabled
 public class RobotHardwareTestVersion {
 
     public LinearOpMode OpMode_; // pointer to the run time operation mode
@@ -47,6 +51,42 @@ public class RobotHardwareTestVersion {
 
     public static double delayTimer = 2000; //delay timer for detection
 
+    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * Math.PI);
+
+    public double  targetHeading = 0; //
+
+    public double  headingError  = 0; //
+    public double  driveSpeed    = 0;
+    public double  turnSpeed     = 0;
+    public double  leftFrontSpeed     = 0;
+    public double leftBackSpeed = 0;
+
+    public double rightFrontSpeed = 0;
+
+    public double rightBackSpeed = 0;
+
+    public int leftFrontTarget = 0;
+
+    public int leftBackTarget = 0;
+
+    public int rightFrontTarget = 0;
+
+    public int rightBackTarget = 0;
+
+    public static final double     HEADING_THRESHOLD       = .5 ;    // How close must the heading get to the target before moving to next step.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    // Define the Proportional control coefficient (or GAIN) for "heading control".
+    // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
+    // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
+    // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
+    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.03; //was 0.03    // Larger is more responsive, but also less stable
+
     //make motors
     public DcMotor motorFrontLeft;
     public DcMotor motorBackLeft;
@@ -57,7 +97,8 @@ public class RobotHardwareTestVersion {
     public DcMotor verticalLeft;
     public DcMotor verticalRight;
     public DcMotor horizontal;
-    public BNO055IMU imu;
+   // public BNO055IMU imu;
+    public IMU imu;
     public WebcamName camCam;
     public CenterStagePipeline pipeline;
     public OpenCvSwitchableWebcam switchableWebcam;
@@ -80,25 +121,35 @@ public class RobotHardwareTestVersion {
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-       // motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+      //  motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+     //   motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+       RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
 
 
         // Retrieve the IMU from the hardware map
-        imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        imu = OpMode_.hardwareMap.get(IMU.class, "imu");
+      //  BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         // Technically this is the default, however specifying it is clearer
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+      //  parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+      //  parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+     //   parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+    //    parameters.loggingEnabled      = true;
+      //  parameters.loggingTag          = "IMU";
+    //    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         // Without this, data retrieving from the IMU throws an exception
-        imu.initialize(parameters);
+     //    imu.initialize(parameters);
+
+
+
+
+       imu.initialize(new IMU.Parameters(orientationOnRobot));
+       imu.resetYaw();
 
         camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
         pipeline = new RobotHardwareTestVersion.CenterStagePipeline( checkBlueColorAuto);
@@ -166,7 +217,7 @@ public class RobotHardwareTestVersion {
 
         //makes filters for the colors
 
-        Mat region1_Red = new Mat();
+        Mat region1_R = new Mat();
         
         Mat region1_B = new Mat();
 
@@ -185,7 +236,7 @@ public class RobotHardwareTestVersion {
 
         Mat YCrCb = new Mat();
 
-        public int avgR, avgLeftB, avgLeft2R, avgLeft2B, avgLeft3R, avgLeft3B; //Todo rename these variables
+        public int avgR,avgB,avg2R,avg2B,avg3R,avg3B;
 
 
         // Volatile since accessed by OpMode thread w/o synchronization
@@ -219,7 +270,7 @@ public class RobotHardwareTestVersion {
             //           Core.extractChannel(input, B, 2); //0 = red 1 = green 2 = blue
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, B, 2);
-            Core.extractChannel(YCrCb, R, 0);
+            Core.extractChannel(YCrCb, R, 1);
 
         }
 
@@ -227,7 +278,7 @@ public class RobotHardwareTestVersion {
         public void init(Mat firstFrame) {
             inputToCb(firstFrame);
 
-            region1_Red = R.submat(new Rect(region1_pointA, region1_pointB));
+            region1_R = R.submat(new Rect(region1_pointA, region1_pointB));
             region1_B = B.submat(new Rect(region1_pointA, region1_pointB));
 
             region2_R = R.submat(new Rect(region2_pointA, region2_pointB));
@@ -242,14 +293,14 @@ public class RobotHardwareTestVersion {
         public Mat processFrame(Mat input) {
             inputToCb(input);
 
-            avgR = (int) Core.mean(region1_Red).val[0];
-            avgLeftB = (int) Core.mean(region1_B).val[0];
+            avgR = (int) Core.mean(region1_R).val[0];
+            avgB = (int) Core.mean(region1_B).val[0];
 
-            avgLeft2R = (int) Core.mean(region2_R).val[0];
-            avgLeft2B = (int) Core.mean(region2_B).val[0];
+            avg2R = (int) Core.mean(region2_R).val[0];
+            avg2B = (int) Core.mean(region2_B).val[0];
 
-            avgLeft3R = (int) Core.mean(region3_R).val[0];
-            avgLeft3B = (int) Core.mean(region3_B).val[0];
+            avg3R = (int) Core.mean(region3_R).val[0];
+            avg3B = (int) Core.mean(region3_B).val[0];
 
 
             //Left
@@ -276,23 +327,23 @@ public class RobotHardwareTestVersion {
             //compares color of boxes to find greatest value of red, then blue
             //red
             if (checkBlue == false) {
-                if (avgR > avgLeft2R && avgR > avgLeft3R) {
+                if (avgR > avg2R && avgR > avg3R) {
                     position = RobotHardwareTestVersion.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avgLeft2R > avgR && avgLeft2R > avgLeft3R) {
+                else if (avg2R > avgR && avg2R > avg3R) {
                     position = RobotHardwareTestVersion.CenterStagePipeline.DetectionPosition.Middle;
                 }
-                else if (avgLeft3R > avgR && avgLeft3R > avgLeft2R) {
+                else /* if (avg3R > avgR && avg3R > avg2R) */{
                     position = RobotHardwareTestVersion.CenterStagePipeline.DetectionPosition.Right;
                 }
             }
 
             //blue
             else {
-                if (avgLeftB > avgLeft2B && avgLeftB > avgLeft3B) {
+                if (avgB > avg2B && avgB > avg3B) {
                     position = RobotHardwareTestVersion.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avgLeft2B > avgLeftB && avgLeft2B > avgLeft3B) {
+                else if (avg2B > avgB && avg2B > avg3B) {
                     position = RobotHardwareTestVersion.CenterStagePipeline.DetectionPosition.Middle;
                 }
                 else  {
@@ -307,7 +358,7 @@ public class RobotHardwareTestVersion {
 
 
         public int getAnalysisLeft() {
-            return avgLeftB;
+            return avgB;
         }
 
         public int getAnalysisRight() {

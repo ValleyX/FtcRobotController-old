@@ -48,6 +48,7 @@ public class BlueNearBoard extends LinearOpMode{
         double startingDistanceFromBoard = 49;
 
         while(opModeInInit()){
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             //to tell user what values the camera sees
             telemetry.addData("r value", robot.pipeline.avgR); // Telemetry for the user to see the avg values of blue and red for the boxes in the camera
             telemetry.addData("b value", robot.pipeline.avgB);
@@ -68,22 +69,30 @@ public class BlueNearBoard extends LinearOpMode{
             //go grab pixel
 
             //Code for parking
-            gyroDrive.driveStraight(0.5,30,0);
-            gyroDrive.turnToHeading(0.5,-90);
-            gyroDrive.driveStraight(0.5,6,-90); //To push item
-            gyroDrive.driveStraight(0.5,-6,-90);
-            gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.5,-12,0);
+            gyroDrive.driveStraight(0.1,17,0);
+            gyroDrive.turnToHeading(0.3,-30);
+            gyroDrive.driveStraight(0.5,14,-30); //To push item
+            gyroDrive.driveStraight(0.5,-6,-30);
+            /*gyroDrive.turnToHeading(0.5,0);
+            gyroDrive.driveStraight(0.5,-12,0);*/
 
             gyroDrive.turnToHeading(0.5,-90); //Turning to board and driving to board
-            gyroDrive.driveStraight(0.5,30,-90);
+            gyroDrive.driveStraight(0.3,41,-90);
             gyroDrive.turnToHeading(0.4,-90);
+
+            liftDrive.liftToHeight(8,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
             sleep(1000); //-------------- sleep to put lift pixel here
             //drive to parking
+            gyroDrive.driveStraight(0.5,-5,-90);
             gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.6,-15,0);
-            gyroDrive.turnToHeading(0.4,-90);
-            gyroDrive.driveStraight(0.5,8,-90);
+            gyroDrive.driveStraight(0.6,-20,0);
+            //gyroDrive.turnToHeading(0.4,-90);
+           // gyroDrive.driveStraight(0.5,8,-90);
 
 
         }
@@ -92,20 +101,28 @@ public class BlueNearBoard extends LinearOpMode{
         if(position == robot.pipeline.position.Middle){
 
             //push pixel out of the way
-            gyroDrive.driveStraight(0.5,33,0);
-            gyroDrive.driveStraight(0.4,-7,0);
+            gyroDrive.driveStraight(0.5,30,0);
+            gyroDrive.driveStraight(0.4,-4,0);
 
             //turning and moving toward board
             gyroDrive.turnToHeading(0.3,-90);
-            gyroDrive.driveStraight(0.5,33.5,-90);
+            gyroDrive.driveStraight(0.25,43,-90);
             gyroDrive.turnToHeading(0.3,-90); //making sure robot is in place
+
+            liftDrive.liftToHeight(8,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
             sleep(1000); //waiting at board ---------- place lift code
 
             //drive to parking area
+            gyroDrive.driveStraight(0.5,-5,-90);
             gyroDrive.turnToHeading(0.4,0);
-            gyroDrive.driveStraight(0.5,-20,0);
-            gyroDrive.turnToHeading(0.4,-90);
-            gyroDrive.driveStraight(0.5,10,-90);
+            gyroDrive.driveStraight(0.5,-23,0);
+            /*gyroDrive.turnToHeading(0.4,-90);
+            gyroDrive.driveStraight(0.5,10,-90);*/
 
 
 
@@ -113,24 +130,34 @@ public class BlueNearBoard extends LinearOpMode{
         if(position == robot.pipeline.position.Right){
 
             //go bump pixel
-            gyroDrive.driveStraight(0.6,30,0);
-            gyroDrive.turnToHeading(0.5,90);
-            gyroDrive.driveStraight(0.5,5,90); //Pushing game piece out of the way.
-            gyroDrive.driveStraight(0.5,-5,90);
+            gyroDrive.driveStraight(.1,30,0);
+            /*gyroDrive.turnToHeading(.5,30);
+            gyroDrive.driveStraight(0.5,16,120);
+            gyroDrive.driveStraight(.5,-20,30);*/
+           gyroDrive.turnToHeading(0.25,90);
+            gyroDrive.driveStraight(0.5,4,90); //Pushing game piece out of the way.
+            gyroDrive.driveStraight(0.5,-4,90);
             //move to board
-            gyroDrive.turnToHeading(0.4,0);
-            gyroDrive.driveStraight(0.5,4.5,0);
+            //gyroDrive.turnToHeading(0.4,0);
+            //gyroDrive.driveStraight(0.5,4.5,0);
             gyroDrive.turnToHeading(0.4,-90);
-            gyroDrive.driveStraight(0.6,34,-90);
+            gyroDrive.driveStraight(0.3,43,-90);
             gyroDrive.turnToHeading(0.4,-90);
-            sleep(2000); //waiting at board
+            liftDrive.liftToHeight(8,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
+
+            sleep(1000); //waiting at board
 
             //move to parking place
+            gyroDrive.driveStraight(0.5,-3,-90);
             gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.5,-31,0);
-            gyroDrive.turnToHeading(0.5,-90);
-            gyroDrive.driveStraight(0.5,10,-90);
-
+            gyroDrive.driveStraight(0.5,-27,0);
+           // gyroDrive.turnToHeading(0.5,-90);
+           // gyroDrive.driveStraight(0.5,10,-90);
 
 
         }

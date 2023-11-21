@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.testcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,8 +26,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
-@Autonomous(name="AutoRedNearBoard")
-public class RedNearBoard extends LinearOpMode{
+@Autonomous(name="AutoRedNearBoarExtraPixeld")
+public class RedNearBoardExtraPixel extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -129,11 +129,11 @@ public class RedNearBoard extends LinearOpMode{
             sleep(1000); //waiting at board ---------- place lift code
 
             //drive to parking area
-            gyroDrive.driveStraight(0.5,-3,90);
-            gyroDrive.turnToHeading(0.4,0);
-            gyroDrive.driveStraight(0.5,-24,0);
-           // gyroDrive.turnToHeading(0.4,90);
-           // gyroDrive.driveStraight(0.5,10,90);
+            gyroDrive.driveStraight(0.5,-105,90);
+            //gyroDrive.turnToHeading(0.4,0);
+           // gyroDrive.driveStraight(0.5,-24,0);
+            // gyroDrive.turnToHeading(0.4,90);
+            // gyroDrive.driveStraight(0.5,10,90);
 
 
 

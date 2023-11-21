@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.testcode;
 
         import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
@@ -9,6 +10,7 @@ package org.firstinspires.ftc.teamcode.testcode;
 
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
+@Disabled
 @Autonomous(name="AprilAutoTest")
 public class AprilAutoTest extends LinearOpMode {
     @Override

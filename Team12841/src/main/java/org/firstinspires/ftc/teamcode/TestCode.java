@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
-
+@Disabled
 @TeleOp(name = "TestDrive")
 public class TestCode extends LinearOpMode {
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "fieldcentric+AprilTracktm")
 public class Field_Centric_Plus_April_Tag extends LinearOpMode {
 
@@ -42,6 +43,8 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     double drive = 0;        // Desired forward power/speed (-1 to +1)
     double strafe = 0;        // Desired strafe power/speed (-1 to +1)
     double turn = 0;        // Desired turning power/speed (-1 to +1)
+
+    double AdjustValue = 1.1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -78,13 +81,13 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
     public void fieldCentricControl() {
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.2; // Counteract imperfect strafing
+        double x = gamepad1.left_stick_x * AdjustValue; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
         // Read inverse IMU heading, as the IMU heading is CW positive
 
         //Gets the bot heading by use Getting angles from imu and getting the yaw in degrees from that
-        double botHeading = -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = -Math.toRadians(robot.getNavXHeading())/*robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)*/;
 
 
 
@@ -122,7 +125,22 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         telemetry.addData("back left power", backLeftPower);
         telemetry.addData("back right power", backRightPower);
         telemetry.addData("denominator", denominator);
+        telemetry.addData("adjustvalue", AdjustValue);
         telemetry.update();
+
+        if (gamepad1.y)
+        {
+            AdjustValue += 0.1;
+            sleep(500);
+        }
+
+        if (gamepad1.a)
+        {
+            AdjustValue -= 0.1;
+            sleep(500);
+        }
+
+
 
     }
 

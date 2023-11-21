@@ -63,31 +63,34 @@ public class RobotHardware {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double HEADING_THRESHOLD = 0.4;    // How close must the heading get to the target before moving to next step.
+    static final double HEADING_THRESHOLD = 0.55;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double P_TURN_GAIN = 0.047;     // Larger is more responsive, but also less stable
-    static final double P_DRIVE_GAIN = 0.03;     // Larger is more responsive, but also less stable
+    static final double P_DRIVE_GAIN = 0.03;     // Larger is makes it snake, but smaller makes it drift
     Camera.SkystoneDeterminationPipeline.RobotPos side_;
 
     RobotHardware(LinearOpMode opMode, Camera.SkystoneDeterminationPipeline.RobotPos side) {
         side_ = side;
         opMode_ = opMode;
         //mapping motors
-        leftFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "lFMotor");
-        rightFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "rFMotor");
-        leftBackDrive = opMode_.hardwareMap.get(DcMotor.class, "lBMotor");
-        rightBackDrive = opMode_.hardwareMap.get(DcMotor.class, "rBMotor");
-        /*elbowMotor = opMode_.hardwareMap.get(DcMotor.class, "elbowMotor");
-        elevatorMotor = opMode_.hardwareMap.get(DcMotor.class, "elevatorMotor");
+        leftFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "lFMotor");//2
+        rightFrontDrive = opMode_.hardwareMap.get(DcMotor.class, "rFMotor");//1
+        leftBackDrive = opMode_.hardwareMap.get(DcMotor.class, "lBMotor");//3
+        rightBackDrive = opMode_.hardwareMap.get(DcMotor.class, "rBMotor");//0
+        elbowMotor = opMode_.hardwareMap.get(DcMotor.class, "elbowMotor");
+        //intakeMotor = opMode_.hardwareMap.get(DcMotor.class, "intakeMotor");
+
+
+        /*elevatorMotor = opMode_.hardwareMap.get(DcMotor.class, "elevatorMotor");
         intakeMotor = opMode_.hardwareMap.get(DcMotor.class, "intakeMotor");
         bucket = opMode_.hardwareMap.get(Servo.class, "bucket");*/
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         camera = new Camera(opMode_, side_);
         aprilTagCamera = new AprilTagCamera(opMode_, this);

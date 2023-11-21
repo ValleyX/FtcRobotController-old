@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.testcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -81,7 +82,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Merge Mechanum to April Tag", group = "Concept")
-//@Disabled
+@Disabled
 public class April_Tag_Test_Merge extends LinearOpMode
 {
 

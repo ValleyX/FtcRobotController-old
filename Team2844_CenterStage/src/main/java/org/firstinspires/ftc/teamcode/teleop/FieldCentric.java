@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "fieldcentric")
 public class FieldCentric extends LinearOpMode {
     @Override

@@ -87,7 +87,7 @@ public class Camera {
 
         //gives the width and height for each box (added onto anchorpoint to get the bottom right corner of the box)
         static final int REGION_WIDTH = 44;
-        static final int REGION_HEIGHT = 53;
+        static final int REGION_HEIGHT = 20;
 
         //point A is the top left, point B is the bottom right
         Point region1_pointA;
@@ -123,11 +123,11 @@ public class Camera {
         public SkystoneDeterminationPipeline(RobotPos side) {
             side_ = side;
             if (side_ == RobotPos.RedR || side_ == RobotPos.BlueR) {
-                REGION1_TOPLEFT_ANCHOR_POINT = new Point(245, 120); // red box
-                REGION2_TOPLEFT_ANCHOR_POINT = new Point(90, 97); //blue box
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(275, 180); // red box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(95, 160 ); //blue box
             } else if (side_ == RobotPos.RedL || side_ == RobotPos.BlueL) {
-                REGION1_TOPLEFT_ANCHOR_POINT = new Point(8, 110); // red box
-                REGION2_TOPLEFT_ANCHOR_POINT = new Point(190, 92); //blue box
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 175); // red box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(168, 170); //blue box
             }
             region1_pointA = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x, REGION1_TOPLEFT_ANCHOR_POINT.y);
             region1_pointB = new Point(REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH, REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
@@ -163,8 +163,8 @@ public class Camera {
             avgBlue2 = (int) Core.mean(region2_Cb).val[0];
             avgRed1 = (int) Core.mean(region1_Cr).val[0];
             avgRed2 = (int) Core.mean(region2_Cr).val[0];
-            int minimumColorValue = 100;
-//beANS
+            int minimumColorValue = 130;
+
 
             //compares them and picks the least red
             if (avgRed1 < avgRed2 && avgRed1 < minimumColorValue) {

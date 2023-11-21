@@ -1,26 +1,30 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.LiftHardware;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
-
-@TeleOp (name = "DoublePersonDrive")
-public class DoubleTeleOpDrive extends LinearOpMode{
+@Disabled
+@TeleOp(name = "DoublePersonDrive")
+public class DoubleTeleOpDrive extends LinearOpMode {
     IMU imu;
     RobotHardware robothardware;
     LiftHardware lifthardware;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robothardware = new RobotHardware(this, Camera.SkystoneDeterminationPipeline.RobotPos.BlueL);
-        lifthardware = new LiftHardware(robothardware);
+        //lifthardware = new LiftHardware(robothardware);
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("lFMotor");
@@ -29,7 +33,7 @@ public class DoubleTeleOpDrive extends LinearOpMode{
         DcMotor motorBackRight = hardwareMap.dcMotor.get("rBMotor");
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double x = gamepad1.left_stick_x * 1.2; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
         //elbow variables
@@ -92,7 +96,7 @@ public class DoubleTeleOpDrive extends LinearOpMode{
          */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         //RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
@@ -105,8 +109,8 @@ public class DoubleTeleOpDrive extends LinearOpMode{
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            elbowPosition = robothardware.elbowMotor.getCurrentPosition();
-            elevatorPosition = robothardware.elevatorMotor.getCurrentPosition();
+            //elbowPosition = robothardware.elbowMotor.getCurrentPosition();
+            //elevatorPosition = robothardware.elevatorMotor.getCurrentPosition();
 
 
             // Read inverse IMU heading, as the IMU heading is CW positive
@@ -118,7 +122,6 @@ public class DoubleTeleOpDrive extends LinearOpMode{
 
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-
 
 
             // Denominator is the largest motor power (absolute value) or 1
@@ -145,7 +148,7 @@ public class DoubleTeleOpDrive extends LinearOpMode{
             telemetry.update();
 
             //all the elbow movements
-            if (elbow)
+            /*if (elbow)
                 lifthardware.moveElbow(100,0.5);
             else if (Math.abs(elbowStick) > 0.2)
             {
@@ -201,7 +204,7 @@ public class DoubleTeleOpDrive extends LinearOpMode{
                     robothardware.bucket.setPosition(0);
                     bucketOpen = false;
                 }
-            }
+            }*/
         }
     }
 }

@@ -34,22 +34,24 @@ public class FullTeleOp extends LinearOpMode {
     private static final int DESIRED_TAG_ID = 2;     // Choose the tag you want to approach or set to -1 for ANY tag.
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    private AprilTagDetection desiredTag = null;
+    boolean isBucketClosed = true;// Used to hold the data for a detected AprilTag
 
 
-
+   public int waittime = 150;
 
     boolean targetFound     = false;    // Set to true when an AprilTag target is detected
     double  drive           = 0;        // Desired forward power/speed (-1 to +1)
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
+    boolean babyMode = false;
     @Override
     public void runOpMode() throws InterruptedException {
 
 
         // Initialize the Apriltag Detection process
-        initAprilTag();
+       // initAprilTag();
         robot = new RobotHardware(this,true);
         intakeDriver = new IntakeDriver(robot);
         liftDrive = new LiftDrive(robot);
@@ -57,21 +59,21 @@ public class FullTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+       // if (isStopRequested()) return;
 
         //
         while (opModeIsActive()) {
-
+/*
             //if bumper is pressed, then go to the april tag
             if (gamepad1.left_bumper) {
 
                 aprilTagDrive();
 
             } else {
-
+*/
                 fieldCentricControl();
 
-            }
+ //           }
 
         }
     }
@@ -82,19 +84,26 @@ public class FullTeleOp extends LinearOpMode {
 
 
 
-        robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
+
+        if (gamepad1.x)
+        {
+            babyMode = ! babyMode;
+            sleep(200);
+        }
+
         // Read inverse IMU heading, as the IMU heading is CW positive
 
         //Gets the bot heading by use Geting angles from imu and geting the yaw in degress from that
-        double botHeading =// -robot.imuFieldCentric.getAngularOrientation().firstAngle;
-                -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = -Math.toRadians(robot.getNavXHeading()); //-robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
 
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
@@ -111,7 +120,14 @@ public class FullTeleOp extends LinearOpMode {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
+        if (babyMode)
+        {
+            frontLeftPower *= 0.25;
+            backLeftPower *= 0.25;
+            frontRightPower *= 0.25;
+            backRightPower *= 0.25;
 
+        }
 
         //if robot found tag, then skip this and go to tag
         robot.leftFrontDrive.setPower(frontLeftPower);
@@ -130,12 +146,25 @@ public class FullTeleOp extends LinearOpMode {
         telemetry.addData("back left power", backLeftPower);
         telemetry.addData("back right power", backRightPower);
         telemetry.addData("denominator", denominator);
+        telemetry.addData("baby",babyMode);
 
 
 
 
         //----------------------------------------------------------------------------------------------
         //AUXILIARY CONTROLS
+
+        //X = ScoreTemporary
+        /*if(gamepad2.x)
+        {
+            liftDrive.liftToHeight(10,1,.1,1000,true);//move lift
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);//open servo
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);//closed servo
+            sleep(1000);
+            liftDrive.liftToHeight(-8,1,.1,1000,true);////lower lift
+        }
+
 
         //Y = step lift up
         if (gamepad2.y == true) {
@@ -152,6 +181,36 @@ public class FullTeleOp extends LinearOpMode {
             liftDrive.liftReset();
         }
 
+        //left Bumper = close bucket
+        if (gamepad2.left_bumper ) {
+            System.out.println("ValleyX closed");
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+        }
+
+
+         if (gamepad2.dpad_up)
+         {
+             waittime +=1;
+             sleep(100);
+         }
+
+        if (gamepad2.dpad_down)
+        {
+            waittime -=1;
+            sleep(100);
+        }*/
+        telemetry.addData("waittime", waittime);
+        //right Bumper = open bucket
+        if (gamepad2.right_bumper ) {
+            System.out.println("ValleyX opened");
+            /*robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(waittime);*/
+            robot.bucketServo.setPosition(robot.BUCKET_MIDDLE);
+            sleep(waittime);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+
+        }
+
 //        //X = score pixel
 //        if (gamepad1.x == true) {
 //            liftDrive.openBucket();
@@ -161,37 +220,88 @@ public class FullTeleOp extends LinearOpMode {
 //        }
 
 
-        //Left Trigger = intake
+        //Left Trigger = intake, Right Trigger = outtake
         if (gamepad1.left_trigger >= 0.1) {
             intakeDriver.intakeOn(true, 1);
         }
-        else {
-            intakeDriver.intakeOn(false, 0);
-        }
-
-        //Right Trigger = outtake
-        if (gamepad1.right_trigger >= 0.1) {
+        else if (gamepad1.right_trigger >= 0.1) {
             intakeDriver.intakeOn(true, -1);
         }
         else {
             intakeDriver.intakeOn(false, 0);
         }
 
+
         telemetry.addData("right sticky", gamepad2.right_stick_y );
         telemetry.addData("Left Motor Pos", robot.liftMotorLeft.getCurrentPosition());
         telemetry.addData("Right Motor Pos", robot.liftMotorRight.getCurrentPosition());
+        telemetry.addData("Navx heading", robot.angles.firstAngle);
 
 
         //Manipulator stick to move lift
-        if(gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
+        /*if(gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
             liftDrive.moveLift(-gamepad2.right_stick_y);
             telemetry.addData("in right sticky", gamepad2.right_stick_y );
         }
         else {
             liftDrive.moveLift(0);
+        }*/
+
+       if (gamepad1.y)
+	   {
+	      robot.resetNavXHeading();
+          sleep(200);
+	   }
+
+        //single driver stuff
+
+        //open bucket if held
+        if (gamepad1.left_bumper){
+            if (isBucketClosed) {
+                robot.bucketServo.setPosition(robot.BUCKET_MIDDLE);
+                sleep(100);
+                robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+                sleep(100);
+                isBucketClosed = false;
+            }
+      //  } else if (gamepad1.left_bumper &&!isBucketClosed){
+       //     robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+        }
+        else {
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            isBucketClosed = true;
         }
 
+        //reset lift
+        if (gamepad1.right_bumper) {
+            liftDrive.liftReset();
+        }
 
+        //manuel lift
+        if (gamepad1.dpad_up){
+            liftDrive.moveLift(.5);
+        } else if (gamepad1.dpad_down){
+            liftDrive.moveLift(-.5);
+        } else {
+            liftDrive.moveLift(0);
+        }
+
+        if (gamepad1.a) {// first tape mark liftheight
+            liftDrive.liftToEncoderCount(657,.5,10,1000,true);
+        }
+
+        if (gamepad1.b) {// second tape mark lift height
+            liftDrive.liftToEncoderCount(1150,.5,10,1000,true);
+        }
+
+        /*if (gamepad1.y /*&& gamepad1.x){
+            robot.resetNavXHeading();
+        }*/
+
+
+
+//657 lift low
+// 1150 lift middle
 
 
         telemetry.update();

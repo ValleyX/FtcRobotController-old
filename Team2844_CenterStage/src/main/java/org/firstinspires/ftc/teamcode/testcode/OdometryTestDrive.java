@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.testcode.RobotHardwareTestVersion;
 import java.io.File;
 
+@Disabled
 public class OdometryTestDrive {
     //call the robot (to be readded when ready
     private RobotHardwareTestVersion robot_;
