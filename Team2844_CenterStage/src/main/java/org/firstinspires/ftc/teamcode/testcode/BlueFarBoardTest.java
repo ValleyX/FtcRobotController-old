@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.testcode;
 
 /*
 Written by Benjamin Ettinger
@@ -16,12 +16,10 @@ import org.firstinspires.ftc.teamcode.Drivers.GyroDrive;
 import org.firstinspires.ftc.teamcode.Drivers.IntakeDriver;
 import org.firstinspires.ftc.teamcode.Drivers.LiftDrive;
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
-import org.firstinspires.ftc.teamcode.testcode.GyroDriveTest;
-import org.firstinspires.ftc.teamcode.testcode.RobotHardwareTestVersion;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous(name="BlueFarDropPark")
-public class BlueFarDropPark extends LinearOpMode {
+@Autonomous(name="BlueFarBoard")
+public class BlueFarBoardTest extends LinearOpMode {
 
     /*
     OUTLINE
@@ -31,16 +29,14 @@ public class BlueFarDropPark extends LinearOpMode {
     */
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
 
 
-
-
         //gets drivers
         RobotHardware robot = new RobotHardware(this, true); //checkBlue is true to only find
-        GyroDrive gyroDrive = new GyroDrive(robot);//sets up Drives        LiftDrive liftDrive = new LiftDrive(robot);
+        GyroDrive gyroDrive = new GyroDrive(robot);
+        LiftDrive liftDrive = new LiftDrive(robot);
         IntakeDriver intakeDriver = new IntakeDriver(robot);
         RobotHardware.CenterStagePipeline.DetectionPosition position = RobotHardware.CenterStagePipeline.DetectionPosition.Left; // position robot detects
         AprilTagDetection desiredTag = null;
@@ -50,8 +46,7 @@ public class BlueFarDropPark extends LinearOpMode {
         robot.blinkinLedDriver.setPattern(robot.pattern);
 
 
-
-        while(opModeInInit()) {
+        while (opModeInInit()) {
             //to tell user what values the camera sees
             telemetry.addData("r value", robot.pipeline.avgR);
             telemetry.addData("b value", robot.pipeline.avgB);
@@ -68,7 +63,6 @@ public class BlueFarDropPark extends LinearOpMode {
         }
 
 
-
         int AprilTagID = 2;
         double drive = 0;
         double turn = 0;
@@ -78,7 +72,7 @@ public class BlueFarDropPark extends LinearOpMode {
 
 
         waitForStart(); //waits
-        //obot.imu.resetYaw(); //reset IMU
+        //robot.imu.resetYaw(); //reset IMU
         robot.pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
         robot.blinkinLedDriver.setPattern(robot.pattern);
 
@@ -98,7 +92,7 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.driveStraight(0.25, -2, 90);
 
             //drop pixel
-            intakeDriver.intakeOn(true, .2);
+            intakeDriver.intakeOn(true, -0.2);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -109,40 +103,105 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go straight
-            gyroDrive.driveStraight(0.5, 15, 0);
+            gyroDrive.driveStraight(0.5, 17, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, -90);
 
-            //go park
-            gyroDrive.driveStraight(0.5, 105, -94);
+            //book it over to board
+            gyroDrive.driveStraight(.9, 80, -90);
+
+            //turn
+            gyroDrive.turnToHeading(.6, -180);
+
+            //drive to where we want to place pixel
+            gyroDrive.driveStraight(.5, 33, -180);
+
+            //turn
+            gyroDrive.turnToHeading(.6, -90);
+
+            //drive to board
+            gyroDrive.driveStraight(.25, 18, -90);
+
+            ////placePixel
+            liftDrive.liftToHeight(8, 1, .1, 1000, true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
+
+            //back away
+            gyroDrive.driveStraight(.25, -7, -90);
+
+            //turn to face correctly
+            gyroDrive.turnToHeading(.5, 0);
+
+            //drive out of the way to board
+            gyroDrive.driveStraight(.5, 26, 0);
+
+            //double check we are centerd
+            gyroDrive.turnToHeading(.5, 0);
+
 
         }
         //DECTECTS MIDDLE
         else if (position == robot.pipeline.position.Middle) {
 
             //go forward a lot
-            gyroDrive.driveStraight(0.25, 50, 0);
+            gyroDrive.driveStraight(.4, 47, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, 0.3);
-            sleep(1350);
+            intakeDriver.intakeOn(true, -0.2);
+            sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
             //move forward a bit
-            gyroDrive.driveStraight(0.5, 3, 0);
+            gyroDrive.driveStraight(0.5, 2, 0);
 
             //turn
             gyroDrive.turnToHeading(0.5, -90);
 
-            //book it over to park
-            gyroDrive.driveStraight(0.5, 100, -94);
+            //book it over to board
+            gyroDrive.driveStraight(0.7, 80, -90);
+
+            //turn
+            gyroDrive.turnToHeading(.5, -180);
+
+            //drive to where we want to place pixel
+            gyroDrive.driveStraight(.5, 27, -180);
+
+            //turn
+            gyroDrive.turnToHeading(.5, -90);
+
+            //drive to board
+            gyroDrive.driveStraight(.25, 15, -90);
+
+            ////placePixel
+            liftDrive.liftToHeight(8, 1, .1, 1000, true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
+
+            //back away
+            gyroDrive.driveStraight(.25, -5, -90);
+
+            //turn to face correctly
+            gyroDrive.turnToHeading(.5, 0);
+
+            //drive out of the way to board
+            gyroDrive.driveStraight(.5, 17, 0);
+
+            //double check we are centerd
+            gyroDrive.turnToHeading(.5, 0);
 
         }
         //DETECTS RIGHT (DEFAULT CONDITION)
         else {
 
-            //drive straight
+             //drive straight
             gyroDrive.driveStraight(0.25, 20, 0);
 
             //turn to the marker
@@ -155,32 +214,58 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go forward a bit
-            gyroDrive.driveStraight(0.5, 10, 0);
+            gyroDrive.driveStraight(0.5, 12, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, .3);
+            intakeDriver.intakeOn(true, -0.2);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
-            gyroDrive.driveStraight(0.5, 10, 0);
+            gyroDrive.driveStraight(0.5, 8, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, -90);
 
-            //go park
-            gyroDrive.driveStraight(0.5, 110, -94);//hehe i/m not entirely straight
+            //book it over to board
+            gyroDrive.driveStraight(0.7, 80, -90);
+
+            //turn
+            gyroDrive.turnToHeading(.5, -180);
+
+            //drive to where we want to place pixel
+            gyroDrive.driveStraight(.5, 25, -180);
+
+            //turn
+            gyroDrive.turnToHeading(.5, -90);
+
+            //drive to board
+            gyroDrive.driveStraight(.25, 23, -90);
+
+            ////placePixel
+            liftDrive.liftToHeight(8, 1, .1, 1000, true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
+
+            //back away
+            gyroDrive.driveStraight(.25, -5, -90);
+
+            //turn to face correctly
+            gyroDrive.turnToHeading(.5, 0);
+
+            //drive out of the way to board
+            gyroDrive.driveStraight(.5, 11, 0);
+
+            //double check we are centerd
+            gyroDrive.turnToHeading(.5, 0);
 
 
         }
 
 
-
-
     } //runOpMode end bracket
+}
 
-
-
-
-
-} //BlueNearBoardDropPark end bracket

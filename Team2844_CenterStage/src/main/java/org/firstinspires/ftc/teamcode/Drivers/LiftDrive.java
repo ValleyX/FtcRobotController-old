@@ -150,6 +150,21 @@ public class LiftDrive {
 
 
 
+    public boolean isFinished()
+    {
+        if (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy())
+        {
+            return false;
+        }
+        else {
+            //commit STOP
+            robot_.liftMotorLeft.setPower(0);
+            robot_.liftMotorRight.setPower(0);
+            return true;
+        }
+    }
+
+
     //steps the lift UP a pixel height (about 3 or so inches I think)
     public void liftStepUp () { //steps the lift up a row
 
@@ -268,6 +283,10 @@ public class LiftDrive {
         //resets the motors to run with the encoder
         robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //commit STOP
+        robot_.liftMotorLeft.setPower(0);
+        robot_.liftMotorRight.setPower(0);
 
     } //liftReset method end bracket
 

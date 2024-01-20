@@ -7,6 +7,7 @@ Blue Near Board Autonomous, detect the right spike, drop pixel, go park
  */
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -30,10 +31,8 @@ public class RedFarDropPark extends LinearOpMode {
     */
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
-
 
 
 
@@ -45,6 +44,9 @@ public class RedFarDropPark extends LinearOpMode {
         RobotHardware.CenterStagePipeline.DetectionPosition position = RobotHardware.CenterStagePipeline.DetectionPosition.Left; // position robot detects
         AprilTagDetection desiredTag = null;
         AprilTag aprilTag;
+
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE; //sets pattern as White for ld lights
+        robot.blinkinLedDriver.setPattern(robot.pattern); //puts that pattern as what the blinkinLed uses
 
 
 
@@ -75,7 +77,9 @@ public class RedFarDropPark extends LinearOpMode {
 
 
         waitForStart(); //waits
-        robot.imu.resetYaw(); //reset IMU
+        //robot.imu.resetYaw(); //reset IMU
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.RED; //sets pattern as White for ld lights
+        robot.blinkinLedDriver.setPattern(robot.pattern); //puts that pattern as what the blinkinLed uses
 
 
         //DETECT SPIKE POSITION
@@ -98,7 +102,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.driveStraight(0.5, 15, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.09);
+            intakeDriver.intakeOn(true, .3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -109,7 +113,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 110, 90);
+            gyroDrive.driveStraight(0.5, 110, 94);
 
         }
         //DECTECTS MIDDLE
@@ -119,7 +123,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.driveStraight(0.25, 50, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.1);
+            intakeDriver.intakeOn(true, .3);
             sleep(1000);
             intakeDriver.intakeOn(false, 0);
 
@@ -130,7 +134,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 90);
 
             //book it over to park
-            gyroDrive.driveStraight(0.5, 100, 90);
+            gyroDrive.driveStraight(0.5, 100, 94);
 
         }
         //DETECTS RIGHT (DEFAULT CONDITION)
@@ -146,7 +150,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.driveStraight(0.25, -2, -90);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.09);
+            intakeDriver.intakeOn(true, .3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -157,13 +161,13 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go straight
-            gyroDrive.driveStraight(0.5, 17, 0);
+            gyroDrive.driveStraight(0.5, 24, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, 90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 105, 90);
+            gyroDrive.driveStraight(0.5, 105, 94);
 
 
         }

@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.Drivers;
 
 //import com.qualcomm.hardware.bosch.BNO055IMU;
+import android.graphics.Path;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -24,6 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+//import org.firstinspires.ftc.teamcode.testcode.SampleRevBlinkinLedDriver;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -88,13 +95,13 @@ public class RobotHardware {
     public static double LIFT_SPEED = 0.75; //how fast the lift goes when certain commands in LiftDrive are called
     public static double MAX_LIFT_HEIGHT = 2112; //max height of lift in inches
     public static double MIN_LIFT_HEIGHT = -1; //min lift height of lift in inches
-    public static double CLIMB_MOTOR_MAX = 30; //max height for the climbers
+    public static double CLIMB_MOTOR_MAX = 6000; //max height for the climbers
     public static double CLIMB_MOTOR_MIN = 0; //min height for the climbers
     public static double MAX_CLIMB_SPEED = 0.75; //max speed for the climber
 
     //Added to test Gyroscope -------------------
     static final double     COUNTS_PER_MOTOR_REV    = 28 ;   // eg: GoBILDA 312 RPM Yellow Jacket
-    static final double     DRIVE_GEAR_REDUCTION    = 20.0 ;     // No External Gearing.
+    static final double     DRIVE_GEAR_REDUCTION    = 20 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
 
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -140,7 +147,7 @@ public class RobotHardware {
 
 
     //Bucket constants
-    public static final double BUCKET_OPEN = 0.87;//constant for bucket open
+    public static final double BUCKET_OPEN = .90                             ;//constant for bucket open
     public static final double BUCKET_CLOSED = 1;
 
     public static final double BUCKET_MIDDLE = (BUCKET_CLOSED + BUCKET_OPEN) / 2;
@@ -171,15 +178,60 @@ public class RobotHardware {
     public DcMotor verticalRight;
     public DcMotor horizontal;
 
-     public IMU imu;
+     //public IMU imu;
 
-     public BNO055IMU imuFieldCentric;
+     public BNO055IMU imu;
 
     public WebcamName camCam;
     public CenterStagePipeline pipeline;
     public OpenCvSwitchableWebcam switchableWebcam;
 
+
+
     public Servo bucketServo;
+
+
+    //servo to let hang assembly go up
+    public Servo hangUnleashServo;
+
+
+    //drone launcher release servo
+    public Servo launcherServo;
+
+
+
+    //Code for lights ---------------------------------------------------------------------------
+
+    public final static int LED_PERIOD = 10;
+
+    /*
+     * Rate limit gamepad button presses to every 500ms.
+     */
+    public final static int GAMEPAD_LOCKOUT = 500;
+
+    public RevBlinkinLedDriver blinkinLedDriver; //primary blinkin system
+
+    public RevBlinkinLedDriver winkinLedDriver; //secondary blinkin system
+    public RevBlinkinLedDriver.BlinkinPattern pattern;
+
+
+
+    //specific LED pattern declaration
+    public RevBlinkinLedDriver.BlinkinPattern autoPattern;
+    public RevBlinkinLedDriver.BlinkinPattern redPattern;
+    public RevBlinkinLedDriver.BlinkinPattern bluePattern;
+    public RevBlinkinLedDriver.BlinkinPattern endgamePattern;
+
+
+
+   public  Telemetry.Item patternName;
+   public  Telemetry.Item display;
+    public Deadline ledCycleDeadline;
+    public Deadline gamepadRateLimit;
+
+
+
+    //code for lights ---------------------------------------------------------------------------------
 
     public TouchSensor touchSensor;
 
@@ -187,7 +239,7 @@ public class RobotHardware {
     public NavxMicroNavigationSensor navxMicro;
     public Orientation angles;
 
-    double saveGryoAngle;
+    public double saveGryoAngle;
 
     public RobotHardware(LinearOpMode opMode,boolean checkBlueColorAuto) {
         OpMode_ = opMode;
@@ -230,7 +282,6 @@ public class RobotHardware {
 
 
 
-
         //declare liftMotor Stuff
         liftMotorLeft = OpMode_.hardwareMap.dcMotor.get("liftMotorLeft");
         liftMotorRight = OpMode_.hardwareMap.dcMotor.get("liftMotorRight");
@@ -259,9 +310,33 @@ public class RobotHardware {
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
+        //declare climber stuff
+        climbMotor = OpMode_.hardwareMap.dcMotor.get("climberMotor");
+
+        climbMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         //declare bucket servo
         bucketServo = OpMode_.hardwareMap.servo.get("bucketServo");
         bucketServo.setPosition(BUCKET_CLOSED);
+
+        //declare release servo
+        hangUnleashServo = OpMode_.hardwareMap.servo.get("hangUnleashServo");
+        hangUnleashServo.setPosition(0);
+
+        //declare drone launcher servo
+        launcherServo = OpMode_.hardwareMap.servo.get("launcherServo");
+        launcherServo.setPosition(0);
+
+
+       // hangUnleashServo = OpMode_.hardwareMap.servo.get("");
+
 
         //external imu
         navxMicro = OpMode_.hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
@@ -270,8 +345,6 @@ public class RobotHardware {
 
         //touch sensor for lift
        // touchSensor = OpMode_.hardwareMap.get(TouchSensor.class, "sensor_touch");
-
-
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -285,14 +358,38 @@ public class RobotHardware {
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
-       imu = OpMode_.hardwareMap.get(IMU.class, "imu");
-       // imu = OpMode_.hardwareMap.get(IMU.class, "imu2");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = OpMode_.hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
 
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-       imu.resetYaw();
+        //camera and LED declaration
 
         camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
+
+        blinkinLedDriver = OpMode_.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin"); //Setting led map
+
+        //winkinLedDriver = OpMode_.hardwareMap.get(RevBlinkinLedDriver.class, "winkin"); //2nd LED map
+
+
+        //LED patterns
+
+        autoPattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+        redPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
+        bluePattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE;
+        endgamePattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
+
+
+//        blinkinLedDriver.setPattern(pattern);
+
+
+
 
         pipeline = new RobotHardware.CenterStagePipeline( checkBlueColorAuto);
         int cameraMonitorViewId = OpMode_.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", OpMode_.hardwareMap.appContext.getPackageName());
@@ -333,6 +430,8 @@ public class RobotHardware {
         switchableWebcam.setPipeline(pipeline);
 
 
+
+
         // Wait for the game to start (Display Gyro value while waiting)
 
 
@@ -356,7 +455,7 @@ public class RobotHardware {
             Right
         }
 
-        //Some color constants, sets deintion for colors
+        //Some color constants, sets definitions for colors
         //R represents Red and B represents Blue
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar RED = new Scalar(255, 0, 0);
@@ -365,6 +464,10 @@ public class RobotHardware {
 
         static final int REGION_WIDTH = 130;
         static final int REGION_HEIGHT = 33;
+
+        public final int redThreshold = 135; //amount of red the camera can see in a box to assign whether object
+
+        public final int blueThreshold = 135; //amount of blue the camera can see in a box to assign whether object
 
         Point region1_pointA, region1_pointB, region2_pointA, region2_pointB, region3_pointA,region3_pointB;
 
@@ -400,6 +503,7 @@ public class RobotHardware {
 
         boolean checkBlue; //where or not the pipeline checks if regions have blue or not
 
+
         //added anchorX and anchorY for test 2023
         public CenterStagePipeline( boolean isBlue) {
 
@@ -407,7 +511,7 @@ public class RobotHardware {
 
             if(checkBlue) { //starting position is blue
                 //anchors to change boxes cordinates if neccary
-                REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 300);
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(50, 300);
                 REGION2_TOPLEFT_ANCHOR_POINT = new Point(350, 300);
                 REGION3_TOPLEFT_ANCHOR_POINT = new Point(500, 200);
             }
@@ -432,7 +536,6 @@ public class RobotHardware {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, B, 2);
             Core.extractChannel(YCrCb, R, 1);
-
         }
 
         @Override
@@ -492,10 +595,10 @@ public class RobotHardware {
             //compares color of boxes to find greatest value of red, then blue
             //red
             if (checkBlue == false) {
-                if (avgR > avg2R && avgR > avg3R && avgR > 140) {
+                if (avgR > avg2R && avgR > avg3R && avgR > redThreshold) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avg2R > avgR && avg2R > avg3R && avg2R > 140) {
+                else if (avg2R > avgR && avg2R > avg3R && avg2R > redThreshold) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Middle;
                 }
                 else /*if (avg3R > avgR && avg3R > avg2R)*/ {
@@ -505,10 +608,10 @@ public class RobotHardware {
 
             //blue
             else {
-                if (avgB > avg2B && avgB > avg3B && avgB > 135) {//value was 140
+                if (avgB > avg2B && avgB > avg3B && avgB > blueThreshold) {//value was 140
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Left;
                 }
-                else if (avg2B > avgB && avg2B > avg3B && avg2B > 135) {
+                else if (avg2B > avgB && avg2B > avg3B && avg2B > blueThreshold) {
                     position = RobotHardware.CenterStagePipeline.DetectionPosition.Middle;
                 }
                 else  {
@@ -519,7 +622,6 @@ public class RobotHardware {
 
             return input;
         }
-
 
 
         public int getAnalysisLeft() {
@@ -568,7 +670,6 @@ public class RobotHardware {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
     }
-
 
 
 
@@ -648,9 +749,9 @@ public class RobotHardware {
     }
 
     public void resetNavXHeading(){
-        //angles.firstAngle = 0;
-        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        saveGryoAngle = angles.firstAngle;
+       // angles.firstAngle = 0;
+        //angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        saveGryoAngle = imu.getAngularOrientation().firstAngle;
 
     }
 }

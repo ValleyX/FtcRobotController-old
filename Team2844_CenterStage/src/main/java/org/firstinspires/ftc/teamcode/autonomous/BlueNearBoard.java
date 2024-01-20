@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,17 +11,22 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.Drivers.AprilTag;
 import org.firstinspires.ftc.teamcode.Drivers.ClimberDriver;
 import org.firstinspires.ftc.teamcode.Drivers.GyroDrive;
+import org.firstinspires.ftc.teamcode.Drivers.IntakeDriver;
 import org.firstinspires.ftc.teamcode.Drivers.LiftDrive;
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 
 import org.firstinspires.ftc.teamcode.Drivers.OdometryDrive;
+import org.firstinspires.ftc.teamcode.testcode.SampleRevBlinkinLedDriver;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.concurrent.TimeUnit;
 
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
@@ -34,6 +40,7 @@ public class BlueNearBoard extends LinearOpMode{
 
         GyroDrive gyroDrive = new GyroDrive(robot);//sets up Drives
         LiftDrive liftDrive = new LiftDrive(robot);
+        IntakeDriver intakeDriver = new IntakeDriver(robot);
 
 
         RobotHardware.CenterStagePipeline.DetectionPosition position = RobotHardware.CenterStagePipeline.DetectionPosition.Left; // position robot detects
@@ -46,6 +53,12 @@ public class BlueNearBoard extends LinearOpMode{
         double strafe = 0;
         double distanceToBoard = 0;
         double startingDistanceFromBoard = 49;
+
+        //robot.displayKind = robot.DisplayKind.AUTO;
+
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE; //sets pattern as White for ld lights
+        robot.blinkinLedDriver.setPattern(robot.pattern); //puts that pattern as what the blinkinLed uses
+
 
         while(opModeInInit()){
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
@@ -63,34 +76,73 @@ public class BlueNearBoard extends LinearOpMode{
 
             position = robot.pipeline.position; //updating position to what the robot detects
 
+//
+//            //set blinkins
+//            robot.blinkinLedDriver.setPattern(robot.bluePattern);
+//            robot.winkinLedDriver.setPattern(robot.autoPattern);
+
 
         }
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE; //Setting color of lds on robot
+        robot.blinkinLedDriver.setPattern(robot.pattern);
         if(position == robot.pipeline.position.Left){
+
+            double DRIVE_SPEED = .3;
             //go grab pixel
 
-            //Code for parking
-            gyroDrive.driveStraight(0.1,17,0);
-            gyroDrive.turnToHeading(0.3,-30);
-            gyroDrive.driveStraight(0.5,14,-30); //To push item
-            gyroDrive.driveStraight(0.5,-6,-30);
-            /*gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.5,-12,0);*/
+            //drive to spike marks
+            gyroDrive.driveStraight(DRIVE_SPEED,28,0);
 
-            gyroDrive.turnToHeading(0.5,-90); //Turning to board and driving to board
-            gyroDrive.driveStraight(0.3,41,-90);
-            gyroDrive.turnToHeading(0.4,-90);
+            //turn to board
+            gyroDrive.turnToHeading(DRIVE_SPEED,-90); //Turning to board and driving to board
 
-            liftDrive.liftToHeight(8,1,.1,1000,true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            //drive to spitting location
+            gyroDrive.driveStraight(DRIVE_SPEED,20,-90);
+
+            //spit out pixel
+            intakeDriver.intakeOn(true, .4);
+            sleep(1500);
+            intakeDriver.intakeOn(false, 0);
+
+            //drive forward
+            gyroDrive.driveStraight(DRIVE_SPEED,10,-90);
+
+            //turn to move to board location
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
+
+            //drive to line up with tag
+            gyroDrive.driveStraight(DRIVE_SPEED,-11,0);
+
+            //turn
+            gyroDrive.turnToHeading(DRIVE_SPEED,-90);
+
+            //drive to board
+            gyroDrive.driveStraight(.2,11,-90);
+
+            //center
+            //gyroDrive.turnToHeading(0.4,-90);
+
+            //place
+            liftDrive.liftToHeight(6,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN - .03);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);
             liftDrive.liftReset();
             sleep(1000); //-------------- sleep to put lift pixel here
-            //drive to parking
-            gyroDrive.driveStraight(0.5,-5,-90);
-            gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.6,-20,0);
+
+
+            //back away
+            gyroDrive.driveStraight(DRIVE_SPEED,-5,-90);
+
+            //turn away from board
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
+
+            //drive away
+            gyroDrive.driveStraight(DRIVE_SPEED,-20,0);
+
+            //center
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
             //gyroDrive.turnToHeading(0.4,-90);
            // gyroDrive.driveStraight(0.5,8,-90);
 
@@ -100,16 +152,32 @@ public class BlueNearBoard extends LinearOpMode{
         //Objective of  this code is to GyroscopeDrive to drive up to the April tag and place pixel then to park, later want to use april tag
         if(position == robot.pipeline.position.Middle){
 
-            //push pixel out of the way
-            gyroDrive.driveStraight(0.5,30,0);
-            gyroDrive.driveStraight(0.4,-4,0);
+            double DRIVE_SPEED = .5;
 
-            //turning and moving toward board
-            gyroDrive.turnToHeading(0.3,-90);
-            gyroDrive.driveStraight(0.25,43,-90);
-            gyroDrive.turnToHeading(0.3,-90); //making sure robot is in place
+            //move to spike marks
+            gyroDrive.driveStraight(DRIVE_SPEED,25,0);
 
-            liftDrive.liftToHeight(8,1,.1,1000,true);
+            //turn around to spit out pixel
+            gyroDrive.turnToHeading(.5,180);
+
+            //spit pixel
+            intakeDriver.intakeOn(true, .3);
+            sleep(1250);
+            intakeDriver.intakeOn(false, 0);
+
+            //drive back
+            gyroDrive.driveStraight(DRIVE_SPEED,3,180);
+
+            //turn toward board
+            gyroDrive.turnToHeading(.3,-90);
+
+            //move to board
+            gyroDrive.driveStraight(.25,48,-90);
+
+            //gyroDrive.turnToHeading(.3,-90); //making sure robot is in place
+
+            //place pixel
+            liftDrive.liftToHeight(5,1,.1,1000,true);
             robot.bucketServo.setPosition(robot.BUCKET_OPEN);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
@@ -117,10 +185,17 @@ public class BlueNearBoard extends LinearOpMode{
             liftDrive.liftReset();
             sleep(1000); //waiting at board ---------- place lift code
 
-            //drive to parking area
-            gyroDrive.driveStraight(0.5,-5,-90);
-            gyroDrive.turnToHeading(0.4,0);
-            gyroDrive.driveStraight(0.5,-23,0);
+            //back away from board
+            gyroDrive.driveStraight(DRIVE_SPEED,-5,-90);
+
+            //turn to wall
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
+
+            //drive away from board
+            gyroDrive.driveStraight(DRIVE_SPEED,-23,0);
+
+            //center yourself
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
             /*gyroDrive.turnToHeading(0.4,-90);
             gyroDrive.driveStraight(0.5,10,-90);*/
 
@@ -129,35 +204,51 @@ public class BlueNearBoard extends LinearOpMode{
         }
         if(position == robot.pipeline.position.Right){
 
-            //go bump pixel
-            gyroDrive.driveStraight(.1,30,0);
-            /*gyroDrive.turnToHeading(.5,30);
-            gyroDrive.driveStraight(0.5,16,120);
-            gyroDrive.driveStraight(.5,-20,30);*/
-           gyroDrive.turnToHeading(0.25,90);
-            gyroDrive.driveStraight(0.5,4,90); //Pushing game piece out of the way.
-            gyroDrive.driveStraight(0.5,-4,90);
-            //move to board
-            //gyroDrive.turnToHeading(0.4,0);
-            //gyroDrive.driveStraight(0.5,4.5,0);
+            double DRIVE_SPEED = .3;
+            //go grab pixel
+
+            //drive to spike marks
+            gyroDrive.driveStraight(DRIVE_SPEED,32,0);
+
+            //turn to board
+            gyroDrive.turnToHeading(DRIVE_SPEED,-90); //Turning to board and driving to board
+
+            //backup
+            gyroDrive.driveStraight(DRIVE_SPEED,-3,0);
+
+            //spit out pixel
+            intakeDriver.intakeOn(true, .4);
+            sleep(1250);
+            intakeDriver.intakeOn(false, 0);
+
+
+            //drive to board
+            gyroDrive.driveStraight(DRIVE_SPEED,45,-90);
+
+            //center
             gyroDrive.turnToHeading(0.4,-90);
-            gyroDrive.driveStraight(0.3,43,-90);
-            gyroDrive.turnToHeading(0.4,-90);
-            liftDrive.liftToHeight(8,1,.1,1000,true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+
+            //place
+            liftDrive.liftToHeight(6,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN -.03);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);
             liftDrive.liftReset();
+            sleep(1000); //-------------- sleep to put lift pixel here
 
-            sleep(1000); //waiting at board
 
-            //move to parking place
-            gyroDrive.driveStraight(0.5,-3,-90);
-            gyroDrive.turnToHeading(0.5,0);
-            gyroDrive.driveStraight(0.5,-27,0);
-           // gyroDrive.turnToHeading(0.5,-90);
-           // gyroDrive.driveStraight(0.5,10,-90);
+            //back away
+            gyroDrive.driveStraight(DRIVE_SPEED,-5,-90);
+
+            //turn away from board
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
+
+            //drive away
+            gyroDrive.driveStraight(DRIVE_SPEED,-30,0);
+
+            //center
+            gyroDrive.turnToHeading(DRIVE_SPEED,0);
 
 
         }

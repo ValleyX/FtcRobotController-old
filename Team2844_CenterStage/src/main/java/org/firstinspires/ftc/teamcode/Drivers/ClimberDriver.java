@@ -6,13 +6,15 @@ package org.firstinspires.ftc.teamcode.Drivers;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ClimberDriver {
 
     private RobotHardware robot_; //gets the robot hardware into this class
 
-    DcMotor climbMotor; //gets motor from RobotHardware
+    DcMotor climbMotor; //declares motor in this class
+    Servo releaseServo; //declares servo in this class
 
 
     //constructor
@@ -21,6 +23,8 @@ public class ClimberDriver {
         robot_ = robot; //linking (pointing) to instantiated RobotHardwareClass
 
         climbMotor = robot_.climbMotor; //gets motor from RobotHardware
+
+        releaseServo = robot_.hangUnleashServo; //gets servo from RobotHardware
 
     }
 
@@ -31,15 +35,15 @@ public class ClimberDriver {
 
         //logic so that we don't break the climbers
         //if the climber is at its MAXIMUM, DONT MOVE IT
-        if (climbMotor.getCurrentPosition() >= robot_.CLIMB_MOTOR_MAX) {
-
-            climbMotor.setPower(0);
-
-        } else {
-
+//        if (climbMotor.getCurrentPosition() >= robot_.CLIMB_MOTOR_MAX) {
+//
+//            climbMotor.setPower(0);
+//
+//        } else {
+//
             climbMotor.setPower(power);
-
-        }
+//
+//        }
 
 
     } //climberUp end bracket
@@ -50,17 +54,26 @@ public class ClimberDriver {
 
         //logic so that we don't break the climbers
         //if the climber is at its MINIMUM, DONT MOVE IT
-        if (climbMotor.getCurrentPosition() <= robot_.CLIMB_MOTOR_MIN) {
+//        if (climbMotor.getCurrentPosition() <= robot_.CLIMB_MOTOR_MIN) {
+//
+//            climbMotor.setPower(0);
+//
+//        } else {
+//
+            climbMotor.setPower(power);
+//
+//        }
 
-            climbMotor.setPower(0);
+    } //climberDown end bracket
 
-        } else {
+    public void moveClimberNoLimit(double power) {
+
+        //moves climber without limits sprcifically for the reset progRAM
 
             climbMotor.setPower(power);
 
-        }
 
-    } //climberDown end bracket
+    }
 
 
     //method to set the climbers to a specific position
@@ -124,6 +137,14 @@ public class ClimberDriver {
         climbMotor.setPower(Math.abs(robot_.MAX_CLIMB_SPEED));
 
     } //climberMax end bracket
+
+
+    //Method to release the climber assembly during end game
+    public void releaseClimber() {
+
+        releaseServo.setPosition(1);
+
+    } //releaseClimber End Bracket
 
 
 } //class ClimberDriver end bracket

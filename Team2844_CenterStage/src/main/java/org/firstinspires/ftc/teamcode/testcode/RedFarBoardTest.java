@@ -7,6 +7,7 @@ Blue Near Board Autonomous, detect the right spike, drop pixel, go park
  */
 
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -44,6 +45,9 @@ public class RedFarBoardTest extends LinearOpMode {
         AprilTagDetection desiredTag = null;
         AprilTag aprilTag;
 
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+        robot.blinkinLedDriver.setPattern(robot.pattern);
+
 
 
         while(opModeInInit()) {
@@ -73,7 +77,9 @@ public class RedFarBoardTest extends LinearOpMode {
 
 
         waitForStart(); //waits
-        robot.imu.resetYaw(); //reset IMU
+        //robot.imu.resetYaw(); //reset IMU
+        robot.pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+        robot.blinkinLedDriver.setPattern(robot.pattern);
 
 
         //DETECT SPIKE POSITION
@@ -93,33 +99,33 @@ public class RedFarBoardTest extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go forward a bit
-            gyroDrive.driveStraight(0.5, 15, 0);
+            gyroDrive.driveStraight(0.5, 12, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.09);
-            sleep(1250);
+            intakeDriver.intakeOn(true, -0.2);
+            sleep(1450);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
-            gyroDrive.driveStraight(0.5, 5, 0);
+            gyroDrive.driveStraight(0.5, 8, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, 90);
 
             //book it over to board
-            gyroDrive.driveStraight(0.7, 80, 90);
+            gyroDrive.driveStraight(0.7, 80, 95);
 
             //turn
             gyroDrive.turnToHeading(.5,180);
 
             //drive to where we want to place pixel
-            gyroDrive.driveStraight(.5,18,180);
+            gyroDrive.driveStraight(.5,19,180);
 
             //turn
             gyroDrive.turnToHeading(.5,90);
 
             //drive to board
-            gyroDrive.driveStraight(.25,20,90);
+            gyroDrive.driveStraight(.25,29,90);
 
             ////placePixel
             liftDrive.liftToHeight(8,1,.1,1000,true);
@@ -130,7 +136,7 @@ public class RedFarBoardTest extends LinearOpMode {
             liftDrive.liftReset();
 
             //back away
-            gyroDrive.driveStraight(.25,-5,90);
+            gyroDrive.driveStraight(.25,-7,90);
 
             //turn to face correctly
             gyroDrive.turnToHeading(.5,0);
@@ -139,34 +145,34 @@ public class RedFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(.5,11,0);
 
             //double check we are centerd
-            gyroDrive.turnToHeading(.5,90);
+            gyroDrive.turnToHeading(.5,0);
 
         }
         //DECTECTS MIDDLE
         else if (position == robot.pipeline.position.Middle) {
 
             //go forward a lot
-            gyroDrive.driveStraight(0.25, 50, 0);
+            gyroDrive.driveStraight(.4, 48, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.1);
-            sleep(1000);
+            intakeDriver.intakeOn(true, -0.2);
+            sleep(1450);
             intakeDriver.intakeOn(false, 0);
 
             //move forward a bit
-            gyroDrive.driveStraight(0.5, 3, 0);
+            gyroDrive.driveStraight(0.5, 6, 0);
 
             //turn
             gyroDrive.turnToHeading(0.5, 90);
 
             //book it over to board
-            gyroDrive.driveStraight(0.7, 80, 90);
+            gyroDrive.driveStraight(0.7, 80, 100);
 
             //turn
             gyroDrive.turnToHeading(.5,180);
 
             //drive to where we want to place pixel
-            gyroDrive.driveStraight(.5,24,180);
+            gyroDrive.driveStraight(.5,23,180);
 
             //turn
             gyroDrive.turnToHeading(.5,90);
@@ -183,16 +189,16 @@ public class RedFarBoardTest extends LinearOpMode {
             liftDrive.liftReset();
 
             //back away
-            gyroDrive.driveStraight(.25,-5,90);
+            gyroDrive.driveStraight(.25,-7,90);
 
             //turn to face correctly
             gyroDrive.turnToHeading(.5,0);
 
             //drive out of the way to board
-            gyroDrive.driveStraight(.5,15,0);
+            gyroDrive.driveStraight(.5,19,0);
 
             //double check we are centerd
-            gyroDrive.turnToHeading(.5,90);
+            gyroDrive.turnToHeading(.5,0);
 
         }
         //DETECTS RIGHT (DEFAULT CONDITION)
@@ -208,7 +214,7 @@ public class RedFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(0.25, -2, -90);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.09);
+            intakeDriver.intakeOn(true, -0.3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -224,8 +230,40 @@ public class RedFarBoardTest extends LinearOpMode {
             //turn to park
             gyroDrive.turnToHeading(0.5, 90);
 
-            //go park
-            gyroDrive.driveStraight(0.5, 105, 90);
+             //book it over to board
+            gyroDrive.driveStraight(.9, 80, 100);
+
+            //turn
+            gyroDrive.turnToHeading(.6,180);
+
+            //drive to where we want to place pixel
+            gyroDrive.driveStraight(.5,26,180);
+
+            //turn
+            gyroDrive.turnToHeading(.6,90);
+
+            //drive to board
+            gyroDrive.driveStraight(.25,21,90);
+
+            ////placePixel
+            liftDrive.liftToHeight(8,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            sleep(1000);//move srevo on bucket
+            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
+            sleep(1000);
+            liftDrive.liftReset();
+
+            //back away
+            gyroDrive.driveStraight(.25,-7,90);
+
+            //turn to face correctly
+            gyroDrive.turnToHeading(.5,0);
+
+            //drive out of the way to board
+            gyroDrive.driveStraight(.5,26,0);
+
+            //double check we are centerd
+            gyroDrive.turnToHeading(.5,0);
 
 
         }

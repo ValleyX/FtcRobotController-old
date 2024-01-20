@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Drivers.ClimberDriver;
+import org.firstinspires.ftc.teamcode.Drivers.DroneLauncher;
 import org.firstinspires.ftc.teamcode.Drivers.IntakeDriver;
 import org.firstinspires.ftc.teamcode.Drivers.LiftDrive;
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
@@ -28,6 +30,9 @@ public class FullTeleOp extends LinearOpMode {
     RobotHardware robot;
     LiftDrive liftDrive;
     IntakeDriver intakeDriver;
+    ClimberDriver climberDriver;
+
+    DroneLauncher droneLauncher;
 
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
@@ -46,6 +51,14 @@ public class FullTeleOp extends LinearOpMode {
     double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
     boolean babyMode = false;
+
+    boolean bLiftInMotion = false;
+
+
+//    //set lights
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -55,7 +68,11 @@ public class FullTeleOp extends LinearOpMode {
         robot = new RobotHardware(this,true);
         intakeDriver = new IntakeDriver(robot);
         liftDrive = new LiftDrive(robot);
-
+        climberDriver = new ClimberDriver(robot);
+        droneLauncher = new DroneLauncher(robot);
+//
+//        robot.blinkinLedDriver.setPattern(robot.redPattern);
+//        robot.winkinLedDriver.setPattern(robot.redPattern);
 
         waitForStart();
 
@@ -82,8 +99,6 @@ public class FullTeleOp extends LinearOpMode {
     public void fieldCentricControl () {
 
 
-
-
         //robot.leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         //robot.leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -93,22 +108,20 @@ public class FullTeleOp extends LinearOpMode {
         double rx = gamepad1.right_stick_x;
 
 
-        if (gamepad1.x)
-        {
-            babyMode = ! babyMode;
+        if (gamepad1.x) {
+            babyMode = !babyMode;
             sleep(200);
         }
 
         // Read inverse IMU heading, as the IMU heading is CW positive
 
         //Gets the bot heading by use Geting angles from imu and geting the yaw in degress from that
-        double botHeading = -Math.toRadians(robot.getNavXHeading()); //-robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
+        //double botHeading = /*-Math.toRadians(robot.getNavXHeading());*/-robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = -Math.toRadians(robot.imu.getAngularOrientation().firstAngle - robot.saveGryoAngle);
 
 
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-
 
 
         // Denominator is the largest motor power (absolute value) or 1
@@ -120,8 +133,7 @@ public class FullTeleOp extends LinearOpMode {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        if (babyMode)
-        {
+        if (babyMode) {
             frontLeftPower *= 0.25;
             backLeftPower *= 0.25;
             frontRightPower *= 0.25;
@@ -136,9 +148,6 @@ public class FullTeleOp extends LinearOpMode {
         robot.rightBackDrive.setPower(backRightPower);
 
 
-
-
-
         telemetry.addData("rotX", rotX);
         telemetry.addData("rotY", rotY);
         telemetry.addData("front left power", frontLeftPower);
@@ -146,158 +155,126 @@ public class FullTeleOp extends LinearOpMode {
         telemetry.addData("back left power", backLeftPower);
         telemetry.addData("back right power", backRightPower);
         telemetry.addData("denominator", denominator);
-        telemetry.addData("baby",babyMode);
-
-
+        telemetry.addData("baby", babyMode);
 
 
         //----------------------------------------------------------------------------------------------
         //AUXILIARY CONTROLS
 
-        //X = ScoreTemporary
-        /*if(gamepad2.x)
-        {
-            liftDrive.liftToHeight(10,1,.1,1000,true);//move lift
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);//open servo
-            sleep(1000);//move srevo on bucket
-            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);//closed servo
-            sleep(1000);
-            liftDrive.liftToHeight(-8,1,.1,1000,true);////lower lift
-        }
 
-
-        //Y = step lift up
-        if (gamepad2.y == true) {
-            liftDrive.liftStepUp();
-        }
-
-        //A = step lift down
-        if (gamepad2.a == true) {
-            liftDrive.liftStepDown();
-        }
-
-        //B = reset lift
-        if (gamepad2.b == true) {
-            liftDrive.liftReset();
-        }
-
-        //left Bumper = close bucket
-        if (gamepad2.left_bumper ) {
-            System.out.println("ValleyX closed");
-            robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
-        }
-
-
-         if (gamepad2.dpad_up)
-         {
-             waittime +=1;
-             sleep(100);
-         }
-
-        if (gamepad2.dpad_down)
-        {
-            waittime -=1;
-            sleep(100);
-        }*/
         telemetry.addData("waittime", waittime);
-        //right Bumper = open bucket
-        if (gamepad2.right_bumper ) {
-            System.out.println("ValleyX opened");
-            /*robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
-            sleep(waittime);*/
-            robot.bucketServo.setPosition(robot.BUCKET_MIDDLE);
-            sleep(waittime);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
-
-        }
-
-//        //X = score pixel
-//        if (gamepad1.x == true) {
-//            liftDrive.openBucket();
-//        }
-//        else {
-//            liftDrive.closeBucket();
-//        }
 
 
         //Left Trigger = intake, Right Trigger = outtake
         if (gamepad1.left_trigger >= 0.1) {
             intakeDriver.intakeOn(true, 1);
-        }
-        else if (gamepad1.right_trigger >= 0.1) {
+        } else if (gamepad1.right_trigger >= 0.1) {
             intakeDriver.intakeOn(true, -1);
-        }
-        else {
+        } else {
             intakeDriver.intakeOn(false, 0);
         }
 
 
-        telemetry.addData("right sticky", gamepad2.right_stick_y );
+        //Drone Launcher Release Code
+        if (gamepad2.x == true) {
+            droneLauncher.launch(true);
+        }
+
+
+
+        telemetry.addData("right sticky", gamepad2.right_stick_y);
         telemetry.addData("Left Motor Pos", robot.liftMotorLeft.getCurrentPosition());
         telemetry.addData("Right Motor Pos", robot.liftMotorRight.getCurrentPosition());
-        telemetry.addData("Navx heading", robot.angles.firstAngle);
+        telemetry.addData("imu heading", Math.toDegrees(botHeading));
+        robot.OpMode_.telemetry.addData("climber pos", robot.climbMotor.getCurrentPosition());
 
 
-        //Manipulator stick to move lift
-        /*if(gamepad2.right_stick_y > 0.1 || gamepad2.right_stick_y < -0.1) {
-            liftDrive.moveLift(-gamepad2.right_stick_y);
-            telemetry.addData("in right sticky", gamepad2.right_stick_y );
+        //reset heading
+        if (gamepad1.y) {
+           robot.resetNavXHeading();
+
+            sleep(200);
         }
-        else {
-            liftDrive.moveLift(0);
-        }*/
 
-       if (gamepad1.y)
-	   {
-	      robot.resetNavXHeading();
-          sleep(200);
-	   }
-
-        //single driver stuff
 
         //open bucket if held
-        if (gamepad1.left_bumper){
+        if (gamepad2.right_trigger > .5) {
             if (isBucketClosed) {
-                robot.bucketServo.setPosition(robot.BUCKET_MIDDLE);
-                sleep(100);
-                robot.bucketServo.setPosition(robot.BUCKET_OPEN);
-                sleep(100);
-                isBucketClosed = false;
+                if (robot.liftMotorRight.getCurrentPosition() > 1500){
+                    robot.bucketServo.setPosition(robot.BUCKET_OPEN+.02);
+                } else {
+                    robot.bucketServo.setPosition(robot.BUCKET_MIDDLE);
+                    sleep(50);
+                    robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+                    sleep(100);
+                    isBucketClosed = false;
+                }
             }
-      //  } else if (gamepad1.left_bumper &&!isBucketClosed){
-       //     robot.bucketServo.setPosition(robot.BUCKET_OPEN);
-        }
-        else {
+        } else {
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             isBucketClosed = true;
         }
 
-        //reset lift
-        if (gamepad1.right_bumper) {
-            liftDrive.liftReset();
-        }
 
-        //manuel lift
-        if (gamepad1.dpad_up){
-            liftDrive.moveLift(.5);
-        } else if (gamepad1.dpad_down){
-            liftDrive.moveLift(-.5);
+        //manuel climber
+        /*if (gamepad2.dpad_up){
+            climberDriver.climberUp(1);
+        } else if (gamepad2.dpad_down){
+            climberDriver.climberDown(-1);
         } else {
-            liftDrive.moveLift(0);
+            climberDriver.climberDown(0);
+        }*/
+
+
+        //quick release climber
+        if (gamepad2.dpad_left) {
+            climberDriver.releaseClimber();
+        } else if (gamepad2.dpad_down) {
+            climberDriver.climberDown(-1);
+        } else if (gamepad2.dpad_up) {
+            climberDriver.climberUp(1);
+        } else {
+            climberDriver.climberDown(0);
         }
 
-        if (gamepad1.a) {// first tape mark liftheight
+
+
+
+/* current
+        if (gamepad2.a) {// first tape mark liftheight
             liftDrive.liftToEncoderCount(657,.5,10,1000,true);
         }
 
-        if (gamepad1.b) {// second tape mark lift height
+        if (gamepad2.b) {// second tape mark lift height
             liftDrive.liftToEncoderCount(1150,.5,10,1000,true);
         }
+*/
 
-        /*if (gamepad1.y /*&& gamepad1.x){
-            robot.resetNavXHeading();
-        }*/
+        //reset lift
+        if ((gamepad2.right_bumper) && (!bLiftInMotion)) {
+            liftDrive.liftReset();
+            bLiftInMotion = true;
+        }
 
+        if ((gamepad2.a) && (!bLiftInMotion)) {// first tape mark liftheight
+            liftDrive.liftToEncoderCount(657,1,10,1000,false);
+            bLiftInMotion = true;
+        }
+
+        if ((gamepad2.b) && (!bLiftInMotion))  {// second tape mark lift height
+            liftDrive.liftToEncoderCount(1150,1,10,1000,false);
+            bLiftInMotion = true;
+        }
+
+        if ((gamepad2.y) && (!bLiftInMotion))  {// second tape mark lift height
+            liftDrive.liftToEncoderCount(1800,1,10,1000,false);
+            bLiftInMotion = true;
+        }
+
+        if (bLiftInMotion)
+        {
+            bLiftInMotion = !liftDrive.isFinished();
+        }
 
 
 //657 lift low

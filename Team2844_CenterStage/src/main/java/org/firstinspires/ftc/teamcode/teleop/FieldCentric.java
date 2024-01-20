@@ -51,8 +51,6 @@ public class FieldCentric extends LinearOpMode {
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
-
-
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]

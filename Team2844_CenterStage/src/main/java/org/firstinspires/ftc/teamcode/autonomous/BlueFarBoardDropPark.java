@@ -75,7 +75,7 @@ public class BlueFarBoardDropPark extends LinearOpMode {
 
 
         waitForStart(); //waits
-        robot.imu.resetYaw(); //reset IMU
+        //robot.imu.resetYaw(); //reset IMU
 
 
         //DETECT SPIKE POSITION

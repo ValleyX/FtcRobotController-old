@@ -53,7 +53,7 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         // Initialize the April tag Detection process
         initAprilTag();
         robot = new RobotHardware(this, true);
-        robot.imu.resetYaw();
+        //robot.imu.resetYaw();
 
 
         waitForStart();
@@ -89,8 +89,6 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         //Gets the bot heading by use Getting angles from imu and getting the yaw in degrees from that
         double botHeading = -Math.toRadians(robot.getNavXHeading())/*robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)*/;
 
-
-
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
@@ -113,9 +111,9 @@ public class Field_Centric_Plus_April_Tag extends LinearOpMode {
         robot.rightBackDrive.setPower(backRightPower);
 
         telemetry.addData("heading", botHeading);
-        telemetry.addData("headingDegrees", -robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-        telemetry.addData("headingRoll", -robot.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
-        telemetry.addData("headingPitch", -robot.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
+        //0telemetry.addData("headingDegrees", -robot.imu00000.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        //0telemetry.addData("headingRoll", -robot.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES));
+        //telemetry.addData("headingPitch", -robot.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES));
 
 
         telemetry.addData("rotX", rotX);

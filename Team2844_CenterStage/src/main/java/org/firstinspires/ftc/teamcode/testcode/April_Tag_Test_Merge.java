@@ -173,7 +173,6 @@ public class April_Tag_Test_Merge extends LinearOpMode
         while (opModeIsActive()){
 
 
-
             // if(aprilTag.isAprilTagDetected(AprilTagID)){
             if ((desiredTag = aprilTag.aprilTagDetected(AprilTagID)) != null)
             {

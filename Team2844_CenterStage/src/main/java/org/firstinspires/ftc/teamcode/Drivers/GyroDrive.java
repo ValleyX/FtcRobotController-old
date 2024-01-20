@@ -126,7 +126,8 @@ public class GyroDrive
         //robot_.angles = robot_.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // Determine the heading current error
-        robot_.headingError = robot_.targetHeading - robot_.getNavXHeading()/*getHeading()*/;
+        //robot_.headingError = robot_.targetHeading - robot_.getNavXHeading()/*getHeading()*/;
+        robot_.headingError = robot_.targetHeading - robot_.imu.getAngularOrientation().firstAngle;;
 
 
         // Normalize the error to be within +/- 180 degrees
@@ -176,8 +177,8 @@ public class GyroDrive
             // keep looping while we are still active, and BOTH motors are running.
             //robot_.OpMode_.opModeIsActive() && during 10/24/2024 testing
             while (robot_.OpMode_.opModeIsActive() &&
-                 //   (robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
-                (robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
+                    (robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
+                //(robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
 
                 // Determine required steering to keep on heading
                 robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_DRIVE_GAIN);
@@ -232,11 +233,11 @@ public class GyroDrive
     }
 
 
-    public  double getHeading() {
+   /*00 public  double getHeading() {
         YawPitchRollAngles orientation = robot_.imu.getRobotYawPitchRollAngles();
 
         return orientation.getYaw(AngleUnit.DEGREES);
-    }
+    }*/
 
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
