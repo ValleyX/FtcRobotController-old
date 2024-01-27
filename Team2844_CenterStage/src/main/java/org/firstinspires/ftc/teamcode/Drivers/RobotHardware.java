@@ -138,7 +138,7 @@ public class RobotHardware {
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03; //was 0.03    // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.04; //was 0.03    // Larger is more responsive, but also less stable
     // -----------------
 
     public static double delayTimer = 2000; //delay timer for detection
@@ -375,7 +375,7 @@ public class RobotHardware {
 
         blinkinLedDriver = OpMode_.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin"); //Setting led map
 
-        //winkinLedDriver = OpMode_.hardwareMap.get(RevBlinkinLedDriver.class, "winkin"); //2nd LED map
+        winkinLedDriver = OpMode_.hardwareMap.get(RevBlinkinLedDriver.class, "winkin"); //2nd LED map
 
 
         //LED patterns
@@ -386,7 +386,8 @@ public class RobotHardware {
         endgamePattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
 
 
-//        blinkinLedDriver.setPattern(pattern);
+       // blinkinLedDriver.setPattern(autoPattern);
+        winkinLedDriver.setPattern(autoPattern);
 
 
 

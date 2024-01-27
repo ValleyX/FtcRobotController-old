@@ -98,7 +98,7 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.driveStraight(0.25, -2, 90);
 
             //drop pixel
-            intakeDriver.intakeOn(true, .2);
+            intakeDriver.intakeOn(true, .3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -109,13 +109,13 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go straight
-            gyroDrive.driveStraight(0.5, 15, 0);
+            gyroDrive.driveStraight(0.5, 18, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, -90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 105, -94);
+            gyroDrive.driveStraight(0.5, 105, -92);
 
         }
         //DECTECTS MIDDLE
@@ -169,7 +169,7 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, -90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 110, -94);//hehe i/m not entirely straight
+            gyroDrive.driveStraight(0.5, 110, -92);//hehe i/m not entirely straight
 
 
         }

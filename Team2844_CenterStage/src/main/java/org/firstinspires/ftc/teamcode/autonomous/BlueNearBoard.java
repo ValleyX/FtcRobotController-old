@@ -177,7 +177,7 @@ public class BlueNearBoard extends LinearOpMode{
             //gyroDrive.turnToHeading(.3,-90); //making sure robot is in place
 
             //place pixel
-            liftDrive.liftToHeight(5,1,.1,1000,true);
+            liftDrive.liftToHeight(6,1,.1,1000,true);
             robot.bucketServo.setPosition(robot.BUCKET_OPEN);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);

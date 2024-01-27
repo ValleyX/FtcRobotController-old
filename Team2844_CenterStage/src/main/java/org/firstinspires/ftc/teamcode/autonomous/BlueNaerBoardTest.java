@@ -28,7 +28,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
 @Disabled
-@Autonomous(name="AutoBlueNearBoardtest")
+@Autonomous(name="AutoBlueNearBoardtest1")
 public class BlueNaerBoardTest extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {

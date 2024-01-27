@@ -152,7 +152,7 @@ public class LiftDrive {
 
     public boolean isFinished()
     {
-        if (robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy())
+        if (robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
         {
             return false;
         }
@@ -306,6 +306,29 @@ public class LiftDrive {
             robot_.liftMotorLeft.setPower(input);
             robot_.liftMotorRight.setPower(input);
         }
+
+
+    } //moveLift method end bracket
+
+    public void moveLiftNoBounds(double input) {
+
+        robot_.OpMode_.telemetry.addData("Move Lift Get pos", robot_.liftMotorLeft.getCurrentPosition());
+
+        robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot_.liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //if (robot_.liftMotorLeft.getCurrentPosition() >= robot_.MAX_LIFT_HEIGHT || robot_.liftMotorLeft.getCurrentPosition() < robot_.MIN_LIFT_HEIGHT){
+           // robot_.liftMotorLeft.setPower(0);
+            //robot_.liftMotorRight.setPower(0);
+            robot_.OpMode_.telemetry.addData("Move Lift in 0 Get pos", robot_.liftMotorLeft.getCurrentPosition());
+        //}
+        //else {
+
+
+            robot_.liftMotorLeft.setPower(input);
+            robot_.liftMotorRight.setPower(input);
+       // }
 
 
     } //moveLift method end bracket

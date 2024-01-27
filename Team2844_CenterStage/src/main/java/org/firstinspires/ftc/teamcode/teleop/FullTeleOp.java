@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -20,6 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 
@@ -33,6 +37,8 @@ public class FullTeleOp extends LinearOpMode {
     ClimberDriver climberDriver;
 
     DroneLauncher droneLauncher;
+
+    ElapsedTime teleopTimer;
 
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
@@ -70,11 +76,14 @@ public class FullTeleOp extends LinearOpMode {
         liftDrive = new LiftDrive(robot);
         climberDriver = new ClimberDriver(robot);
         droneLauncher = new DroneLauncher(robot);
+        teleopTimer = new ElapsedTime();
+        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
 //
 //        robot.blinkinLedDriver.setPattern(robot.redPattern);
 //        robot.winkinLedDriver.setPattern(robot.redPattern);
 
         waitForStart();
+        teleopTimer.reset();
 
        // if (isStopRequested()) return;
 
@@ -89,6 +98,22 @@ public class FullTeleOp extends LinearOpMode {
             } else {
 */
                 fieldCentricControl();
+                if(teleopTimer.seconds() > 120 && teleopTimer.seconds() < 135){
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                }
+                if(teleopTimer.seconds() > 135 && teleopTimer.seconds() < 145){
+                    robot.winkinLedDriver.setPattern(robot.endgamePattern);
+                    robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+                }
+                if(teleopTimer.seconds() > 145 && teleopTimer.seconds() < 150){
+                robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+                    robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+                 }
+                if(teleopTimer.seconds() > 150){
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                    robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                }
 
  //           }
 
@@ -104,7 +129,7 @@ public class FullTeleOp extends LinearOpMode {
 
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double x = gamepad1.left_stick_x /* 1.1*/; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
 
@@ -252,7 +277,7 @@ public class FullTeleOp extends LinearOpMode {
 
         //reset lift
         if ((gamepad2.right_bumper) && (!bLiftInMotion)) {
-            liftDrive.liftReset();
+            liftDrive.liftToEncoderCount(0,1,10,1000,false);
             bLiftInMotion = true;
         }
 
@@ -271,10 +296,24 @@ public class FullTeleOp extends LinearOpMode {
             bLiftInMotion = true;
         }
 
+        if(Math.abs(gamepad2.right_stick_y) > .1 && !bLiftInMotion)
+        {
+
+            liftDrive.moveLiftNoBounds(-gamepad2.right_stick_y);
+        }else if (!bLiftInMotion){
+            liftDrive.moveLift(0);
+        }
+
+        if (gamepad2.left_bumper){
+            robot.liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
         if (bLiftInMotion)
         {
             bLiftInMotion = !liftDrive.isFinished();
         }
+        telemetry.addData("Lift In Motion = ", bLiftInMotion);
 
 
 //657 lift low

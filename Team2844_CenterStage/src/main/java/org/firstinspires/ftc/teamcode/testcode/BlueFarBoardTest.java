@@ -89,27 +89,27 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.turnToHeading(0.25, 90);
 
             //back up to take the dump
-            gyroDrive.driveStraight(0.25, -2, 90);
+            //gyroDrive.driveStraight(0.25, , 90);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.2);
+            intakeDriver.intakeOn(true, 0.3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
-            gyroDrive.driveStraight(0.5, 5, 0);
+            gyroDrive.driveStraight(0.5, 3, 0);
 
             //turn
             gyroDrive.turnToHeading(0.5, 0);
 
             //go straight
-            gyroDrive.driveStraight(0.5, 17, 0);
+            gyroDrive.driveStraight(0.5, 20, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, -90);
 
             //book it over to board
-            gyroDrive.driveStraight(.9, 80, -90);
+            gyroDrive.driveStraight(.5, 80, -90);
 
             //turn
             gyroDrive.turnToHeading(.6, -180);
@@ -123,13 +123,13 @@ public class BlueFarBoardTest extends LinearOpMode {
             //drive to board
             gyroDrive.driveStraight(.25, 18, -90);
 
-            ////placePixel
-            liftDrive.liftToHeight(8, 1, .1, 1000, true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            liftDrive.liftToHeight(8,1,.1,1000,true);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN - .04);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);
             liftDrive.liftReset();
+            sleep(1000); //-------------- sleep to put lift pixel here
 
             //back away
             gyroDrive.driveStraight(.25, -7, -90);
@@ -138,7 +138,7 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.turnToHeading(.5, 0);
 
             //drive out of the way to board
-            gyroDrive.driveStraight(.5, 26, 0);
+            gyroDrive.driveStraight(.5, 15, 0);
 
             //double check we are centerd
             gyroDrive.turnToHeading(.5, 0);
@@ -149,10 +149,10 @@ public class BlueFarBoardTest extends LinearOpMode {
         else if (position == robot.pipeline.position.Middle) {
 
             //go forward a lot
-            gyroDrive.driveStraight(.4, 47, 0);
+            gyroDrive.driveStraight(.4, 48.5, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.2);
+            intakeDriver.intakeOn(true, 0.4);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -160,16 +160,16 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(0.5, 2, 0);
 
             //turn
-            gyroDrive.turnToHeading(0.5, -90);
+            gyroDrive.turnToHeading(0.3, -90);
 
             //book it over to board
-            gyroDrive.driveStraight(0.7, 80, -90);
+            gyroDrive.driveStraight(0.4, 80, -90);//final boolean BEANS = true;
 
             //turn
             gyroDrive.turnToHeading(.5, -180);
 
             //drive to where we want to place pixel
-            gyroDrive.driveStraight(.5, 27, -180);
+            gyroDrive.driveStraight(.5, 26, -180);
 
             //turn
             gyroDrive.turnToHeading(.5, -90);
@@ -217,7 +217,7 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(0.5, 12, 0);
 
             //drop pixel
-            intakeDriver.intakeOn(true, -0.2);
+            intakeDriver.intakeOn(true, 0.3);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
@@ -228,13 +228,13 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, -90);
 
             //book it over to board
-            gyroDrive.driveStraight(0.7, 80, -90);
+            gyroDrive.driveStraight(0.5, 80, -90);
 
             //turn
             gyroDrive.turnToHeading(.5, -180);
 
             //drive to where we want to place pixel
-            gyroDrive.driveStraight(.5, 25, -180);
+            gyroDrive.driveStraight(.5, 22, -180);
 
             //turn
             gyroDrive.turnToHeading(.5, -90);
@@ -244,7 +244,7 @@ public class BlueFarBoardTest extends LinearOpMode {
 
             ////placePixel
             liftDrive.liftToHeight(8, 1, .1, 1000, true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN -.02);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);

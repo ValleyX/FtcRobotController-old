@@ -94,7 +94,7 @@ public class RedNearBoard extends LinearOpMode{
             gyroDrive.turnToHeading(DRIVE_SPEED,90); //Turning to board and driving to board
 
             //backup
-            gyroDrive.driveStraight(DRIVE_SPEED,-3,0);
+            gyroDrive.driveStraight(DRIVE_SPEED,0,0);
 
             //spit out pixel
             intakeDriver.intakeOn(true, .3);
@@ -103,7 +103,7 @@ public class RedNearBoard extends LinearOpMode{
 
 
             //drive to board
-            gyroDrive.driveStraight(DRIVE_SPEED,45,90);
+            gyroDrive.driveStraight(DRIVE_SPEED,48,90);
 
             //center
             gyroDrive.turnToHeading(0.4,90);
@@ -152,7 +152,7 @@ public class RedNearBoard extends LinearOpMode{
             gyroDrive.turnToHeading(.3,180);
 
             //spit pixel
-            intakeDriver.intakeOn(true, .3);
+            intakeDriver.intakeOn(true, .4);
             sleep(1250);
             intakeDriver.intakeOn(false, 0);
 
