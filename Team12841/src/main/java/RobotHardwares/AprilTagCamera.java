@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package RobotHardwares;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -12,6 +11,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.concurrent.TimeUnit;
+
+import RobotHardwares.RobotHardware;
 
 public class AprilTagCamera {
     // Adjust these numbers to suit your robot.
@@ -28,7 +29,7 @@ public class AprilTagCamera {
     final double MAX_AUTO_STRAFE = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN = 0.4;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    boolean targetFound = false;    // Set to true when an AprilTag target is detected
+    public boolean targetFound = false;    // Set to true when an AprilTag target is detected
     double drive = 0;        // Desired forward power/speed (-1 to +1)
     double strafe = 0;        // Desired strafe power/speed (-1 to +1)
     double turn = 0;        // Desired turning power/speed (-1 to +1)
@@ -41,7 +42,7 @@ public class AprilTagCamera {
     LinearOpMode opMode_;
     RobotHardware robotHardware_;
 
-    AprilTagCamera(LinearOpMode opMode, RobotHardware robotHardware) {
+    public AprilTagCamera(LinearOpMode opMode, RobotHardware robotHardware) {
         opMode_ = opMode;
         robotHardware_ = robotHardware;
     }

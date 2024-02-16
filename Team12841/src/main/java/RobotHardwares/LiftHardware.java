@@ -1,11 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package RobotHardwares;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import RobotHardwares.RobotHardware;
 
 public class LiftHardware {
     RobotHardware robotHardware_;
     ElapsedTime timeRunning;
+
+    LinearOpMode opMode_;
 
     public boolean intake = false;
     public boolean outtake = false;
@@ -19,57 +24,55 @@ public class LiftHardware {
     public final double elevatorInches = liftDiameterMotor * Math.PI;
 
     public final double elevatorDistancePerRev = elevatorMotorEncoderCountsPerRev / elevatorInches;
-    public LiftHardware(RobotHardware robotHardware) {
+    public LiftHardware(RobotHardware robotHardware, LinearOpMode opMode) {
         robotHardware_ = robotHardware;
+        opMode_ = opMode;
         timeRunning = new ElapsedTime();
         robotHardware_.elbowMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardware_.elbowMotor.setTargetPosition(0);
         robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        /*robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardware_.elevatorMotor.setTargetPosition(0);
-        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
+        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveElbow(double degree, double speed)
+    public void moveElbow(int pos, double speed)
     {
-        robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //Making the motors read the clicks
+        robotHardware_.elbowMotor.setTargetPosition(pos);
 
-        robotHardware_.elbowMotor.setTargetPosition((int) (degree * degreesPerClick));
+        robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         robotHardware_.elbowMotor.setPower(speed);
-    }
 
-    public void moveElevator( double inch, double speed)
-    {
-        robotHardware_.elbowMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //robotHardware_.elbowMotor.is
+
         //Making the motors read the clicks
-
-        robotHardware_.elbowMotor.setTargetPosition((int) (inch * elevatorDistancePerRev));
-
-        robotHardware_.elbowMotor.setPower(speed);
     }
 
-    //method that turns to intake on
-    public void startIntake()
+    public void moveElevator(int pos, double speed)
     {
-        intake = true;
-        outtake = false;
-    }
-    //method that turns the intake off yeet
-    public void stopIntake()
-    {
-        intake = false;
-        outtake = false;
+        robotHardware_.elevatorMotor.setTargetPosition(-pos);
+
+        robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robotHardware_.elevatorMotor.setPower(speed);
+
+        //robotHardware_.elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //Making the motors read the clicks
     }
 
-    public void reverseIntake()
+    public void closeBucket()
     {
-        intake = false;
-        outtake = true;
-    }
+        robotHardware_.bucket.setPosition(0.6);
+    } //close
+
+    public void openBucket()
+    {
+        robotHardware_.bucket.setPosition(0.7);
+    } //open
+
 
 }

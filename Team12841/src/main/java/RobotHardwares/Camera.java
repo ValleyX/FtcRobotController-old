@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package RobotHardwares;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -109,10 +109,10 @@ public class Camera {
         //makes positions for each color depending on which on is higher
         int redPosition;
         int bluePosition;
-        int avgBlue1;
-        int avgBlue2;
-        int avgRed1;
-        int avgRed2;
+        public int avgBlue1;
+        public int avgBlue2;
+        public int avgRed1;
+        public int avgRed2;
 
 
         // Volatile since accessed by OpMode thread w/o synchronization
@@ -122,9 +122,12 @@ public class Camera {
         //assigns the placement values to the corners of the box (A=topleft, B=bottomright)
         public SkystoneDeterminationPipeline(RobotPos side) {
             side_ = side;
-            if (side_ == RobotPos.RedR || side_ == RobotPos.BlueR) {
+            if (side_ == RobotPos.BlueR) {
                 REGION1_TOPLEFT_ANCHOR_POINT = new Point(275, 180); // red box
-                REGION2_TOPLEFT_ANCHOR_POINT = new Point(95, 160 ); //blue box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(95, 160); //blue box
+            }else if (side_ == RobotPos.RedR) {
+                REGION1_TOPLEFT_ANCHOR_POINT = new Point(275, 180); // red box
+                REGION2_TOPLEFT_ANCHOR_POINT = new Point(95, 170.3 ); //blue box
             } else if (side_ == RobotPos.RedL || side_ == RobotPos.BlueL) {
                 REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 175); // red box
                 REGION2_TOPLEFT_ANCHOR_POINT = new Point(168, 170); //blue box
@@ -163,7 +166,7 @@ public class Camera {
             avgBlue2 = (int) Core.mean(region2_Cb).val[0];
             avgRed1 = (int) Core.mean(region1_Cr).val[0];
             avgRed2 = (int) Core.mean(region2_Cr).val[0];
-            int minimumColorValue = 130;
+            int minimumColorValue = 138;
 
 
             //compares them and picks the least red
