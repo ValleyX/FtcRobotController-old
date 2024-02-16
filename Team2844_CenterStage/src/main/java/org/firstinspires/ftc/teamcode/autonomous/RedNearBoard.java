@@ -98,7 +98,7 @@ public class RedNearBoard extends LinearOpMode{
 
             //spit out pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
 
@@ -153,7 +153,7 @@ public class RedNearBoard extends LinearOpMode{
 
             //spit pixel
             intakeDriver.intakeOn(true, .4);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //drive back
@@ -221,7 +221,7 @@ public class RedNearBoard extends LinearOpMode{
 
             //spit out pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1500);
+            sleep(2500);
             intakeDriver.intakeOn(false, 0);
 
             //drive forward

@@ -99,7 +99,7 @@ public class BlueFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
@@ -126,7 +126,7 @@ public class BlueFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, 0.3);
-            sleep(1350);
+            sleep(2350);
             intakeDriver.intakeOn(false, 0);
 
             //move forward a bit
@@ -136,7 +136,7 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, -90);
 
             //book it over to park
-            gyroDrive.driveStraight(0.5, 100, -94);
+            gyroDrive.driveStraight(0.5, 100, -92);
 
         }
         //DETECTS RIGHT (DEFAULT CONDITION)
@@ -159,7 +159,7 @@ public class BlueFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
@@ -169,7 +169,7 @@ public class BlueFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, -90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 110, -92);//hehe i/m not entirely straight
+            gyroDrive.driveStraight(0.5, 110, -92);
 
 
         }

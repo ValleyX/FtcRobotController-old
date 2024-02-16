@@ -103,7 +103,7 @@ public class RedFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
@@ -124,7 +124,7 @@ public class RedFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1000);
+            sleep(2000);
             intakeDriver.intakeOn(false, 0);
 
             //move forward a bit
@@ -134,7 +134,7 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 90);
 
             //book it over to park
-            gyroDrive.driveStraight(0.5, 100, 94);
+            gyroDrive.driveStraight(0.5, 100, 92);
 
         }
         //DETECTS RIGHT (DEFAULT CONDITION)
@@ -151,7 +151,7 @@ public class RedFarDropPark extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, .3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
@@ -161,13 +161,13 @@ public class RedFarDropPark extends LinearOpMode {
             gyroDrive.turnToHeading(0.5, 0);
 
             //go straight
-            gyroDrive.driveStraight(0.5, 24, 0);
+            gyroDrive.driveStraight(0.5, 20, 0);
 
             //turn to park
             gyroDrive.turnToHeading(0.5, 90);
 
             //go park
-            gyroDrive.driveStraight(0.5, 105, 94);
+            gyroDrive.driveStraight(0.5, 105, 92);
 
 
         }

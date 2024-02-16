@@ -111,13 +111,15 @@ public class GyroDrive
     public OpMode opMode_;
 
     public NavxMicroNavigationSensor navxMicro;
+    public boolean waitForAllMotors;
 
 
 
 
     public GyroDrive(RobotHardware robot){
-        robot_ = robot;
+        robot_ = robot;  waitForAllMotors = false;
     }
+
 
 
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
@@ -136,6 +138,7 @@ public class GyroDrive
 
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(robot_.headingError * proportionalGain, -1, 1);
+
     }
 
     public void driveStraight(double maxDriveSpeed,
@@ -176,22 +179,43 @@ public class GyroDrive
 
             // keep looping while we are still active, and BOTH motors are running.
             //robot_.OpMode_.opModeIsActive() && during 10/24/2024 testing
-            while (robot_.OpMode_.opModeIsActive() &&
-                    (robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
-                //(robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
+            if (waitForAllMotors) {
+                while (robot_.OpMode_.opModeIsActive() &&
+                        //(robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
+                    (robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
 
-                // Determine required steering to keep on heading
-                robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_DRIVE_GAIN);
+                    // Determine required steering to keep on heading
+                    robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_DRIVE_GAIN);
 
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    robot_.turnSpeed *= -1.0;
+                    // if driving in reverse, the motor correction also needs to be reversed
+                    if (distance < 0)
+                        robot_.turnSpeed *= -1.0;
 
-                // Apply the turning correction to the current driving speed.
-                moveRobot(robot_.driveSpeed, robot_.turnSpeed);
+                    // Apply the turning correction to the current driving speed.
+                    moveRobot(robot_.driveSpeed, robot_.turnSpeed);
 
-                // Display drive status for the driver.
-                 sendTelemetry(true);
+                    // Display drive status for the driver.
+                    sendTelemetry(true);
+                }
+            } else {
+
+                while (robot_.OpMode_.opModeIsActive() &&
+                        (robot_.leftFrontDrive.isBusy() && robot_.leftBackDrive.isBusy() && robot_.rightFrontDrive.isBusy() && robot_.rightBackDrive.isBusy())) {
+                    //(robot_.leftFrontDrive.isBusy() || robot_.leftBackDrive.isBusy() || robot_.rightFrontDrive.isBusy() || robot_.rightBackDrive.isBusy())) {
+
+                    // Determine required steering to keep on heading
+                    robot_.turnSpeed = getSteeringCorrection(heading, robot_.P_DRIVE_GAIN);
+
+                    // if driving in reverse, the motor correction also needs to be reversed
+                    if (distance < 0)
+                        robot_.turnSpeed *= -1.0;
+
+                    // Apply the turning correction to the current driving speed.
+                    moveRobot(robot_.driveSpeed, robot_.turnSpeed);
+
+                    // Display drive status for the driver.
+                    sendTelemetry(true);
+                }
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION

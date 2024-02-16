@@ -77,7 +77,7 @@ public class FullTeleOp extends LinearOpMode {
         climberDriver = new ClimberDriver(robot);
         droneLauncher = new DroneLauncher(robot);
         teleopTimer = new ElapsedTime();
-        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        //robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
 //
 //        robot.blinkinLedDriver.setPattern(robot.redPattern);
 //        robot.winkinLedDriver.setPattern(robot.redPattern);
@@ -98,21 +98,55 @@ public class FullTeleOp extends LinearOpMode {
             } else {
 */
                 fieldCentricControl();
-                if(teleopTimer.seconds() > 120 && teleopTimer.seconds() < 135){
-                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                if (babyMode)
+                {
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                } else  {
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE);
+                }
+            if(teleopTimer.seconds() > 90 && teleopTimer.seconds() < 105){
+                    //robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                if (babyMode)
+                {
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                } else  {
+                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE);
                 }
-                if(teleopTimer.seconds() > 135 && teleopTimer.seconds() < 145){
-                    robot.winkinLedDriver.setPattern(robot.endgamePattern);
+
+                }
+                if(teleopTimer.seconds() > 105 && teleopTimer.seconds() < 115){
+                    //robot.winkinLedDriver.setPattern(robot.endgamePattern);
                     robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+                    if (babyMode)
+                    {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                    } else  {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE);
+                    }
+
                 }
-                if(teleopTimer.seconds() > 145 && teleopTimer.seconds() < 150){
-                robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+                if(teleopTimer.seconds() > 115 && teleopTimer.seconds() < 120){
+                //robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
                     robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+                    if (babyMode)
+                    {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                    } else  {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE);
+                    }
+
                  }
-                if(teleopTimer.seconds() > 150){
-                    robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                if(teleopTimer.seconds() > 120){
+                   // robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
                     robot.blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+                    if (babyMode)
+                    {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                    } else  {
+                        robot.winkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE);
+                    }
+
                 }
 
  //           }
@@ -222,6 +256,8 @@ public class FullTeleOp extends LinearOpMode {
         }
 
 
+
+
         //open bucket if held
         if (gamepad2.right_trigger > .5) {
             if (isBucketClosed) {
@@ -277,20 +313,20 @@ public class FullTeleOp extends LinearOpMode {
 
         //reset lift
         if ((gamepad2.right_bumper) && (!bLiftInMotion)) {
-            liftDrive.liftToEncoderCount(0,1,10,1000,false);
+            liftDrive.liftToEncoderCount(0,1,50,1000,false);
             bLiftInMotion = true;
         }
-
+        //level 1
         if ((gamepad2.a) && (!bLiftInMotion)) {// first tape mark liftheight
             liftDrive.liftToEncoderCount(657,1,10,1000,false);
             bLiftInMotion = true;
         }
-
+        //level 2
         if ((gamepad2.b) && (!bLiftInMotion))  {// second tape mark lift height
             liftDrive.liftToEncoderCount(1150,1,10,1000,false);
             bLiftInMotion = true;
         }
-
+        //level 3
         if ((gamepad2.y) && (!bLiftInMotion))  {// second tape mark lift height
             liftDrive.liftToEncoderCount(1800,1,10,1000,false);
             bLiftInMotion = true;

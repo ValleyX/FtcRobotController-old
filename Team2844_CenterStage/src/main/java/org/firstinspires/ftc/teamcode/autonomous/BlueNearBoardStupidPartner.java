@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 //robot must pe put in the same place to relatively same position per game to be consistant
 //Position distance from corner near board is about 48 inches
-@Autonomous(name="AutoBlueNearBoard")
-public class BlueNearBoard extends LinearOpMode{
+@Autonomous(name="STUPIDAutoBlueNearBoard")
+public class BlueNearBoardStupidPartner extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -139,12 +139,12 @@ public class BlueNearBoard extends LinearOpMode{
             gyroDrive.turnToHeading(DRIVE_SPEED,0);
 
             //drive away
-            gyroDrive.driveStraight(DRIVE_SPEED,-20,0);
+            gyroDrive.driveStraight(DRIVE_SPEED,26,0);
 
             //center
             gyroDrive.turnToHeading(DRIVE_SPEED,0);
             //gyroDrive.turnToHeading(0.4,-90);
-           // gyroDrive.driveStraight(0.5,8,-90);
+            // gyroDrive.driveStraight(0.5,8,-90);
 
 
         }
@@ -155,8 +155,7 @@ public class BlueNearBoard extends LinearOpMode{
             double DRIVE_SPEED = .5;
 
             //move to spike marks
-            gyroDrive.driveStraight(DRIVE_SPEED,30,0);
-            gyroDrive.driveStraight(DRIVE_SPEED,-5,0);
+            gyroDrive.driveStraight(DRIVE_SPEED,25,0);
 
             //turn around to spit out pixel
             gyroDrive.turnToHeading(.5,180);
@@ -193,7 +192,7 @@ public class BlueNearBoard extends LinearOpMode{
             gyroDrive.turnToHeading(DRIVE_SPEED,0);
 
             //drive away from board
-            gyroDrive.driveStraight(DRIVE_SPEED,-23,0);
+            gyroDrive.driveStraight(DRIVE_SPEED,23,0);
 
             //center yourself
             gyroDrive.turnToHeading(DRIVE_SPEED,0);
@@ -246,7 +245,7 @@ public class BlueNearBoard extends LinearOpMode{
             gyroDrive.turnToHeading(DRIVE_SPEED,0);
 
             //drive away
-            gyroDrive.driveStraight(DRIVE_SPEED,-30,0);
+            gyroDrive.driveStraight(DRIVE_SPEED,17,0);
 
             //center
             gyroDrive.turnToHeading(DRIVE_SPEED,0);

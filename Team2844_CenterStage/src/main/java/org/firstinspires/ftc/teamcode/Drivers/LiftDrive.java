@@ -32,11 +32,15 @@ public class LiftDrive {
     //errorMargin = how much height error is allowable in the function
     //timeOutMS = how long the program will try to do the thing before it gives up and exits
     //wait = if it is going to stop other functions and just do this, or if it isn't going to do that and basically allows multitasking
+    int time;
     public void liftToEncoderCount (int liftCounts, double liftSpeed, int errorMargin, double timeOutMS, boolean wait) {
 
         //gets the rotations per inch, and then sets the distance that we want the lift to go to
         //int newLeftTarget = robot_.liftMotorLeft.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
         //int newRightTarget = robot_.liftMotorRight.getCurrentPosition() + (int)(liftInches * robot_.LIFT_COUNTS_PER_INCH);
+
+        time ++;
+
 
         //tells motors to use the encoder while running
         robot_.liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -63,7 +67,7 @@ public class LiftDrive {
 
             timeRunning.reset();
 
-            while ((robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
+            while ((robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy() /*&& time < 20*/)
                     && (robot_.liftMotorLeft.getCurrentPosition() > (liftCounts + errorMargin)
                     || robot_.liftMotorLeft.getCurrentPosition() < (liftCounts - errorMargin))
                     && (robot_.liftMotorRight.getCurrentPosition() > (liftCounts + errorMargin)
@@ -80,6 +84,8 @@ public class LiftDrive {
             robot_.liftMotorRight.setPower(0);
 
         } //if wait==true statement end bracket
+
+
 
 
 
@@ -125,7 +131,7 @@ public class LiftDrive {
 
             timeRunning.reset();
 
-            while ((robot_.liftMotorLeft.isBusy() || robot_.liftMotorRight.isBusy())
+            while ((robot_.liftMotorLeft.isBusy() && robot_.liftMotorRight.isBusy())
                     && (robot_.liftMotorLeft.getCurrentPosition() > (newLeftTarget + errorMargin)
                     || robot_.liftMotorLeft.getCurrentPosition() < (newLeftTarget - errorMargin))
                     && (robot_.liftMotorRight.getCurrentPosition() > (newRightTarget + errorMargin)

@@ -93,7 +93,7 @@ public class BlueFarBoardTest extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, 0.3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
@@ -102,14 +102,18 @@ public class BlueFarBoardTest extends LinearOpMode {
             //turn
             gyroDrive.turnToHeading(0.5, 0);
 
-            //go straight
-            gyroDrive.driveStraight(0.5, 20, 0);
+            //go straight unlike david
+            gyroDrive.driveStraight(0.5, 18, 0);
 
             //turn to park
-            gyroDrive.turnToHeading(0.5, -90);
+            gyroDrive.waitForAllMotors = true;
+            gyroDrive.turnToHeading(0.3, -90);
+            gyroDrive.waitForAllMotors = false;
 
             //book it over to board
-            gyroDrive.driveStraight(.5, 80, -90);
+            gyroDrive.driveStraight(0.15, 40, -90);
+            sleep(500);
+            gyroDrive.driveStraight(0.2, 40, -90);
 
             //turn
             gyroDrive.turnToHeading(.6, -180);
@@ -124,7 +128,7 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(.25, 18, -90);
 
             liftDrive.liftToHeight(8,1,.1,1000,true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN - .04);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN - .03);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);
@@ -153,23 +157,27 @@ public class BlueFarBoardTest extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, 0.4);
-            sleep(1250);
+            sleep(2300);
             intakeDriver.intakeOn(false, 0);
 
             //move forward a bit
             gyroDrive.driveStraight(0.5, 2, 0);
 
             //turn
+            gyroDrive.waitForAllMotors = true;
             gyroDrive.turnToHeading(0.3, -90);
+            gyroDrive.waitForAllMotors = false;
 
             //book it over to board
-            gyroDrive.driveStraight(0.4, 80, -90);//final boolean BEANS = true;
+            gyroDrive.driveStraight(0.2, 40, -90);
+            sleep(500);
+            gyroDrive.driveStraight(0.4, 40, -90);
 
             //turn
             gyroDrive.turnToHeading(.5, -180);
 
             //drive to where we want to place pixel
-            gyroDrive.driveStraight(.5, 26, -180);
+            gyroDrive.driveStraight(.5, 25.5, -180);
 
             //turn
             gyroDrive.turnToHeading(.5, -90);
@@ -178,7 +186,7 @@ public class BlueFarBoardTest extends LinearOpMode {
             gyroDrive.driveStraight(.25, 15, -90);
 
             ////placePixel
-            liftDrive.liftToHeight(8, 1, .1, 1000, true);
+            liftDrive.liftToHeight(7, 1, .1, 1000, true);
             robot.bucketServo.setPosition(robot.BUCKET_OPEN);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
@@ -218,17 +226,21 @@ public class BlueFarBoardTest extends LinearOpMode {
 
             //drop pixel
             intakeDriver.intakeOn(true, 0.3);
-            sleep(1250);
+            sleep(2250);
             intakeDriver.intakeOn(false, 0);
 
             //go forward a bit
             gyroDrive.driveStraight(0.5, 8, 0);
 
             //turn to park
-            gyroDrive.turnToHeading(0.5, -90);
+            gyroDrive.waitForAllMotors = true;
+            gyroDrive.turnToHeading(0.3, -90);
+            gyroDrive.waitForAllMotors = false;
 
             //book it over to board
-            gyroDrive.driveStraight(0.5, 80, -90);
+            gyroDrive.driveStraight(0.2, 40, -90);
+            sleep(500);
+            gyroDrive.driveStraight(0.4, 40, -90);
 
             //turn
             gyroDrive.turnToHeading(.5, -180);
@@ -244,7 +256,7 @@ public class BlueFarBoardTest extends LinearOpMode {
 
             ////placePixel
             liftDrive.liftToHeight(8, 1, .1, 1000, true);
-            robot.bucketServo.setPosition(robot.BUCKET_OPEN -.02);
+            robot.bucketServo.setPosition(robot.BUCKET_OPEN -.03);
             sleep(1000);//move srevo on bucket
             robot.bucketServo.setPosition(robot.BUCKET_CLOSED);
             sleep(1000);
