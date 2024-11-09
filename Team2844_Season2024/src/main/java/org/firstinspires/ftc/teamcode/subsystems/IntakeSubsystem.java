@@ -6,26 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
+
 //import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
-import org.openftc.easyopencv.OpenCvSwitchableWebcam;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
 
 public class IntakeSubsystem extends SubsystemBase {
+    //declare variables
     public DcMotor m_SubExtend;
     public DcMotor m_IntakeMotor;
-    public Servo m_IntakeDrop;
+    public Servo m_IntakeDropServo;
     //cameraStuff
    // public WebcamName m_camCam;
     //public CameraPipeline pipeline;
@@ -33,13 +23,19 @@ public class IntakeSubsystem extends SubsystemBase {
     public LinearOpMode m_opMode;
     public NormalizedColorSensor m_ColorSensorBucket;
     public NormalizedColorSensor m_ColorSensorBelow;
-    public IntakeSubsystem(DcMotor subExtend, DcMotor intakeMotor, Servo intakeDrop, /*WebcamName camCam,*/LinearOpMode opMode/*,NormalizedColorSensor colorSensor*/){
+
+    //initialize using constructor
+    public IntakeSubsystem(DcMotor subExtend, DcMotor intakeMotor, Servo intakeDrop, /*WebcamName camCam,*/LinearOpMode opMode,NormalizedColorSensor colorSensorBucket, NormalizedColorSensor colorSensorBelow){
         m_SubExtend = subExtend;
-        m_IntakeDrop = intakeDrop;
+        m_IntakeDropServo = intakeDrop;
         m_IntakeMotor = intakeMotor;
 
         m_opMode = opMode;
-       // m_ColorSensor = colorSensor;
+
+        m_ColorSensorBucket = colorSensorBucket;
+        m_ColorSensorBelow = colorSensorBelow;
+
+
         //camera stuff
         //m_camCam = camCam;//camCam = OpMode_.hardwareMap.get(WebcamName.class, "Webcamcolor");
         /*m_camCam = m_opMode.hardwareMap.get(WebcamName.class, "Webcamcolor");
@@ -75,6 +71,47 @@ public class IntakeSubsystem extends SubsystemBase {
             }
         });
         switchableWebcam.setPipeline(pipeline);*/
+    }
+
+    //sets servo to position
+    public void setIntakeDropServo(double position){
+        m_IntakeDropServo.setPosition(position);
+
+    }
+
+    //turns on intake
+    public void intakeOn(){
+        m_IntakeMotor.setPower(1);
+    }
+
+    //Extakes
+    public void intakeExtake(){
+        m_IntakeMotor.setPower(-1);
+    }
+
+    //turns off intake
+    public void intakeOff(){
+        m_IntakeMotor.setPower(0);
+    }
+
+    //set subextend to position
+    public void subExtendToPosition (double subExtendInches, double subExtendSpeed) {
+
+        //gets the rotations per inch, and then sets the distance that we want the lift to go to
+        int newTarget = (int)(Math.abs(subExtendInches) * RobotHardware.SUBEXTEND_COUNTS_PER_INCH);
+
+        //tells motors to use the encoder while running
+        m_SubExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //sets the target position to the distance we want the lift to go to
+        m_SubExtend.setTargetPosition(newTarget);
+
+        //sets the motors to run to position mode
+        m_SubExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //start motion
+        m_SubExtend.setPower(Math.abs(subExtendSpeed));
+
     }
 
 

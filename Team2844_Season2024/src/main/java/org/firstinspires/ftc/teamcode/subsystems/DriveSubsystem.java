@@ -20,6 +20,13 @@ public class DriveSubsystem extends SubsystemBase {
         m_imu = imu;
     }
 
+    public void allPower(double speed){
+        m_frontLeft.setPower(speed);
+        m_frontRight.setPower(speed);
+        m_backRight.setPower(speed);
+        m_backLeft.setPower(speed);
+    }
+
     @Override
     public void periodic(){
 

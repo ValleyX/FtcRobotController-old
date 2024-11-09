@@ -8,12 +8,13 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 
 public class FieldCentricCommand extends CommandBase {
-
+    public boolean babyMode;
     private final DriveSubsystem m_driveSubsystem;
     public LinearOpMode m_opMode;
     public FieldCentricCommand(DriveSubsystem driveSubsystem, LinearOpMode opMode){
         m_driveSubsystem = driveSubsystem;
         m_opMode = opMode;
+        babyMode = false;
         addRequirements(m_driveSubsystem); //prevents other command from using this subsysten while active
     }
 
@@ -28,6 +29,11 @@ public class FieldCentricCommand extends CommandBase {
         double y = -m_opMode.gamepad1.left_stick_y; // Remember, this is reversed!
         double x = m_opMode.gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
         double rx = m_opMode.gamepad1.right_stick_x;
+
+        if (m_opMode.gamepad1.x) {
+            babyMode = !babyMode;
+            m_opMode.sleep(200);
+        }
 
         // Read inverse IMU heading, as the IMU heading is CW positive
         //double botHeading = -m_driveSubsytem.m_imu.getAngularOrientation().firstAngle;
@@ -46,10 +52,18 @@ public class FieldCentricCommand extends CommandBase {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        m_driveSubsystem.m_frontLeft.setPower(frontLeftPower);
-        m_driveSubsystem.m_backLeft.setPower(backLeftPower);
-        m_driveSubsystem.m_frontRight.setPower(frontRightPower);
-        m_driveSubsystem.m_backRight.setPower(backRightPower);
+        if (babyMode) {
+            frontLeftPower *= 0.33 ;
+            backLeftPower *= 0.33;
+            frontRightPower *= 0.33;
+            backRightPower *= 0.33;
+
+        }
+            m_driveSubsystem.m_frontLeft.setPower(frontLeftPower);
+            m_driveSubsystem.m_backLeft.setPower(backLeftPower);
+            m_driveSubsystem.m_frontRight.setPower(frontRightPower);
+            m_driveSubsystem.m_backRight.setPower(backRightPower);
+
 
         m_opMode.telemetry.addData("rotX", rotX);
         m_opMode.telemetry.addData("rotY", rotY);
@@ -58,11 +72,18 @@ public class FieldCentricCommand extends CommandBase {
         m_opMode.telemetry.addData("back left power", backLeftPower);
         m_opMode.telemetry.addData("back right power", backRightPower);
         m_opMode.telemetry.addData("denominator", denominator);
+        m_opMode.telemetry.addData("baby mode", babyMode);
+        m_opMode.telemetry.addData("bot heading", botHeading);
         m_opMode.telemetry.update();
     }
 
-    // @Override
-    //public boolean isFinished(){
-    //     return true;
-    // }
+   /* @Override
+    public boolean isFinished(){
+       /* if (!m_opMode.isStopRequested() && m_opMode.opModeIsActive()) {
+            return false;
+
+        } else {
+            return true;
+        //}
+    }*/
 }
