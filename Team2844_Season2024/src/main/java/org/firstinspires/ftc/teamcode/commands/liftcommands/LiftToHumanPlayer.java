@@ -22,7 +22,7 @@ public class LiftToHumanPlayer extends CommandBase {
     public void initialize(){
         //TODO; put in actual value for the position
         m_liftSub.liftToPosition(2.5,1);
-        m_opMode.sleep(100);
+        m_opMode.sleep(500);
         m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_ENGAGED);
 
     }

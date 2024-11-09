@@ -13,7 +13,7 @@ public class RobotHardware {
     //Constants
     //lift counts per inch
     public static final double LIFT_COUNTS_PER_MOTOR_REV = 28;    //  AndyMark Motor Encoder
-    public static final double LIFT_DRIVE_GEAR_REDUCTION = 48.6;     // This is < 1.0 if geared UP was 60
+    public static final double LIFT_DRIVE_GEAR_REDUCTION = 60;     // This is < 1.0 if geared UP was 60
     public static final double LIFT_ONE_MOTOR_COUNT = LIFT_COUNTS_PER_MOTOR_REV * LIFT_DRIVE_GEAR_REDUCTION;
     public static final double LIFT_Distance_in_one_rev = 1.5 * Math.PI; //in
     public static final double LIFT_COUNTS_PER_INCH = LIFT_ONE_MOTOR_COUNT / LIFT_Distance_in_one_rev;

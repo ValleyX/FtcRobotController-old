@@ -29,7 +29,7 @@ public class LiftScore extends CommandBase {
         currentPosInches = m_liftSub.m_liftMotor.getCurrentPosition() / RobotHardware.LIFT_COUNTS_PER_INCH;
         m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_ENGAGED);
         m_opMode.sleep(500);
-        m_liftSub.liftToPosition(currentPosInches-3,1);
+        m_liftSub.liftToPosition(currentPosInches-4,1);
         m_opMode.sleep(700);
         m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_DISENGAGED);
         m_opMode.sleep(100);
