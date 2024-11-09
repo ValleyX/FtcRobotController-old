@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.testcode;
 
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,15 +33,16 @@ public class FIeldCentric extends CommandOpMode {
     Button m_button;
     IMU newImu;
     public CameraSubsystemTest cameraSubsystemTest;
+    GamepadEx driveGamepad;
 
     @Override
     public void initialize() /*throws InterruptedException*/ {
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("leftFront");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftBack");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftRear");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("rightFront");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("rightRear");
 
         //Servo servo =  hardwareMap.servo.get("servo");
 
@@ -64,21 +68,24 @@ public class FIeldCentric extends CommandOpMode {
         newImu = hardwareMap.get(IMU.class,"imu");
         newImu.initialize(newParameters);
 
-        WebcamName camCam = hardwareMap.get(WebcamName.class, "Webcamcolor");
-        CameraSubsystemTest.CameraPipeline pipeline = new CameraSubsystemTest.CameraPipeline(true);
+        //WebcamName camCam = hardwareMap.get(WebcamName.class, "Webcamcolor");
+        //CameraSubsystemTest.CameraPipeline pipeline = new CameraSubsystemTest.CameraPipeline(true);
+
+
+        driveGamepad = new GamepadEx(gamepad1);
 
 
         FieldCentricTestDriveSubsystem drive = new FieldCentricTestDriveSubsystem(motorFrontLeft,motorFrontRight,motorBackRight,motorBackLeft,/*imu*/newImu);
         FieldCentricTestCommand driveCommand = new FieldCentricTestCommand(drive, this);
         AprilTagDriveSub aprilSubsystem = new AprilTagDriveSub(motorFrontLeft,motorFrontRight,motorBackRight,motorBackLeft);
         AprilTagTestCommand aprilTagTestCommand = new AprilTagTestCommand(aprilSubsystem,this);
-        cameraSubsystemTest = new CameraSubsystemTest(camCam,this,pipeline);
+        //cameraSubsystemTest = new CameraSubsystemTest(camCam,this,pipeline);
         ButtonTest buttonTest = new ButtonTest(drive);
 
         BooleanSupplier supplier = () -> gamepad1.left_bumper;
-        CameraSubsystemTest.CameraPipeline.DetectionColor Color = CameraSubsystemTest.CameraPipeline.DetectionColor.Yellow;
+        //CameraSubsystemTest.CameraPipeline.DetectionColor Color = CameraSubsystemTest.CameraPipeline.DetectionColor.Yellow;
 
-        while(opModeInInit()) {
+       /* while(opModeInInit()) {
             telemetry.addData("r value", cameraSubsystemTest.m_pipeline.avgR);
             telemetry.addData("b value", cameraSubsystemTest.m_pipeline.avgB);
             telemetry.addData("brick color", cameraSubsystemTest.m_pipeline.color);
@@ -127,18 +134,19 @@ public class FIeldCentric extends CommandOpMode {
         telemetry.addData("Total frame time ms", cameraSubsystemTest.switchableWebcam.getTotalFrameTimeMs());
         telemetry.addData("Pipeline time ms", cameraSubsystemTest.switchableWebcam.getPipelineTimeMs());
         telemetry.addData("Overhead time ms", cameraSubsystemTest.switchableWebcam.getOverheadTimeMs());
-        telemetry.addData("Theoretical max FPS", cameraSubsystemTest.switchableWebcam.getCurrentPipelineMaxFps());
+        telemetry.addData("Theoretical max FPS", cameraSubsystemTest.switchableWebcam.getCurrentPipelineMaxFps());*/
 
 
 
-        m_button = new Button(supplier) {
+        /*m_button = new Button(supplier) {
             @Override
             public Button whileHeld(Command command, boolean interruptible) {
                 return super.whileHeld(command, interruptible);
             }
         };
 
-        m_button.whileHeld(aprilTagTestCommand,true);
+        m_button.whileHeld(buttonTest,true);*/
+        m_button = (new GamepadButton(driveGamepad, GamepadKeys.Button.A)).whileHeld(buttonTest,true);
 
         //if(gamepad1.a){
        //     servo.setPosition(1);
@@ -150,13 +158,13 @@ public class FIeldCentric extends CommandOpMode {
 
 
 
-        if (isStopRequested()) {
+       /* if (isStopRequested()) {
 
 
            cameraSubsystemTest.switchableWebcam.stopStreaming();
             return;
 
-        }
+        }*/
 
         register(drive);
        drive.setDefaultCommand(driveCommand);
@@ -214,10 +222,10 @@ public class FIeldCentric extends CommandOpMode {
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
             run();
-            telemetry.addData("r value", cameraSubsystemTest.m_pipeline.avgR);
+            /*telemetry.addData("r value", cameraSubsystemTest.m_pipeline.avgR);
             telemetry.addData("b value", cameraSubsystemTest.m_pipeline.avgB);
             telemetry.addData("brick color", cameraSubsystemTest.m_pipeline.color);
-            telemetry.update();
+            telemetry.update();*/
         }
         reset();
     }
