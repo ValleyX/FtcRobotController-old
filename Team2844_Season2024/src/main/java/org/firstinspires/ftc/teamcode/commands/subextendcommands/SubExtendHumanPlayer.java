@@ -19,14 +19,17 @@ public class SubExtendHumanPlayer extends CommandBase {
 
     @Override
     public void initialize(){
-        m_intakeSub.setIntakeDropServo(RobotHardware.DROP_SERVO_DOWN);
+       // m_intakeSub.setIntakeDropServo(RobotHardware.INTAKE_SERVO_SPIT);//move bucket down
+        //m_opMode.sleep(200);
 
+        //extake
         m_intakeSub.intakeExtake();
-        m_opMode.sleep(5000);
+        m_opMode.sleep(500);
 
+        //turn of intake
         m_intakeSub.intakeOff();
-
-        m_intakeSub.setIntakeDropServo(RobotHardware.DROP_SERVO_UP);
+        //bring up servo
+        m_intakeSub.setIntakeDropServo(RobotHardware.INTAKE_SERVO_UP);
 
     }
 
@@ -34,6 +37,8 @@ public class SubExtendHumanPlayer extends CommandBase {
     public void execute(){
 
     }
+
+
 
     @Override
     public boolean isFinished(){

@@ -18,7 +18,9 @@ public class HangOut extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.hangToPosition(23.5,1);
+
+        //move hang lift to position
+        m_liftSub.hangToPosition(23.5,1);//extends hang a little bit more than initial position
         //m_opMode.sleep(3000);
 
     }

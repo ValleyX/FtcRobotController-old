@@ -47,8 +47,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCO
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
+
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -56,7 +57,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0); //kI: 0.1
 
     public static double LATERAL_MULTIPLIER = 3;
 

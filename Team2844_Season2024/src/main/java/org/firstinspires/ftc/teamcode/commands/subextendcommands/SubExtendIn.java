@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands.subextendcommands;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
 /**This pulls the subextend in including bring the bucket in*/
 public class SubExtendIn extends CommandBase {
@@ -20,7 +18,10 @@ public class SubExtendIn extends CommandBase {
 
     @Override
     public void initialize(){
-        m_intakeSub.setIntakeDropServo(RobotHardware.DROP_SERVO_UP);
+        //bring up bucket
+        m_intakeSub.setIntakeDropServo(RobotHardware.INTAKE_SERVO_INIT);
+
+        //reset sub extend
         m_intakeSub.subExtendToPosition(0,1);
 
     }

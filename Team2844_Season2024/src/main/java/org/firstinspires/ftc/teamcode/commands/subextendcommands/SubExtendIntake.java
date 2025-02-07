@@ -19,17 +19,27 @@ public class SubExtendIntake extends CommandBase {
 
     @Override
     public void initialize(){
-
+        //turn on intake
+        m_intakeSub.intakeOn();
+        m_intakeSub.setIntakeDropServo(RobotHardware.INTAKE_SERVO_DOWN);
     }
 
     @Override
     public void execute(){
-        m_intakeSub.intakeOn();
+
+        if(m_intakeSub.m_IntakeDropServo.getPosition() < .05){
+            m_intakeSub.intakeOff();
+        }
+
     }
 
     @Override
     public void end(boolean interrupted){
-        m_intakeSub.intakeOff();
+        if(interrupted) {
+            m_intakeSub.intakeOff();
+            m_intakeSub.setIntakeDropServo(RobotHardware.INTAKE_SERVO_UP);
+        }
+
     }
 
     @Override

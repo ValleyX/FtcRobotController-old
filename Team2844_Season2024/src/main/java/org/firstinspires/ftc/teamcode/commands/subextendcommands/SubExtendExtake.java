@@ -18,17 +18,25 @@ public class SubExtendExtake extends CommandBase {
 
     @Override
     public void initialize(){
-
-    }
-
-    @Override
-    public void execute(){
+        //start extaking
         m_intakeSub.intakeExtake();
     }
 
     @Override
+    public void execute(){
+        //TODO make this work
+        //if bucket up turn intake off
+        if(m_intakeSub.m_IntakeDropServo.getPosition() < .05) {
+            m_intakeSub.intakeOff();
+        }
+    }
+
+    @Override
     public void end(boolean interrupted){
-        m_intakeSub.intakeOff();
+        //turns off intake at the end
+        if(interrupted) {
+            m_intakeSub.intakeOff();
+        }
     }
 
     @Override

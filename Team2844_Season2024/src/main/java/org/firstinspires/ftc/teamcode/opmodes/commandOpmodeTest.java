@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
 
-
+//framework for creating opmodes
 @Disabled
 @TeleOp(name = "test")
 public class commandOpmodeTest extends CommandOpMode {

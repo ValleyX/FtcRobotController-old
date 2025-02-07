@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 
@@ -12,17 +13,31 @@ public class LiftSubsystem extends SubsystemBase {
     public DcMotor m_liftMotor;
     public DcMotor m_hangMotor;
     public Servo m_bucket;
+    public Servo m_hangServo;
+    public TouchSensor m_liftTouch;
+    public TouchSensor m_rightBase;
+    public TouchSensor m_leftBase;
 
     //initialize using constructor
-    public LiftSubsystem(DcMotor liftMotor, DcMotor hangMotor, Servo bucket){
+    public LiftSubsystem(DcMotor liftMotor, DcMotor hangMotor, Servo bucket, Servo hangServo,TouchSensor liftTouch, TouchSensor rightBase, TouchSensor leftBase){
         m_liftMotor = liftMotor;
         m_hangMotor = hangMotor;
         m_bucket = bucket;
+        m_hangServo = hangServo;
+        m_liftTouch = liftTouch;
+        m_leftBase = leftBase;
+        m_rightBase = rightBase;
+
     }
 
     //sets bucket servo to position
     public void bucketToPosition(double position){
         m_bucket.setPosition(position);
+    }
+
+    //sets hang servo to position
+    public void hangServoToPosition(double position){
+        m_hangServo.setPosition(position);
     }
 
     //sets lift to position
@@ -43,7 +58,6 @@ public class LiftSubsystem extends SubsystemBase {
 
         //start motion
         m_liftMotor.setPower(Math.abs(liftSpeed));
-
     }
 
     public void hangToPosition (double hangInches, double hangSpeed) {

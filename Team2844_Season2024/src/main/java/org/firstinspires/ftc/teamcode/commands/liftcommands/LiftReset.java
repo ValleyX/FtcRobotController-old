@@ -20,8 +20,13 @@ public class LiftReset extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.liftToPosition(0,1);
-        m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_DISENGAGED);
+        m_liftSub.bucketToPosition(RobotHardware.CLAW_SERVO_DISENGAGED);//open claw to reset
+       // m_liftSub.liftToPosition(.5,1);
+
+        m_liftSub.liftToPosition(0,1);//set lift to base posiiton
+
+
+        //m_opMode.sleep(100);
 
     }
 

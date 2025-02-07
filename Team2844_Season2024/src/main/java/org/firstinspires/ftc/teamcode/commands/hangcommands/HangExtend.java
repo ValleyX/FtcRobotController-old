@@ -18,7 +18,7 @@ public class HangExtend extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.hangToPosition(28,1);
+        m_liftSub.hangToPosition(28,1);//extends hang to first position
         //m_opMode.sleep(1000);
 
     }
@@ -30,6 +30,7 @@ public class HangExtend extends CommandBase {
 
     @Override
     public boolean isFinished(){
+        //waits for hang to finish before moving on
         if(m_liftSub.m_hangMotor.isBusy()){
             return false;
         } else {

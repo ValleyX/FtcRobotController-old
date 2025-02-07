@@ -18,7 +18,7 @@ public class LiftOut extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.liftToPosition(6.5,1);
+        m_liftSub.liftToPosition(6.5,1);//first lift position for the hang sequence
 
     }
 
@@ -29,6 +29,9 @@ public class LiftOut extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        return true;
+        if(m_liftSub.m_rightBase.isPressed() && m_liftSub.m_leftBase.isPressed()){
+        return true;}
+
+        return false;
     }
 }

@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 //Drive Subsystem
 public class DriveSubsystem extends SubsystemBase {
+    //declare all motors for drive + IMU
     public DcMotor m_frontLeft;
     public DcMotor m_frontRight;
     public DcMotor m_backLeft;
     public DcMotor m_backRight;
     public IMU m_imu;
+
+    //constructor
     public DriveSubsystem(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, IMU imu){
         m_frontLeft = frontLeft;
         m_backLeft = backLeft;
@@ -21,6 +24,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void allPower(double speed){
+        //set motor power to speed
         m_frontLeft.setPower(speed);
         m_frontRight.setPower(speed);
         m_backRight.setPower(speed);

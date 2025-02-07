@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     //declare variables
     public DcMotor m_SubExtend;
-    public DcMotor m_IntakeMotor;
+    public Servo m_IntakeMotor;
     public Servo m_IntakeDropServo;
     //cameraStuff
    // public WebcamName m_camCam;
@@ -25,15 +26,15 @@ public class IntakeSubsystem extends SubsystemBase {
     public NormalizedColorSensor m_ColorSensorBelow;
 
     //initialize using constructor
-    public IntakeSubsystem(DcMotor subExtend, DcMotor intakeMotor, Servo intakeDrop, /*WebcamName camCam,*/LinearOpMode opMode,NormalizedColorSensor colorSensorBucket, NormalizedColorSensor colorSensorBelow){
+    public IntakeSubsystem(DcMotor subExtend, Servo intakeMotor, Servo intakeDrop /*WebcamName camCam,LinearOpMode opMode/*NormalizedColorSensor colorSensorBucket, NormalizedColorSensor colorSensorBelow*/){
         m_SubExtend = subExtend;
         m_IntakeDropServo = intakeDrop;
         m_IntakeMotor = intakeMotor;
 
-        m_opMode = opMode;
+       // m_opMode = opMode;
 
-        m_ColorSensorBucket = colorSensorBucket;
-        m_ColorSensorBelow = colorSensorBelow;
+        //m_ColorSensorBucket = colorSensorBucket;
+        //m_ColorSensorBelow = colorSensorBelow;
 
 
         //camera stuff
@@ -75,30 +76,29 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //sets servo to position
     public void setIntakeDropServo(double position){
-        m_IntakeDropServo.setPosition(position);
-
+            m_IntakeDropServo.setPosition(position);
     }
 
     //turns on intake
     public void intakeOn(){
-        m_IntakeMotor.setPower(1);
+        m_IntakeMotor.setPosition(0);
     }
 
     //Extakes
     public void intakeExtake(){
-        m_IntakeMotor.setPower(-1);
+        m_IntakeMotor.setPosition(1);
     }
 
     //turns off intake
     public void intakeOff(){
-        m_IntakeMotor.setPower(0);
+        m_IntakeMotor.setPosition(.5);
     }
 
     //set subextend to position
     public void subExtendToPosition (double subExtendInches, double subExtendSpeed) {
 
         //gets the rotations per inch, and then sets the distance that we want the lift to go to
-        int newTarget = (int)(Math.abs(subExtendInches) * RobotHardware.SUBEXTEND_COUNTS_PER_INCH);
+        int newTarget = (int)(/*Math.abs*/(subExtendInches) * RobotHardware.SUBEXTEND_COUNTS_PER_INCH);
 
         //tells motors to use the encoder while running
         m_SubExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

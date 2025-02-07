@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
 /**This puts lift to high chamber scoring position*/
@@ -19,8 +20,9 @@ public class LiftHighChamber extends CommandBase {
 
     @Override
     public void initialize(){
-        //TODO; put in actual value for the position
+        //sets lift to position for scoring at the high chamber
         m_liftSub.liftToPosition(17,1);
+       // m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_ENGAGED);
 
     }
 

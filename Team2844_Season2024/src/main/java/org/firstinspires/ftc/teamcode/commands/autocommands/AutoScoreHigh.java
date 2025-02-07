@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.commands.autocommands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.robocol.Command;
 
 import org.firstinspires.ftc.teamcode.Drivers.RobotHardware;
-import org.firstinspires.ftc.teamcode.commands.liftcommands.LiftHighChamber;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 
 public class AutoScoreHigh extends CommandBase {
@@ -22,13 +20,13 @@ public class AutoScoreHigh extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.liftToPosition(17,1);
-        m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_ENGAGED);
-        m_opMode.sleep(700);
-        m_liftSub.liftToPosition(13,1);
-        m_opMode.sleep(700);
-        m_liftSub.bucketToPosition(RobotHardware.BUCKET_SERVO_DISENGAGED);
-        m_opMode.sleep(100);
+        //m_liftSub.liftToPosition(17,1);
+        m_liftSub.bucketToPosition(RobotHardware.CLAW_SERVO_ENGAGED); //set the claw to be closed
+        m_opMode.sleep(25); //wait so claw fully closes
+        m_liftSub.liftToPosition(13,1); //move the lift
+        m_opMode.sleep(500); //wait for the lift to finish moving
+        m_liftSub.bucketToPosition(RobotHardware.CLAW_SERVO_DISENGAGED); //disengage the claw
+        //m_opMode.sleep(100);
     }
 
 }

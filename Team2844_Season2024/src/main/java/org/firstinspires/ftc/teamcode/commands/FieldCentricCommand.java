@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
-
+/**this is where any driving is*/
 public class FieldCentricCommand extends CommandBase {
     public boolean babyMode;
     private final DriveSubsystem m_driveSubsystem;

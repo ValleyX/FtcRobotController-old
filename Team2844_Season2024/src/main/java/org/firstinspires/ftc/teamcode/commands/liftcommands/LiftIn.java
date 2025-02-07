@@ -19,7 +19,7 @@ public class LiftIn extends CommandBase {
 
     @Override
     public void initialize(){
-        m_liftSub.liftToPosition(2.5,1);
+        m_liftSub.liftToPosition(1.5,1);//set lift to a smaller position thain where they were for the hang sequence
 
 
     }
@@ -31,6 +31,7 @@ public class LiftIn extends CommandBase {
 
     @Override
     public boolean isFinished(){
+        //wait for lift to finish
         if(m_liftSub.m_liftMotor.isBusy()){
             return false;
         } else {
