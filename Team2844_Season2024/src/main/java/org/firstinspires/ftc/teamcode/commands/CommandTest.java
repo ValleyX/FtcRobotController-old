@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
+
+/** this is a framework that is used to make a new command*/
 public class CommandTest extends CommandBase {
+
+
     public CommandTest(){
 
     }
+
 
     @Override
     public void initialize(){
@@ -15,8 +20,8 @@ public class CommandTest extends CommandBase {
 
     }
 
-    @Override
-    public boolean isFinished(){
-        return true;
-    }
+    // @Override
+    //public boolean isFinished(){
+    //     return true;
+    // }
 }
