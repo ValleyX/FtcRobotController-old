@@ -15,16 +15,21 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+//added by JAE for 12841
+repositories {
+    mavenCentral()
+}
+
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
     androidResources {
-        noCompress 'tflite'
+ //       noCompress 'tflite'
     }
 
     packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
+ //       jniLibs {
+  //          pickFirsts += ['**/*.so']
+ //       }
         jniLibs.useLegacyPackaging true
     }
 }

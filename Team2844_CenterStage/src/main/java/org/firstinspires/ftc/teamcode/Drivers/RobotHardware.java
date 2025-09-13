@@ -186,7 +186,7 @@ public class RobotHardware {
     //drone launcher release servo
     public Servo launcherServo;
 
-
+   public IMU imu2;
 
     //Code for lights ---------------------------------------------------------------------------
 
@@ -343,6 +343,8 @@ public class RobotHardware {
         //RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
